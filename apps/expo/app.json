@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "expo",
-    "slug": "expo",
+    "slug": "ai-x",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,7 +12,8 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/030f46c0-3f80-4cc1-a502-80847a988b92"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -32,8 +33,12 @@
     },
     "extra": {
       "eas": {
-        "projectId": "768478b6-46cd-43a3-904b-f4d5065648d2"
+        "projectId": "030f46c0-3f80-4cc1-a502-80847a988b92"
       }
+    },
+    "owner": "mohammadameer",
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

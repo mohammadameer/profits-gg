@@ -10,11 +10,11 @@
       "cache": false
     },
     "dev": {
-      "dependsOn": ["^db:generate"],
+      "dependsOn": ["^db:push"],
       "cache": false
     },
     "build": {
-      "dependsOn": ["^build", "^db:generate"],
+      "dependsOn": ["^build", "^db:push"],
       "outputs": [".next/**", ".expo/**"]
     },
     "lint": {
@@ -27,7 +27,7 @@
       "cache": false
     },
     "type-check": {
-      "dependsOn": ["^db:generate"],
+      "dependsOn": ["^db:push"],
       "cache": false
     }
   },
