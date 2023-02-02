@@ -1,0 +1,10 @@
+{
+  "name": "@profits-gg/ui",
+  "sideEffects": false,
+  "version": "1.0.0",
+  "main": "index.ts",
+  "license": "MIT",
+  "exports": {
+    ".": "./index.ts"
+  }
+}

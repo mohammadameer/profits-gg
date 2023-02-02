@@ -10,13 +10,13 @@ import useWindowSize from "../hooks/utils/useWindowSize";
 import posthog from "posthog-js";
 import { toast, Toaster } from "react-hot-toast";
 import clsx from "clsx";
+import Modal from "./Modal";
 import TextInput from "./form/TextInput";
 import { useForm } from "react-hook-form";
 import { required } from "../utils/formRules";
 import CodeInput from "./form/CodeInput";
 import SelectInput from "./form/SelectInput";
 import { trpc } from "../utils/trpc";
-import { Modal } from "@profits-gg/ui";
 
 type LayoutProps = {
   children: ReactNode;

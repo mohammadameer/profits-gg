@@ -29,6 +29,7 @@ const moduleExports = {
     // for more information.
     hideSourceMaps: true,
   },
+  transpilePackages: ["@profits-gg/ui", "@profits-gg/config"],
 };
 
 const sentryWebpackPluginOptions = {
