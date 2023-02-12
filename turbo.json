@@ -32,7 +32,7 @@
     }
   },
   "globalEnv": [
-    "$NODE_ENV",
+    "NODE_ENV",
     "PORT",
     "VERCEL_URL",
     "SENTRY_DSN",
