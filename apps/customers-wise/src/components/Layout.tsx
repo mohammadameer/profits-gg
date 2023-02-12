@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 
 // utils
 import { signIn, signOut, useSession } from "next-auth/react";
-import Button from "./form/Button";
 import { useRouter } from "next/router";
 import { MenuButton } from "./MenuButton";
 import useWindowSize from "../hooks/utils/useWindowSize";
@@ -16,7 +15,7 @@ import { required } from "../utils/formRules";
 import CodeInput from "./form/CodeInput";
 import SelectInput from "./form/SelectInput";
 import { trpc } from "../utils/trpc";
-import { Modal } from "@profits-gg/ui";
+import { Button, Modal } from "@profits-gg/ui";
 
 type LayoutProps = {
   children: ReactNode;

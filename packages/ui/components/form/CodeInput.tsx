@@ -12,7 +12,7 @@ import Error from "../Error";
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 
-type TextInputProps<T extends FieldValues> = {
+export type CodeInputProps<T extends FieldValues> = {
   label: string;
   placeholder?: string;
   name: Path<T>;
@@ -36,7 +36,7 @@ export default function CodeInput<T extends FieldValues>({
   rules = {},
   className = "",
   autoComplete = "false",
-}: TextInputProps<T>) {
+}: CodeInputProps<T>) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -56,7 +56,7 @@ export default function CodeInput<T extends FieldValues>({
     <div
       className={clsx(
         "relative flex w-full flex-col gap-2 focus-within:border-white",
-        className
+        className,
       )}
     >
       <label htmlFor={name} className="block">
@@ -96,7 +96,7 @@ export default function CodeInput<T extends FieldValues>({
                     (inputRef?.current?.value.length == i ||
                       (inputRef?.current?.value.length === VERIFY_CODE_LENGTH &&
                         i == 3)) &&
-                    "border-4"
+                    "border-4",
                 )}
                 onClick={() => inputRef?.current?.focus()}
               >

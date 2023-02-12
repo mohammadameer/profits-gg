@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import Card from "../Card";
+import Card from "../GridCard";
 import SelectInput from "../form/SelectInput";
 import Page from "../Page";
 

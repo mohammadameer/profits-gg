@@ -9,7 +9,7 @@ import type {
 } from "react-hook-form";
 import { useController } from "react-hook-form";
 
-type SwitchInputProps<T extends FieldValues> = {
+export type SwitchInputProps<T extends FieldValues> = {
   label?: string;
   name: Path<T>;
   rules?: Exclude<
@@ -39,13 +39,13 @@ export default function SwitchInput<T extends FieldValues>({
       onBlur={onBlur}
       className={clsx(
         "relative h-8 w-16 flex-shrink-0 cursor-pointer rounded-full border-2  border-transparent pt-[2px] transition-colors duration-200 ease-in-out",
-        value ? "bg-gray-200" : "bg-gray-700"
+        value ? "bg-gray-200" : "bg-gray-700",
       )}
     >
       <SwitchPrimitive.Thumb
         className={clsx(
           "pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out",
-          value ? "-translate-x-4" : "translate-x-4"
+          value ? "-translate-x-4" : "translate-x-4",
         )}
       />
     </SwitchPrimitive.Root>

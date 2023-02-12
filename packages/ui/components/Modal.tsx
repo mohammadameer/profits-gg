@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { Dispatch, FC, SetStateAction } from "react";
 
-interface ModalProps {
+export interface ModalProps {
   children: React.ReactNode;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;

@@ -2,9 +2,12 @@
   "name": "@profits-gg/config",
   "sideEffects": false,
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "index.js",
   "license": "MIT",
-  "exports": {
-    ".": "./index.ts"
+  "files": [
+    "prettier-preset.js"
+  ],
+  "dependencies": {
+    "prettier-plugin-tailwindcss": "^0.2.2"
   }
 }

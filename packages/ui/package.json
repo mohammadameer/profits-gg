@@ -2,9 +2,13 @@
   "name": "@profits-gg/ui",
   "sideEffects": false,
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "./index.tsx",
+  "types": "./index.tsx",
   "license": "MIT",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.tsx"
+  },
+  "dependencies": {
+    "react-hook-form": "^7.43.1"
   }
 }

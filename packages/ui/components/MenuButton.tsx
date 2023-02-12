@@ -1,7 +1,7 @@
 import React from "react";
 import { motion, Transition } from "framer-motion";
 
-interface Props {
+export interface MenuButtonProps {
   isOpen?: boolean;
   color?: string;
   strokeWidth?: string | number;
@@ -18,7 +18,7 @@ const MenuButton = ({
   lineProps = null,
   className,
   ...props
-}: Props) => {
+}: MenuButtonProps) => {
   const variant = isOpen ? "opened" : "closed";
   const top = {
     closed: {
@@ -98,4 +98,4 @@ const MenuButton = ({
   );
 };
 
-export { MenuButton };
+export default MenuButton;

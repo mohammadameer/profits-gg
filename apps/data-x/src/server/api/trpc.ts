@@ -39,6 +39,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
+    stripe
   };
 };
 
@@ -55,6 +56,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
+    
   });
 };
 
@@ -66,6 +68,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  */
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
+import { stripe } from "../stripe/client";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,

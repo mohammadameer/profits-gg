@@ -11,7 +11,7 @@ import type {
 import Error from "../Error";
 import clsx from "clsx";
 
-type TextInputProps<T extends FieldValues> = {
+export type TextInputProps<T extends FieldValues> = {
   label: string;
   placeholder?: string;
   name: Path<T>;
@@ -43,7 +43,7 @@ export default function TextInput<T extends FieldValues>({
     <div
       className={clsx(
         "relative flex w-full flex-col gap-2 focus-within:border-white",
-        className
+        className,
       )}
     >
       <label htmlFor={name} className="block">

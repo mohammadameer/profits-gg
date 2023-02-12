@@ -9,7 +9,7 @@ type page = {
   link: string;
 };
 
-type PageProps = {
+export type PageProps = {
   children: React.ReactNode;
   title?: string | undefined;
   description?: string;
@@ -39,7 +39,7 @@ const Page: FC<PageProps> = ({
   const router = useRouter();
 
   return (
-    <div className={clsx("flex w-full grow flex-col", className)}>
+    <div className={clsx("flex w-full grow flex-col px-4 md:px-28", className)}>
       {backButton ? (
         <div
           className="cursor-pointer transition-all duration-200 active:scale-95"
@@ -84,7 +84,7 @@ const Page: FC<PageProps> = ({
         )}
       </div>
       {filterComponent ? filterComponent() : null}
-      <div className="mt-8 flex grow flex-col px-2 pb-10 ">
+      <div className="mt-4 flex grow flex-col px-2 pb-10 ">
         {isLoading && loadingComponent ? loadingComponent() : children}
       </div>
     </div>

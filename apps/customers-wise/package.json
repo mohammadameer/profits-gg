@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "build": "prisma db push && next build",
+    "db:generate": "prisma generate --schema prisma/schema.prisma ",
+    "db:push": "prisma db push --schema prisma/schema.prisma ",
     "dev": "next dev -p 10000",
     "postinstall": "prisma generate",
     "lint": "next lint",
@@ -11,6 +13,7 @@
   },
   "dependencies": {
     "@profits-gg/ui": "*",
+    "@profits-gg/config": "*",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@next/font": "^13.0.1",
     "@prisma/client": "^4.7.1",

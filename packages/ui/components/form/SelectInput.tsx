@@ -16,7 +16,7 @@ type Option = {
   value: string | number | null;
 };
 
-type SelectInputProps<T extends FieldValues> = {
+export type SelectInputProps<T extends FieldValues> = {
   label?: string;
   placeholder: string;
   name: Path<T>;
@@ -29,6 +29,7 @@ type SelectInputProps<T extends FieldValues> = {
   options: Option[] | undefined;
   className?: string;
   noError?: boolean;
+  isMulti?: boolean;
 };
 
 export default function SelectInput<T extends FieldValues>({
@@ -40,6 +41,7 @@ export default function SelectInput<T extends FieldValues>({
   options = [],
   className = "",
   noError = false,
+  isMulti = false,
 }: SelectInputProps<T>) {
   const {
     field: { value, onChange, onBlur },
@@ -50,7 +52,7 @@ export default function SelectInput<T extends FieldValues>({
     <div
       className={clsx(
         "relative flex w-full flex-col gap-2 focus-within:border-white",
-        className
+        className,
       )}
     >
       {label ? (
@@ -63,20 +65,35 @@ export default function SelectInput<T extends FieldValues>({
         name={name}
         placeholder={placeholder || label}
         options={options}
-        value={options.find((option) => value == option.value)}
+        value={
+          isMulti
+            ? options.filter((option) => value?.includes(option.value))
+            : options.find((option) => value == option.value)
+        }
         defaultValue={options.find((option) => value == option.value)}
-        onChange={(option) => onChange(option?.value)}
+        onChange={(option) => {
+          if (isMulti) {
+            option = option as Option[];
+            onChange(option?.map((o) => o.value));
+          } else {
+            option = option as Option;
+            onChange(option?.value);
+          }
+        }}
         onBlur={onBlur}
         unstyled={true}
+        isMulti={isMulti}
+        noOptionsMessage={() => "لا توجد خيارات أخرى"}
         classNames={{
           container: () => "rounded-lg bg-gray-800 ",
           control: ({ hasValue }) =>
             `rounded-lg px-2 py-1 border-gray-500 border ${
               hasValue ? "text-white" : "text-gray-400"
             } outline-none focus:border-white`,
-          valueContainer: () => "bg-gray-800 rounded-r-lg",
+          valueContainer: () => "bg-gray-800 rounded-r-lg gap-2",
+          multiValue: () => "bg-gray-700 rounded-lg",
           menu: () => "bg-gray-800 rounded-lg p-2 mt-2",
-          option: () => "hover:bg-gray-700 !cursor-pointer p-2 rounded-lg",
+          option: () => "hover:bg-gray-700 !cursor-pointer p-2 rounded-lg ",
         }}
       />
 
