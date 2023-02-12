@@ -6,13 +6,14 @@
     "packages/*"
   ],
   "scripts": {
+    "build:customers-wise": "turbo run build --filter=customers-wise",
     "dev:customers-wise": "turbo dev --scope=\"@profits-gg/customers-wise\"",
     "db:customers-wise:generate": "turbo db:generate --scope=\"@profits-gg/customers-wise\"",
     "db:customers-wise:push": "turbo db:generate db:push --scope=\"@profits-gg/customers-wise\"",
-    "build": "turbo build",
     "clean": "rm -rf node_modules",
     "clean:workspaces": "turbo clean",
     "dev:data-x": "turbo dev --scope=\"@profits-gg/data-x\"",
+    "build:data-x": "turbo run build --filter=data-x",
     "db:data-x:generate": "turbo db:generate --scope=\"@profits-gg/data-x\"",
     "db:data-x:push": "turbo db:generate db:push --scope=\"@profits-gg/data-x\"",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
