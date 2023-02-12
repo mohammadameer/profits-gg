@@ -8,7 +8,8 @@ import { toast } from "react-hot-toast";
 import { useContext } from "react";
 import { LoginModalContext } from "../../../components/Layout";
 import type Stripe from "stripe";
-import { List, Stage } from "@prisma/client";
+import type { List } from "@prisma/client";
+import { Stage } from "@prisma/client";
 import DataItem from "../../../components/DataItem";
 
 const productsMaxes = {
@@ -75,7 +76,7 @@ export default function DateType() {
   const handleFetchNextPage = () => {
     // check if user is logged in
     if (sessionStatus == "unauthenticated") {
-      setLoginOpen(true);
+      setLoginOpen?.(true);
       return;
     }
 
@@ -189,7 +190,10 @@ export default function DateType() {
             {Array(10)
               .fill(0)
               .map((_, index) => (
-                <div className="flex h-14 w-full cursor-pointer gap-4 rounded-md  bg-gray-800 p-4 shadow-md transition-all hover:scale-105 active:scale-95" />
+                <div
+                  key={index}
+                  className="flex h-14 w-full cursor-pointer gap-4 rounded-md  bg-gray-800 p-4 shadow-md transition-all hover:scale-105 active:scale-95"
+                />
               ))}
           </>
         ) : (

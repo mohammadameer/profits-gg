@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from "react";
+import type { Dispatch, FC, ReactNode, SetStateAction } from "react";
 import React, { useEffect, useState } from "react";
 
 // utils
@@ -13,7 +13,6 @@ import {
   CodeInput,
   MenuButton,
   Modal,
-  SelectInput,
   TextInput,
 } from "@profits-gg/ui";
 import { required } from "@profits-gg/lib/utils/formRules";
@@ -26,16 +25,15 @@ type LayoutProps = {
 
 const nonAuthPages: string[] = [];
 
-export const LoginModalContext = React.createContext({
-  setLoginOpen: (open: boolean) => {},
-});
+export const LoginModalContext = React.createContext<{
+  setLoginOpen: Dispatch<SetStateAction<boolean>> | null;
+}>({ setLoginOpen: null });
 
 const Layout: FC<LayoutProps> = ({ children }) => {
   const { control, watch, handleSubmit, setValue } = useForm();
 
   const email = watch("email");
   const code = watch("code");
-  const organization = watch("organization");
 
   const router = useRouter();
   const route = router.route;

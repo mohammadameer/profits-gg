@@ -204,8 +204,8 @@ export default function OrganizationSubscription() {
                     style={{
                       height: (index + 1.8) * 60,
                     }}
-                    className={`flex w-full animate-pulse cursor-pointer flex-col gap-4 rounded-lg border-4 border-gray-700 bg-gray-700 p-4 hover:scale-105 active:scale-95 lg:w-1/3`}
-                  ></div>
+                    className="flex w-full animate-pulse cursor-pointer flex-col gap-4 rounded-lg border-4 border-gray-700 bg-gray-700 p-4 hover:scale-105 active:scale-95 lg:w-1/3"
+                  />
                 ))}
             </>
           )}

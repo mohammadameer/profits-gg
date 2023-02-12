@@ -31,6 +31,7 @@
       "cache": false
     }
   },
+  "globalDependencies": ["$NODE_ENV", "$PORT", "$VERCEL_URL"],
   "globalEnv": [
     "DATABASE_URL",
     "NEXTAUTH_SECRET",

@@ -18,7 +18,7 @@ const DataItem = ({
   const { control, watch, setValue } = useForm();
 
   const list = watch("list");
-  const stage = watch("stage");
+  // const stage = watch("stage");
 
   const [showData, setShowData] = useState(false);
 

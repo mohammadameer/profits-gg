@@ -61,7 +61,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       },
       {
         onSuccess: () => invalidate(),
-      }
+      },
     );
   };
 
@@ -121,7 +121,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     try {
       if (emailSent) {
         window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(
-          email
+          email,
         )}&token=${code}`;
       } else {
         setLoading(true);
@@ -157,7 +157,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         <div
           className={clsx(
             "fixed top-0 left-0 z-20 flex w-full items-center justify-between px-8 py-6 transition-all",
-            loginOpen && "blur-[4px]"
+            loginOpen && "blur-[4px]",
           )}
         >
           <div className="flex items-end gap-4">
@@ -182,7 +182,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
                 if (status === "authenticated") {
                   signOut({ callbackUrl: "/" });
                 } else {
-                  setLoginOpen(true);
+                  setLoginOpen?.(true);
                 }
               }}
             />
@@ -201,7 +201,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         <div
           className={clsx(
             "fixed top-0 left-0 z-10 flex h-screen w-full flex-col justify-between overflow-scroll bg-gray-800 px-6 pb-20 pt-32 md:right-0 md:w-3/12 md:rounded-l-lg md:pt-36 md:pb-10",
-            route == "/" && "md:hidden"
+            route == "/" && "md:hidden",
           )}
         >
           <div className="flex flex-col gap-4 ">
@@ -267,7 +267,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
                 if (status === "authenticated") {
                   signOut({ callbackUrl: "/" });
                 } else {
-                  setLoginOpen(true);
+                  setLoginOpen?.(true);
                 }
               }}
               className="md:hidden"
@@ -283,7 +283,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
           `relative flex grow flex-col items-start gap-8 px-6 transition-all`,
           !isNonAuthPage && "pt-28",
           route == "/" && "pt-0",
-          loginOpen && "blur-[4px]"
+          loginOpen && "blur-[4px]",
         )}
       >
         {status === "authenticated" || route === "/" || isNonAuthPage ? (

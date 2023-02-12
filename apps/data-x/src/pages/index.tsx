@@ -1,5 +1,5 @@
 import { GridCard } from "@profits-gg/ui";
-import { NextPage } from "next";
+import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useContext } from "react";
@@ -37,7 +37,7 @@ const Home: NextPage = () => {
             link="/user/stages"
             onClick={() => {
               if (status !== "authenticated") {
-                setLoginOpen(true);
+                setLoginOpen?.(true);
               } else {
                 router.push("/user/stages");
               }
@@ -48,7 +48,7 @@ const Home: NextPage = () => {
             link="/user/lists"
             onClick={() => {
               if (status !== "authenticated") {
-                setLoginOpen(true);
+                setLoginOpen?.(true);
               } else {
                 router.push("/user/lists");
               }
@@ -59,7 +59,7 @@ const Home: NextPage = () => {
             link="/user/subscription"
             onClick={() => {
               if (status !== "authenticated") {
-                setLoginOpen(true);
+                setLoginOpen?.(true);
               } else {
                 router.push("/user/subscription");
               }

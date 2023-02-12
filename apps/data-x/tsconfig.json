@@ -1,10 +1,6 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "@data-x/*": ["./src/*"],
-      "@components/*": ["./src/components/*"]
-    },
     "target": "es2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -23,16 +19,34 @@
     "declaration": false,
     "declarationMap": false,
     "strictNullChecks": true,
-    "useUnknownInCatchVariables": true
+    "useUnknownInCatchVariables": true,
+    "composite": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "preserveWatchOutput": true
+  },
+  "ts-node": {
+    "files": true,
+    "require": ["tsconfig-paths/register"],
+    "experimentalResolverFeatures": true,
+    "compilerOptions": {
+      "module": "CommonJS",
+      "types": ["node"]
+    }
   },
   "include": [
+    "src",
     "next-env.d.ts",
+    "../../packages/types/*.d.ts",
+    "../../packages/types/next-auth.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
     "next-env.d.ts",
-    "../../prettier.config.cjs"
+    "../../prettier.config.cjs",
+    "../types/next-auth.d.ts",
+    "../types/*.d.ts"
   ],
   "exclude": ["node_modules"]
 }

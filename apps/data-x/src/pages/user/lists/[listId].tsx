@@ -55,7 +55,7 @@ export default function List() {
   const handleFetchNextPage = () => {
     // check if user is logged in
     if (sessionStatus == "unauthenticated") {
-      setLoginOpen(true);
+      setLoginOpen?.(true);
       return;
     }
 
@@ -121,7 +121,10 @@ export default function List() {
             {Array(10)
               .fill(0)
               .map((_, index) => (
-                <div className="flex h-14 w-full cursor-pointer gap-4 rounded-md  bg-gray-800 p-4 shadow-md transition-all hover:scale-105 active:scale-95" />
+                <div
+                  key={index}
+                  className="flex h-14 w-full cursor-pointer gap-4 rounded-md  bg-gray-800 p-4 shadow-md transition-all hover:scale-105 active:scale-95"
+                />
               ))}
           </>
         ) : (
