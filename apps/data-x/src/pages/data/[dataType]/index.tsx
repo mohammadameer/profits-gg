@@ -22,7 +22,7 @@ const productsMaxes = {
     download: 1000,
   },
   enterprise: {
-    search: 6000,
+    search: 5000,
     download: 3000,
   },
 };

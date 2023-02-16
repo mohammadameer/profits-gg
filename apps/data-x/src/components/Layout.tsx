@@ -190,7 +190,19 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         >
           {children}
         </LoginModalContext.Provider>
+        <div className="flex items-center gap-4 p-2">
+          <p
+            className="cursor-pointer"
+            onClick={() => router.push("/privacy-policy")}
+          >
+            سياسة الخصوصية
+          </p>
+          <p className="cursor-pointer" onClick={() => router.push("/terms")}>
+            شروط الخدمة
+          </p>
+        </div>
       </div>
+
       <Toaster />
 
       <Modal
@@ -234,6 +246,28 @@ const Layout: FC<LayoutProps> = ({ children }) => {
             type="submit"
             className="mt-2"
           />
+          <p className="mt-4">
+            عند تسجيل / تسجيل الدخول انت توافق على{" "}
+            <span
+              className="cursor-pointer border-b font-bold"
+              onClick={() => {
+                router.push("/privacy-policy");
+                setLoginOpen(false);
+              }}
+            >
+              سياسة الخصوصية
+            </span>{" "}
+            و{" "}
+            <span
+              className="cursor-pointer border-b font-bold"
+              onClick={() => {
+                router.push("/terms");
+                setLoginOpen(false);
+              }}
+            >
+              شروط الخدمة
+            </span>
+          </p>
         </form>
       </Modal>
     </div>

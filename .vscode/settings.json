@@ -8,5 +8,11 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
-  }
+  },
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "spellright.language": ["en"],
+  "spellright.documentTypes": ["markdown", "typescript"],
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ]
 }
