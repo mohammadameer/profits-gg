@@ -9,26 +9,13 @@ import { LoginModalContext } from "../../../components/Layout";
 import { api } from "../../../utils/api";
 import type Stripe from "stripe";
 
-const productsMaxes = {
-  basic: {
-    search: 500,
-    download: 250,
-  },
-  preferred: {
-    search: 2000,
-    download: 1000,
-  },
-  enterprise: {
-    search: 5000,
-    download: 3000,
-  },
-};
-
 export default function List() {
   const router = useRouter();
   const { listId } = router.query;
 
   const { setLoginOpen } = useContext(LoginModalContext);
+
+  const { data: user } = api.user.retrieve.useQuery();
 
   const { data: session, status: sessionStatus } = useSession();
 
@@ -59,7 +46,13 @@ export default function List() {
       return;
     }
 
-    if (session?.user.stripeSubscriptionStatus !== "active") {
+    const dataLength =
+      listData?.pages.reduce((acc, page) => acc + page.data.length, 0) || 0;
+
+    if (
+      session?.user.stripeSubscriptionStatus !== "active" &&
+      dataLength > 10
+    ) {
       toast("اشترك في أحد الباقات لزيادة حد ظهور البيانات", {
         icon: "🔒",
       });
@@ -69,15 +62,8 @@ export default function List() {
     // check if subscription high amount is reached
     const product = subscription?.price.product as Stripe.Product;
     if (!product) return;
-    const productMaxSearch =
-      productsMaxes[product.name as keyof typeof productsMaxes].search;
-    const dataLength =
-      listData?.pages.reduce((acc, page) => acc + page.data.length, 0) || 0;
 
-    if (
-      productsMaxes[product.name as keyof typeof productsMaxes].search <=
-      dataLength
-    ) {
+    if ((user?.searchMax || 11) < dataLength) {
       toast("لقد وصلت لحد ظهور البيانات في باقتك", {
         icon: "🔒",
       });

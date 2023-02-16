@@ -60,6 +60,8 @@ model User {
     stripeSubscriptionId     String?
     stripeSubscriptionItemId String?
     stripeSubscriptionStatus StripeSubscriptionStatus?
+    exportCredits            Int                       @default(0)
+    searchMax                Int                       @default(10)
     image                    String?
     lists                    List[]
     stages                   Stage[]
@@ -111,6 +113,7 @@ model VerificationToken {
 }
 
 enum DataType {
+    onlineStore
     company
 }
 

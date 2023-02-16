@@ -24,7 +24,7 @@ const Home: NextPage = () => {
                 <p className="select-none text-black/40">+54 ألف</p>
               </div>
             )}
-            link="/data/companies"
+            link="/data/onlineStore"
           />
         </div>
       </div>

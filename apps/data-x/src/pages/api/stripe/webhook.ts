@@ -49,6 +49,7 @@ export default async function handler(
           // Used to provision services as they are added to a subscription.
           await handleSubscriptionCreatedOrUpdated({
             event,
+            stripe,
             prisma,
           });
           break;
@@ -56,6 +57,7 @@ export default async function handler(
           // Used to provision services as they are updated.
           await handleSubscriptionCreatedOrUpdated({
             event,
+            stripe,
             prisma,
           });
           break;

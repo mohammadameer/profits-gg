@@ -1,32 +1,45 @@
-import { List } from "@prisma/client";
+import type { List } from "@prisma/client";
 import { required } from "@profits-gg/lib/utils/formRules";
 import { Button, Page, TextInput } from "@profits-gg/ui";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { api } from "../../../utils/api";
+import type Stripe from "stripe";
+import { toast } from "react-hot-toast";
 
 export default function NewLink() {
   const router = useRouter();
-  const { locationId } = router.query;
-
+  const { data: session } = useSession();
   const { control, handleSubmit } = useForm<List>();
+
+  const { data: subscription } = api.stripe.subscription.useQuery();
 
   const { mutate: createList, isLoading: isCreatingList } =
     api.list.create.useMutation();
 
   const onSubmit = async (data: List) => {
-    createList(
-      {
-        name: data.name as string,
-        description: data.description as string,
-      },
-      {
-        onSuccess: () => {
-          router.push(`/user/lists`);
+    if (session?.user.stripeSubscriptionStatus === "active") {
+      const product = subscription?.price.product as Stripe.Product;
+
+      if (product.name == "basic") return;
+
+      createList(
+        {
+          name: data.name as string,
+          description: data.description as string,
         },
-      },
-    );
+        {
+          onSuccess: () => {
+            router.push(`/user/lists`);
+          },
+        },
+      );
+    } else {
+      toast("متوفرة للإشتراك المفضل والشركات", {
+        icon: "🔒",
+      });
+    }
   };
 
   return (

@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
 import type Stripe from "stripe";
 import { api } from "../../utils/api";
 
@@ -22,9 +23,10 @@ const tiers = {
     name: "1️⃣ الباقة الأساسية",
     tier: "basic",
     features: [
-      "500 كحد أعلى لظهور البيانات",
-      "100 كحد أعلى شهري لتحميل البيانات",
-      // "250 كحد أعلى لتحميل البيانات"
+      "عدد لا محدود من مشاهدة البيانات",
+      "عدد لا محدود من حفظ البيانات في القوائم",
+      "500 كحد أعلى شهري لاستخراج البيانات",
+      "1000 كحد أعلى شهري لنتائج البحث",
     ],
   },
   preferred: {
@@ -32,9 +34,10 @@ const tiers = {
     tier: "preferred",
     name: "2️⃣ الباقة المفضلة",
     features: [
-      "2000 كحد أعلى لظهور البيانات",
-      "500 كحد أعلى شهري لتحميل البيانات",
-      // "1000 كحد أعلى لتحميل البيانات",
+      "عدد لا محدود من مشاهدة البيانات",
+      "عدد لا محدود من حفظ البيانات في القوائم",
+      "2500 كحد أعلى شهري لاستخراج البيانات",
+      "5000 كحد أعلى شهري لنتائج البحث",
       "إنشاء قوائم خاصة",
     ],
   },
@@ -43,9 +46,10 @@ const tiers = {
     tier: "enterprise",
     name: "3️⃣ باقة الشركات",
     features: [
-      "5000 كحد أعلى لظهور البيانات",
-      "1000 كحد أعلى شهري لتحميل البيانات",
-      // "3000 كحد أعلى لتحميل البيانات",
+      "عدد لا محدود من مشاهدة البيانات",
+      "عدد لا محدود من حفظ البيانات في القوائم",
+      "5000 كحد أعلى شهري لاستخراج البيانات",
+      "10000 كحد أعلى شهري لنتائج البحث",
       "إنشاء قوائم خاصة",
       "وصول لل API",
     ],
@@ -53,6 +57,9 @@ const tiers = {
 };
 
 export default function OrganizationSubscription() {
+  const router = useRouter();
+  const { success, error } = router.query;
+
   const { data: session } = useSession();
 
   const { control, handleSubmit, watch, setValue } = useForm({
@@ -79,7 +86,9 @@ export default function OrganizationSubscription() {
       {
         enabled: false,
         refetchOnWindowFocus: false,
-        onSuccess: (sessionUrl) => window.open(sessionUrl, "_self"),
+        onSuccess: (sessionUrl) => {
+          window.location.href = sessionUrl;
+        },
       },
     );
   const { data: subscription } = api.stripe.subscription.useQuery();
@@ -121,6 +130,20 @@ export default function OrganizationSubscription() {
       );
     }
   }, [subscription, products]);
+
+  useEffect(() => {
+    if (error) {
+      toast("خطأ في دفع الإشتراك", {
+        icon: "🚨",
+      });
+    }
+
+    if (success) {
+      toast("تم دفع الإشتراك بنجاح", {
+        icon: "🎉",
+      });
+    }
+  }, [error, success]);
 
   const subscriptionIsActive =
     session?.user.stripeSubscriptionStatus === "active";

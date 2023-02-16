@@ -1,4 +1,5 @@
-import { Data, Prisma } from "@prisma/client";
+import type { Data, Prisma } from "@prisma/client";
+import { DataType } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
@@ -8,7 +9,8 @@ export const dataRouter = createTRPCRouter({
     .input(
       z.object({
         search: z.string().nullish(),
-        type: z.number().nullish(),
+        type: z.enum(["onlineStore", "company"]).nullish(),
+        maroofType: z.number().nullish(),
         lists: z.array(z.string()).nullish(),
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.number().nullish(), // <-- "cursor" needs to exist, but can be any type
@@ -20,12 +22,15 @@ export const dataRouter = createTRPCRouter({
 
       const query: Prisma.DataFindManyArgs = {
         where: {
+          type: {
+            equals: input.type || undefined,
+          },
           nameAr: {
             contains: input.search || undefined,
             mode: "insensitive",
           },
           maroofBusinessTypeId: {
-            equals: input.type || undefined,
+            equals: input.maroofType || undefined,
           },
         },
         take: take + 1, // get an extra item at the end which we'll use as next cursor

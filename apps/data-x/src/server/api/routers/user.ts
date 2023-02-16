@@ -3,13 +3,13 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
+  retrieve: protectedProcedure.query(({ ctx }) =>
+    ctx.prisma.user.findUnique({
+      where: {
+        id: ctx.session.user.id,
+      },
     }),
+  ),
 
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.user.findMany();

@@ -42,8 +42,8 @@ export const stripeRouter = createTRPCRouter({
           },
         ],
         // {CHECKOUT_SESSION_ID} is a string literal which the Stripe SDK will replace; do not manually change it or replace it with a variable!
-        success_url: `${process.env.NEXTAUTH_URL}/settings/subscription`,
-        cancel_url: `${process.env.NEXTAUTH_URL}/settings/subscription`,
+        success_url: `${process.env.NEXTAUTH_URL}/user/subscription?success=true`,
+        cancel_url: `${process.env.NEXTAUTH_URL}/user/subscription?error=true`,
         automatic_tax: { enabled: true },
         allow_promotion_codes: true,
         customer_update: {

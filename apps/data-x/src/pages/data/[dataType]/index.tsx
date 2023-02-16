@@ -12,41 +12,28 @@ import type { List } from "@prisma/client";
 import { Stage } from "@prisma/client";
 import DataItem from "../../../components/DataItem";
 
-const productsMaxes = {
-  basic: {
-    search: 500,
-    download: 250,
-  },
-  preferred: {
-    search: 2000,
-    download: 1000,
-  },
-  enterprise: {
-    search: 5000,
-    download: 3000,
-  },
-};
-
 export default function DateType() {
   const router = useRouter();
-
+  const { dataType } = router.query;
   const { data: session, status: sessionStatus } = useSession();
 
   const { control, watch } = useForm({
     defaultValues: {
       search: "",
-      type: "all",
+      maroofType: "all",
       inLists: "in",
       lists: [],
     },
   });
 
   const search = watch("search");
-  const type = watch("type");
+  const maroofType = watch("maroofType");
   const choosedLists = watch("lists");
   const inLists = watch("inLists");
 
   const { setLoginOpen } = useContext(LoginModalContext);
+
+  const { data: user } = api.user.retrieve.useQuery();
 
   const {
     data,
@@ -60,7 +47,8 @@ export default function DateType() {
     {
       limit: 10,
       search: search === "" ? undefined : search,
-      type: type === "all" ? undefined : +type,
+      type: dataType as "onlineStore" | "company",
+      maroofType: maroofType === "all" ? undefined : +maroofType,
       lists: choosedLists?.length === 0 ? undefined : choosedLists,
     },
     {
@@ -80,7 +68,13 @@ export default function DateType() {
       return;
     }
 
-    if (session?.user.stripeSubscriptionStatus !== "active") {
+    const dataLength =
+      data?.pages.reduce((acc, page) => acc + page.data.length, 0) || 0;
+
+    if (
+      session?.user.stripeSubscriptionStatus !== "active" &&
+      dataLength > 10
+    ) {
       toast("اشترك في أحد الباقات لزيادة حد ظهور البيانات", {
         icon: "🔒",
       });
@@ -90,15 +84,8 @@ export default function DateType() {
     // check if subscription high amount is reached
     const product = subscription?.price.product as Stripe.Product;
     if (!product) return;
-    const productMaxSearch =
-      productsMaxes[product.name as keyof typeof productsMaxes].search;
-    const dataLength =
-      data?.pages.reduce((acc, page) => acc + page.data.length, 0) || 0;
 
-    if (
-      productsMaxes[product.name as keyof typeof productsMaxes].search <=
-      dataLength
-    ) {
+    if ((user?.searchMax || 11) < dataLength) {
       toast("لقد وصلت لحد ظهور البيانات في باقتك", {
         icon: "🔒",
       });
@@ -134,7 +121,7 @@ export default function DateType() {
           className="w-full md:w-3/12"
         />
         <SelectInput
-          name="type"
+          name="maroofType"
           label="النوع"
           options={[
             { value: "all", label: "الكل" },
