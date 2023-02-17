@@ -170,7 +170,7 @@ export default function OrganizationSubscription() {
               control={control}
               disabled={subscriptionIsActive}
             />
-            <p>سنوي مع خصم ٢٠٪ واسترجاع خلال ٦٠ يوم</p>
+            <p>سنوي مع خصم ٢٠٪</p>
           </div>
         </div>
         <h1 className="text-xl">الباقات</h1>

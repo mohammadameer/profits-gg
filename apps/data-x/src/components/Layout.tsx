@@ -190,16 +190,21 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         >
           {children}
         </LoginModalContext.Provider>
-        <div className="flex items-center gap-4 p-2">
-          <p
-            className="cursor-pointer"
-            onClick={() => router.push("/privacy-policy")}
-          >
-            سياسة الخصوصية
-          </p>
-          <p className="cursor-pointer" onClick={() => router.push("/terms")}>
-            شروط الخدمة
-          </p>
+        <div className="flex w-full flex-col items-center justify-between gap-4 p-4 md:flex-row md:p-2">
+          <div className="flex items-center gap-4">
+            <p
+              className="cursor-pointer"
+              onClick={() => router.push("/privacy-policy")}
+            >
+              سياسة الخصوصية
+            </p>
+            <p className="cursor-pointer" onClick={() => router.push("/terms")}>
+              شروط الخدمة
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <a href="mailto:mohammad@data-x.dev">mohammad@data-x.dev</a>
+          </div>
         </div>
       </div>
 

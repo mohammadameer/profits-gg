@@ -91,6 +91,19 @@ export const handleInvoicePaid = async ({
 
   const userId = subscription.metadata.userId;
 
+  let exportCredits;
+  const searchMax =
+    productsMaxes[productName as keyof typeof productsMaxes].search;
+
+  exportCredits =
+    productsMaxes[productName as keyof typeof productsMaxes].export;
+
+  const isYearly = subscriptionItem.price.recurring?.interval === "year";
+
+  if (isYearly) {
+    exportCredits *= 12;
+  }
+
   // update organization with subscription data
   await prisma.user.update({
     where: {
@@ -100,10 +113,8 @@ export const handleInvoicePaid = async ({
       stripeSubscriptionId: subscription.id,
       stripeSubscriptionItemId: subscription.items.data[0]?.id,
       stripeSubscriptionStatus: subscription.status,
-      exportCredits:
-        productsMaxes[productName as keyof typeof productsMaxes].export,
-      searchMax:
-        productsMaxes[productName as keyof typeof productsMaxes].search,
+      exportCredits,
+      searchMax,
     },
   });
 };
@@ -137,6 +148,12 @@ export const handleSubscriptionCreatedOrUpdated = async ({
     exportCredits =
       productsMaxes[productName as keyof typeof productsMaxes].export;
     searchMax = productsMaxes[productName as keyof typeof productsMaxes].search;
+
+    const isYearly = subscriptionItem.price.recurring?.interval === "year";
+
+    if (isYearly) {
+      exportCredits *= 12;
+    }
   } else {
     exportCredits = 0;
     searchMax = 10;
