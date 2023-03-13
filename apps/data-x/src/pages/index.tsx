@@ -30,6 +30,13 @@ const Home: NextPage = () => {
       </div>
 
       <div className="flex w-full flex-col gap-8 px-4 md:px-28">
+        <p className="text-2xl">الأدوات</p>
+        <div className="grid w-full grid-cols-12 gap-4">
+          <GridCard title="🗺️ خرائط قوقل" link="/tools/google-maps" />
+        </div>
+      </div>
+
+      <div className="flex w-full flex-col gap-8 px-4 md:px-28">
         <p className="text-2xl">شخصي</p>
         <div className="grid w-full grid-cols-12 gap-4">
           {/* <GridCard

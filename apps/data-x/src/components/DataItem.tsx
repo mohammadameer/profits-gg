@@ -1,4 +1,5 @@
-import { Data, List, Stage } from "@prisma/client";
+import type { Data, List } from "@prisma/client";
+import { Stage } from "@prisma/client";
 import { SelectInput } from "@profits-gg/ui";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
@@ -24,7 +25,7 @@ const DataItem = ({
 
   const { data: dataItemUnchanged } = api.data.retrieve.useQuery(
     {
-      dataId: dataItem.id,
+      id: dataItem.id,
     },
     {
       enabled: showData,
@@ -120,7 +121,7 @@ const DataItem = ({
   return (
     <div className="flex w-full flex-col items-center justify-between gap-4 rounded-md bg-gray-800  p-4 shadow-md md:flex-row ">
       <div className="flex items-center gap-2">
-        <p>{dataItem.nameAr}</p>
+        <p>{dataItem.nameAr || dataItem.name}</p>
         {dataItem?.website ? (
           <a href={dataItem?.website}>🌍</a>
         ) : (
@@ -132,6 +133,7 @@ const DataItem = ({
         className={clsx(
           "flex flex-col items-center gap-2 transition-all md:flex-row ",
           showData && dataItemUnchanged ? "blur-0" : "blur-sm",
+          email || phoneNumber ? "opacity-100" : "opacity-40",
         )}
         onClick={() => setShowData(true)}
       >

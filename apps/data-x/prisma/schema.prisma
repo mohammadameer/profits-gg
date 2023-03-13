@@ -115,16 +115,21 @@ model VerificationToken {
 enum DataType {
     onlineStore
     company
+    googlePlace
 }
 
 // model for different types of data, companies, contacts, users, jobs
 model Data {
     id                   String   @id @default(auto()) @map("_id") @db.ObjectId
     type                 DataType
+    name                 String?
     nameAr               String?
     nameEn               String?
-    maroofId             Int?     @unique
-    maroofUrl            String?  @unique
+    dataId              String?  @unique
+    lat                  Float?
+    lng                  Float?
+    googleTypes          String[]
+    maroofUrl            String?
     maroofBusinessTypeId Int?
     activeStatus         Int?
     description          String?

@@ -5,6 +5,25 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 export const dataRouter = createTRPCRouter({
+  create: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        dataId: z.string(),
+        type: z.enum(["onlineStore", "company", "googlePlace"]),
+        googleTypes: z.array(z.string()).nullish(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) =>
+      ctx.prisma.data.create({
+        data: {
+          name: input.name,
+          dataId: input.dataId,
+          type: input.type,
+          googleTypes: input.googleTypes || undefined,
+        },
+      }),
+    ),
   list: publicProcedure
     .input(
       z.object({
@@ -74,14 +93,19 @@ export const dataRouter = createTRPCRouter({
       };
     }),
   retrieve: publicProcedure
-    .input(z.object({ dataId: z.string() }))
+    .input(z.object({ id: z.string().nullish(), dataId: z.string().nullish() }))
     .query(({ ctx, input }) =>
-      ctx.prisma.data.findFirst({ where: { id: input.dataId } }),
+      ctx.prisma.data.findUnique({
+        where: {
+          id: input.id ? input.id : undefined,
+          dataId: input.dataId ? input.dataId : undefined,
+        },
+      }),
     ),
   lists: publicProcedure
     .input(
       z.object({
-        dataId: z.string(),
+        dataId: z.string().nullish(),
       }),
     )
     .query(async ({ ctx, input }) =>

@@ -10,7 +10,7 @@ import { env } from "../env/server.mjs";
 import { prisma } from "./db";
 import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
-import { StripeSubscriptionStatus } from "@prisma/client";
+import type { StripeSubscriptionStatus } from "@prisma/client";
 import { createTransport } from "nodemailer";
 
 /**
@@ -134,7 +134,6 @@ export const authOptions: NextAuthOptions = {
       async sendVerificationRequest(params) {
         const { identifier, provider, token } = params;
         const url = new URL(params.url);
-        // url.searchParams.delete("token") // uncomment if you want the user to type this manually
         const signInURL = new URL(
           `/auth/email?${url.searchParams}`,
           url.origin,
@@ -148,13 +147,13 @@ export const authOptions: NextAuthOptions = {
           html: `<body style="background: #111827; padding: 20px 10px;">
           <table width="100%" border="0" cellspacing="20" cellpadding="0" style="background: #374151; max-width: 600px; margin: auto; border-radius: 15px;">
             <tr>
-              <td align="center" style="padding: 10px 0px; font-size: 22px; font-family: Helvetica, Arial, sans-serif; color: white;">  استخدم هذا الرمز لتسجيل الدخول </td>
-            </tr>
-            <tr>
-              <td align="center" style="padding: 10px 0px; font-size: 35px; font-family: Helvetica, Arial, sans-serif; color: white;">  ${token} </td>
+              <td align="center" style="padding: 10px 0px; font-size: 22px; font-family: Helvetica, Arial, sans-serif; color: white;"> أهلا، تقدر تستخدم الرمز في نهاية هذا الإيميل لتسجيل الدخول </td>
             </tr>
             <tr>
               <td align="center" style="padding: 0px 0px 10px 0px; font-size: 16px; line-height: 22px; font-family: Helvetica, Arial, sans-serif; color: white;"> إذا لم تقم بطلب هذا الرمز يمكنك تجاهل هذا الإيميل. </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding: 10px 0px; font-size: 35px; font-family: Helvetica, Arial, sans-serif; color: white;">  ${token} </td>
             </tr>
           </table>
         </body>`,

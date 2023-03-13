@@ -18,6 +18,7 @@
     "@profits-gg/config": "*",
     "@profits-gg/lib": "*",
     "@profits-gg/ui": "*",
+    "@react-google-maps/api": "^2.18.1",
     "@sentry/nextjs": "^7.36.0",
     "@tanstack/react-query": "^4.20.0",
     "@trpc/client": "^10.9.0",

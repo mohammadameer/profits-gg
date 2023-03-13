@@ -84,15 +84,16 @@ export default function SelectInput<T extends FieldValues>({
         unstyled={true}
         isMulti={isMulti}
         noOptionsMessage={() => "لا توجد خيارات أخرى"}
+        menuShouldScrollIntoView={false}
         classNames={{
-          container: () => "rounded-lg bg-gray-800 ",
+          container: () => "rounded-lg bg-gray-800",
           control: ({ hasValue }) =>
             `rounded-lg px-2 py-1 border-gray-500 border ${
               hasValue ? "text-white" : "text-gray-400"
             } outline-none focus:border-white`,
-          valueContainer: () => "bg-gray-800 rounded-r-lg gap-2",
+          valueContainer: () => "bg-gray-800 rounded-r-lg gap-2 ",
           multiValue: () => "bg-gray-700 rounded-lg",
-          menu: () => "bg-gray-800 rounded-lg p-2 mt-2",
+          menu: () => "bg-gray-800 rounded-lg p-2 mt-2 z-50",
           option: () => "hover:bg-gray-700 !cursor-pointer p-2 rounded-lg ",
         }}
       />
