@@ -78,35 +78,45 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     createUser: async ({ user }) => {
-      await prisma.list.createMany({
-        data: [
-          {
-            name: "تحت التواصل",
-            description: "",
-            userId: user.id,
-          },
-          {
-            name: "تم التواصل",
-            description: "",
-            userId: user.id,
-          },
-          {
-            name: "بانتظار الرد",
-            description: "",
-            userId: user.id,
-          },
-          {
-            name: "مؤهل",
-            description: "",
-            userId: user.id,
-          },
-          {
-            name: "غير مؤهل",
-            description: "",
-            userId: user.id,
-          },
-        ],
+      const userLists = await prisma.list.findMany({
+        where: {
+          userId: user.id,
+        },
       });
+
+      if (userLists.length > 0) {
+        return;
+      } else {
+        await prisma.list.createMany({
+          data: [
+            {
+              name: "تحت التواصل",
+              description: "",
+              userId: user.id,
+            },
+            {
+              name: "تم التواصل",
+              description: "",
+              userId: user.id,
+            },
+            {
+              name: "بانتظار الرد",
+              description: "",
+              userId: user.id,
+            },
+            {
+              name: "مؤهل",
+              description: "",
+              userId: user.id,
+            },
+            {
+              name: "غير مؤهل",
+              description: "",
+              userId: user.id,
+            },
+          ],
+        });
+      }
     },
   },
 
