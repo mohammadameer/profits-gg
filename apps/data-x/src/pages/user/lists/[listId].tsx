@@ -99,7 +99,13 @@ export default function List() {
         {listData?.pages?.length && listData?.pages[0]?.data?.length ? (
           listData?.pages?.map((page) =>
             page?.data.map((dataItem) => (
-              <DataItem key={dataItem.id} dataItem={dataItem} lists={lists} />
+              <DataItem
+                key={dataItem.id}
+                dataItem={dataItem}
+                lists={lists}
+                sessionStatus={sessionStatus}
+                setLoginOpen={setLoginOpen}
+              />
             )),
           )
         ) : isLoadingData ? (

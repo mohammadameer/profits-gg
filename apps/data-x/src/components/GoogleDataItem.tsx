@@ -2,6 +2,7 @@ import type { Data, List } from "@prisma/client";
 import { SelectInput } from "@profits-gg/ui";
 import { Marker } from "@react-google-maps/api";
 import clsx from "clsx";
+import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -21,11 +22,15 @@ const GoogleDataItem = ({
   selectedPlace,
   setSelectedPlace,
   lists,
+  sessionStatus,
+  setLoginOpen,
 }: {
   place: google.maps.places.PlaceResult;
   selectedPlace: google.maps.places.PlaceResult | null;
   setSelectedPlace: (place: google.maps.places.PlaceResult | null) => void;
   lists: List[];
+  sessionStatus: "authenticated" | "unauthenticated" | "loading";
+  setLoginOpen: Dispatch<SetStateAction<boolean>> | null;
 }) => {
   const { control, watch, setValue } = useForm();
 
@@ -165,7 +170,7 @@ const GoogleDataItem = ({
       <div
         key={place.place_id}
         className={clsx(
-          "flex cursor-pointer flex-col gap-4 rounded-md border-4 bg-gray-800 p-4 shadow-md transition-all duration-200 ",
+          "flex min-w-[40vh] cursor-pointer flex-col gap-4 rounded-md border-4 bg-gray-800 p-4 shadow-md transition-all duration-200  lg:min-w-full",
           selectedPlace?.place_id == place.place_id
             ? "border-gray-700"
             : "border-gray-800",
@@ -191,6 +196,11 @@ const GoogleDataItem = ({
             }))}
             isMulti={true}
             noError
+            onMenuOpen={() => {
+              if (sessionStatus == "unauthenticated") {
+                setLoginOpen?.(true);
+              }
+            }}
           />
         </div>
       </div>

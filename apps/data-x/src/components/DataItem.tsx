@@ -2,6 +2,7 @@ import type { Data, List } from "@prisma/client";
 import { Stage } from "@prisma/client";
 import { SelectInput } from "@profits-gg/ui";
 import clsx from "clsx";
+import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -10,11 +11,15 @@ import { api } from "../utils/api";
 const DataItem = ({
   lists,
   dataItem,
+  sessionStatus,
+  setLoginOpen,
 }: //   stages,
 {
   //   stages: Stage[] | undefined;
   lists: List[] | undefined;
   dataItem: Data;
+  sessionStatus: "authenticated" | "unauthenticated" | "loading";
+  setLoginOpen: Dispatch<SetStateAction<boolean>> | null;
 }) => {
   const { control, watch, setValue } = useForm();
 
@@ -180,6 +185,11 @@ const DataItem = ({
           }))}
           isMulti={true}
           noError
+          onMenuOpen={() => {
+            if (sessionStatus == "unauthenticated") {
+              setLoginOpen?.(true);
+            }
+          }}
         />
       </div>
     </div>

@@ -30,6 +30,7 @@ export type SelectInputProps<T extends FieldValues> = {
   className?: string;
   noError?: boolean;
   isMulti?: boolean;
+  onMenuOpen?: () => void;
 };
 
 export default function SelectInput<T extends FieldValues>({
@@ -42,6 +43,7 @@ export default function SelectInput<T extends FieldValues>({
   className = "",
   noError = false,
   isMulti = false,
+  onMenuOpen = () => {},
 }: SelectInputProps<T>) {
   const {
     field: { value, onChange, onBlur },
@@ -65,6 +67,10 @@ export default function SelectInput<T extends FieldValues>({
         name={name}
         placeholder={placeholder || label}
         options={options}
+        onMenuOpen={() => {
+          console.log("test 1");
+          onMenuOpen?.();
+        }}
         value={
           isMulti
             ? options.filter((option) => value?.includes(option.value))
@@ -85,6 +91,7 @@ export default function SelectInput<T extends FieldValues>({
         isMulti={isMulti}
         noOptionsMessage={() => "لا توجد خيارات أخرى"}
         menuShouldScrollIntoView={false}
+        menuPosition="fixed"
         classNames={{
           container: () => "rounded-lg bg-gray-800",
           control: ({ hasValue }) =>

@@ -1,26 +1,27 @@
-import { Page, SelectInput } from "@profits-gg/ui";
-import {
-  Circle,
-  GoogleMap,
-  Marker,
-  useLoadScript,
-} from "@react-google-maps/api";
+import { Page } from "@profits-gg/ui";
+import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 import { DrawingManager } from "@react-google-maps/api";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import useDebounce from "@profits-gg/lib/hooks/useDebounce";
 import { api } from "src/utils/api";
 import GoogleDataItem from "src/components/GoogleDataItem";
 import type { List } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import { LoginModalContext } from "src/components/Layout";
 
 export default function GoogleMaps() {
+  const { status: sessionStatus } = useSession();
+
+  const { setLoginOpen } = useContext(LoginModalContext);
+
   const libraries = useMemo(() => ["places", "drawing"], []);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [places, setPlaces] = useState<google.maps.places.PlaceResult[]>([]);
   const [selectedPlace, setSelectedPlace] =
     useState<google.maps.places.PlaceResult | null>(null);
   const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral>({
-    lat: 24.727048,
-    lng: 46.709592,
+    lat: 24.682657,
+    lng: 46.690707,
   });
 
   const { data: lists } = api.list.list.useQuery();
@@ -100,7 +101,7 @@ export default function GoogleMaps() {
               onLoad={onMapLoad}
             >
               <DrawingManager drawingMode={null} />
-              <div className="absolute top-0 left-2 flex h-full w-4/12 flex-col gap-4 overflow-scroll rounded-md p-2">
+              <div className="absolute top-0 flex w-full gap-4 overflow-scroll rounded-md p-2 lg:left-2 lg:h-full lg:w-4/12 lg:flex-col">
                 {places.map((place) => {
                   if (!place.business_status) return null;
 
@@ -111,6 +112,8 @@ export default function GoogleMaps() {
                       place={place}
                       selectedPlace={selectedPlace}
                       setSelectedPlace={setSelectedPlace}
+                      sessionStatus={sessionStatus}
+                      setLoginOpen={setLoginOpen}
                     />
                   );
                 })}

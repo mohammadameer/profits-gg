@@ -168,6 +168,8 @@ export default function DateType() {
                 key={dataItem.id}
                 dataItem={dataItem}
                 lists={lists as List[]}
+                sessionStatus={sessionStatus}
+                setLoginOpen={setLoginOpen}
                 // stages={stages as Stage[]}
               />
             )),
