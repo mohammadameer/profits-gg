@@ -246,7 +246,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
             />
           ) : null}
           <Button
-            text={emailSent ? "تأكد رمز الدخول" : "إرسال رمز الدخول"}
+            text={emailSent ? "تأكيد رمز الدخول" : "إرسال رمز الدخول"}
             loading={loading}
             type="submit"
             className="mt-2"
