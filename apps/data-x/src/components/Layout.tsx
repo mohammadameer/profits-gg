@@ -74,6 +74,9 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   const loginWithEmail = async () => {
     try {
       if (emailSent) {
+        posthog.identify(undefined, {
+          email,
+        });
         window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(
           email,
         )}&token=${code}`;

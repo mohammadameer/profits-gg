@@ -9,7 +9,7 @@ import "../styles/globals.css";
 import Layout from "../components/Layout";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { posthog } from "posthog-js";
+import posthog from "posthog-js";
 
 const ibmPlexSansArabicLight = IBM_Plex_Sans_Arabic({
   weight: "100",
