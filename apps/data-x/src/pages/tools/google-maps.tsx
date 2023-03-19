@@ -8,6 +8,7 @@ import GoogleDataItem from "src/components/GoogleDataItem";
 import type { List } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { LoginModalContext } from "src/components/Layout";
+import clsx from "clsx";
 
 export default function GoogleMaps() {
   const { status: sessionStatus } = useSession();
@@ -15,6 +16,7 @@ export default function GoogleMaps() {
   const { setLoginOpen } = useContext(LoginModalContext);
 
   const libraries = useMemo(() => ["places", "drawing"], []);
+  const [fullScreen, setFullScreen] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [places, setPlaces] = useState<google.maps.places.PlaceResult[]>([]);
   const [selectedPlace, setSelectedPlace] =
@@ -77,13 +79,24 @@ export default function GoogleMaps() {
   return (
     <Page title="🗺️ خرائط قوقل">
       <div className="grid w-full grid-cols-12 gap-4">
-        <div className="col-span-12 h-[450px] overflow-hidden rounded-md p-4 md:h-[65vh]">
+        <div
+          className={clsx(
+            "col-span-12 h-[450px] overflow-hidden rounded-md p-4 md:h-[65vh]",
+            fullScreen ? "fixed top-0 left-0 h-full w-full" : "",
+          )}
+        >
           {isLoaded ? (
             <GoogleMap
               options={mapOptions}
               zoom={16}
               center={debouncedMapCenter}
-              mapContainerStyle={{ width: "100%", height: "100%" }}
+              mapContainerStyle={{
+                width: "100%",
+                height: "100%",
+                ...(fullScreen
+                  ? { position: "fixed", top: 0, left: 0 }
+                  : { position: "relative" }),
+              }}
               mapTypeId={google.maps.MapTypeId.ROADMAP}
               onCenterChanged={() => {
                 if (map) {
@@ -101,7 +114,12 @@ export default function GoogleMaps() {
               onLoad={onMapLoad}
             >
               <DrawingManager drawingMode={null} />
-              <div className="absolute top-0 flex w-full gap-4 overflow-scroll rounded-md p-2 lg:left-2 lg:h-full lg:w-4/12 lg:flex-col">
+              <div
+                className={clsx(
+                  "absolute top-0 flex w-full gap-4 overflow-scroll rounded-md p-2 lg:left-2 lg:h-full lg:w-4/12 lg:flex-col",
+                  fullScreen ? "pt-28" : "",
+                )}
+              >
                 {places.map((place) => {
                   if (!place.business_status) return null;
 
@@ -117,6 +135,12 @@ export default function GoogleMaps() {
                     />
                   );
                 })}
+              </div>
+              <div
+                className="absolute bottom-2 right-2 cursor-pointer select-none rounded-md bg-gray-800 p-4 hover:scale-105 active:scale-95"
+                onClick={() => setFullScreen(!fullScreen)}
+              >
+                <p>{fullScreen ? "عودة للحجم الرئيسي" : "عرض الشاشة كاملة"}</p>
               </div>
             </GoogleMap>
           ) : null}
