@@ -62,7 +62,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 
   // go to dashboard if not authenticated and identify user if loged in
   useEffect(() => {
-    if (data?.user?.id && !userIdentified) {
+    if (data?.user?.id && data?.user?.email && !userIdentified) {
       posthog.identify(data?.user?.id, {
         email: data?.user?.email,
         name: data?.user?.name,
