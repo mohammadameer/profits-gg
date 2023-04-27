@@ -1,9 +1,11 @@
 {
-  "name": "sard",
+  "name": "@profits-gg/sard",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "build": "next build",
+    "db:generate": "prisma generate --schema prisma/schema.prisma ",
+    "db:push": "prisma db push --schema prisma/schema.prisma ",
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
