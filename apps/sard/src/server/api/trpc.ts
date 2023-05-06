@@ -22,7 +22,6 @@ import { getServerAuthSession } from "~/server/auth";
 import { prisma } from "~/server/db";
 
 type CreateContextOptions = {
-  // req: CreateNextContextOptions["req"];
   session: Session | null;
 };
 
@@ -38,7 +37,6 @@ type CreateContextOptions = {
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
-    // req: opts.req,
     session: opts.session,
     prisma,
   };
@@ -57,7 +55,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const session = await getServerAuthSession({ req, res });
 
   return createInnerTRPCContext({
-    // req,
     session,
   });
 };
