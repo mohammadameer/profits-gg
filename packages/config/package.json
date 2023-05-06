@@ -10,6 +10,6 @@
   "dependencies": {
     "eslint-config-turbo": "^0.0.7",
     "eslint-plugin-prettier": "^4.2.1",
-    "prettier-plugin-tailwindcss": "^0.2.2"
+    "prettier-plugin-tailwindcss": "^0.2.8"
   }
 }
