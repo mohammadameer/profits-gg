@@ -6,6 +6,7 @@ import { Button, SelectInput } from "@profits-gg/ui";
 import { useForm } from "react-hook-form";
 import { required } from "@profits-gg/lib/utils/formRules";
 import { useState } from "react";
+import va from "@vercel/analytics";
 
 type FormValues = {
   eage: string;
@@ -44,6 +45,8 @@ const Home: NextPage = () => {
       setStory("");
     }
 
+    va.track("story-created");
+    
     setIsLoading(true);
 
     const response = await fetch("/api/openai/chat", {
