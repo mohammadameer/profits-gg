@@ -44,13 +44,15 @@ const Home: NextPage = () => {
       setStory("");
     }
 
+    setIsLoading(true);
+
     const response = await fetch("/api/openai/chat", {
       headers: {
         "Content-Type": "application/json",
       },
       method: "POST",
       body: JSON.stringify({
-        message: `انا ام او اب واريد تعليم ابني، هل يمكنك كتابة قصة عن ${values.category} لشخص عمره ما بين ${values.eage} ولا تتعدى سطر واحد}`,
+        message: `انا ام او اب واريد تعليم ابني، هل يمكنك كتابة قصة عن ${values.category} لشخص عمره ما بين ${values.eage} ولا تتعدى ${values.length}`,
       }),
     });
 
@@ -176,20 +178,16 @@ const Home: NextPage = () => {
               label="طول القصة"
               options={[
                 {
+                  label: "دقيقة واحدة",
+                  value: "دقيقة واحدة",
+                },
+                {
+                  label: "٣ دقائق",
+                  value: "٣ دقائق",
+                },
+                {
                   label: "٥ دقائق",
                   value: "٥ دقائق",
-                },
-                {
-                  label: "١٠ دقائق",
-                  value: "١٠ دقائق",
-                },
-                {
-                  label: "١٥ دقيقة",
-                  value: "١٥ دقيقة",
-                },
-                {
-                  label: "٢٠ دقيقة",
-                  value: "٢٠ دقيقة",
                 },
               ]}
               control={control}
