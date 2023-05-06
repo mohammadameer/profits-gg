@@ -23,7 +23,7 @@ const Button: FC<ButtonProps> = ({
   return (
     <button
       onClick={() => {
-        if (!disabled || !loading) onClick();
+        if (!disabled && !loading) onClick();
       }}
       type={type}
       className={clsx(

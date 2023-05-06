@@ -14,6 +14,11 @@ const config = {
    *
    * @see https://github.com/vercel/next.js/issues/41980
    */
+  transpilePackages: [
+    "@profits-gg/ui",
+    "@profits-gg/lib",
+    "@profits-gg/config",
+  ],
   i18n: {
     locales: ["en"],
     defaultLocale: "en",

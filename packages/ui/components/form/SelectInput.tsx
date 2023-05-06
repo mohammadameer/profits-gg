@@ -18,7 +18,7 @@ type Option = {
 
 export type SelectInputProps<T extends FieldValues> = {
   label?: string;
-  placeholder: string;
+  placeholder?: string;
   name: Path<T>;
   rules?: Exclude<
     RegisterOptions,
@@ -31,6 +31,27 @@ export type SelectInputProps<T extends FieldValues> = {
   noError?: boolean;
   isMulti?: boolean;
   onMenuOpen?: () => void;
+  classNames?: {
+    container?: () => string;
+    control?: ({ hasValue }: { hasValue: boolean }) => string;
+    valueContainer?: () => string;
+    multiValue?: () => string;
+    menu?: () => string;
+    option?: () => string;
+  };
+  disabled: boolean;
+};
+
+const defaultClassNames = {
+  container: () => "rounded-lg bg-gray-800",
+  control: ({ hasValue }: { hasValue: boolean }) =>
+    `rounded-lg px-2 py-1 border-gray-500 border ${
+      hasValue ? "text-white" : "text-gray-400"
+    } outline-none focus:border-white`,
+  valueContainer: () => "bg-gray-800 rounded-r-lg gap-2 ",
+  multiValue: () => "bg-gray-700 rounded-lg",
+  menu: () => "bg-gray-800 rounded-lg p-2 mt-2 z-50",
+  option: () => "hover:bg-gray-700 !cursor-pointer p-2 rounded-lg ",
 };
 
 export default function SelectInput<T extends FieldValues>({
@@ -44,6 +65,8 @@ export default function SelectInput<T extends FieldValues>({
   noError = false,
   isMulti = false,
   onMenuOpen = () => {},
+  classNames = {},
+  disabled = false,
 }: SelectInputProps<T>) {
   const {
     field: { value, onChange, onBlur },
@@ -53,7 +76,8 @@ export default function SelectInput<T extends FieldValues>({
   return (
     <div
       className={clsx(
-        "relative flex w-full flex-col gap-2 focus-within:border-white",
+        "relative flex w-full flex-col gap-2 transition-all duration-200 focus-within:border-white",
+        disabled ? "cursor-not-allowed opacity-50" : "",
         className,
       )}
     >
@@ -68,7 +92,6 @@ export default function SelectInput<T extends FieldValues>({
         placeholder={placeholder || label}
         options={options}
         onMenuOpen={() => {
-          console.log("test 1");
           onMenuOpen?.();
         }}
         value={
@@ -77,7 +100,10 @@ export default function SelectInput<T extends FieldValues>({
             : options.find((option) => value == option.value)
         }
         defaultValue={options.find((option) => value == option.value)}
+        isDisabled={disabled}
         onChange={(option) => {
+          if (disabled) return;
+
           if (isMulti) {
             option = option as Option[];
             onChange(option?.map((o) => o.value));
@@ -92,17 +118,11 @@ export default function SelectInput<T extends FieldValues>({
         noOptionsMessage={() => "لا توجد خيارات أخرى"}
         menuShouldScrollIntoView={false}
         menuPosition="fixed"
-        classNames={{
-          container: () => "rounded-lg bg-gray-800",
-          control: ({ hasValue }) =>
-            `rounded-lg px-2 py-1 border-gray-500 border ${
-              hasValue ? "text-white" : "text-gray-400"
-            } outline-none focus:border-white`,
-          valueContainer: () => "bg-gray-800 rounded-r-lg gap-2 ",
-          multiValue: () => "bg-gray-700 rounded-lg",
-          menu: () => "bg-gray-800 rounded-lg p-2 mt-2 z-50",
-          option: () => "hover:bg-gray-700 !cursor-pointer p-2 rounded-lg ",
-        }}
+        classNames={
+          classNames
+            ? { ...defaultClassNames, ...classNames }
+            : defaultClassNames
+        }
       />
 
       {!noError ? (

@@ -1,9 +1,7 @@
-import { type Config } from "tailwindcss";
+const base = require("@profits-gg/config/tailwind-preset");
 
-export default {
-  content: ["./src/**/*.{js,ts,jsx,tsx}"],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-} satisfies Config;
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  ...base,
+  content: [...base.content],
+};

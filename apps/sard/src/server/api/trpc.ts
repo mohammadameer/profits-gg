@@ -15,12 +15,14 @@
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { createTRPCUpstashLimiter } from "@trpc-limiter/upstash";
 import { type Session } from "next-auth";
 
 import { getServerAuthSession } from "~/server/auth";
 import { prisma } from "~/server/db";
 
 type CreateContextOptions = {
+  req: CreateNextContextOptions["req"];
   session: Session | null;
 };
 
@@ -36,6 +38,7 @@ type CreateContextOptions = {
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
+    req: opts.req,
     session: opts.session,
     prisma,
   };
@@ -54,6 +57,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const session = await getServerAuthSession({ req, res });
 
   return createInnerTRPCContext({
+    req,
     session,
   });
 };
@@ -68,6 +72,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { NextApiRequest } from "next";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -82,6 +87,28 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
     };
   },
 });
+
+// const getFingerprint = (req: NextApiRequest) => {
+//   const forwarded = req.headers["x-forwarded-for"];
+//   const ip = forwarded
+//     ? (typeof forwarded === "string" ? forwarded : forwarded[0])?.split(/, /)[0]
+//     : req.socket.remoteAddress;
+//   return ip || "127.0.0.1";
+// };
+
+// const rateLimiter = createTRPCUpstashLimiter({
+//   root: t,
+//   fingerprint: (ctx) => getFingerprint(ctx.req),
+//   windowMs: 20000,
+//   message: (hitInfo) =>
+//     `Too many requests, please try again later. ${Math.ceil(
+//       (hitInfo.reset - Date.now()) / 1000
+//     )}`,
+//   onLimit: (hitInfo) => {
+//     console.log(hitInfo);
+//   },
+//   max: 1,
+// });
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
@@ -128,3 +155,5 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+// export const rateLimitedProcedure = publicProcedure.use(rateLimiter);

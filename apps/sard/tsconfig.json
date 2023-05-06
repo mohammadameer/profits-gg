@@ -19,6 +19,23 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
+    },
+    "declaration": false,
+    "declarationMap": false,
+    "strictNullChecks": true,
+    "useUnknownInCatchVariables": true,
+    "composite": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "preserveWatchOutput": true
+  },
+  "ts-node": {
+    "files": true,
+    "require": ["tsconfig-paths/register"],
+    "experimentalResolverFeatures": true,
+    "compilerOptions": {
+      "module": "CommonJS",
+      "types": ["node"]
     }
   },
   "include": [
@@ -27,7 +44,13 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs"
+    "**/*.mjs",
+    "src",
+    "../../packages/types/*.d.ts",
+    "../../packages/types/next-auth.d.ts",
+    "../../prettier.config.cjs",
+    "../types/next-auth.d.ts",
+    "../types/*.d.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,19 +1,19 @@
 import clsx from "clsx";
 import type { Dispatch, FC, SetStateAction } from "react";
 
-export interface ModalProps {
+export type ModalProps = {
   children: React.ReactNode;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   onClose?: () => void;
-}
+};
 
 const Modal: FC<ModalProps> = ({ children, open, setOpen, onClose }) => {
   if (!open) return null;
   return (
     <div
       className={clsx(
-        "fixed top-0 left-0 z-40 flex h-full w-full items-start justify-center pt-40",
+        "fixed left-0 top-0 z-40 flex h-full w-full items-start justify-center pt-40",
       )}
       onClick={() => {
         setOpen(false);
