@@ -27,12 +27,12 @@ const SelectInputClassNames = {
 
 const Home: NextPage = () => {
   const { control, handleSubmit } = useForm<FormValues>();
-  const { mutate: chat, isLoading } = api.openai.chat.useMutation();
 
   const [story, setStory] = useState<string>();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const createStory = async (data: FormValues) => {
-    if (!data.eage || !data.category || !data.length) {
+  const createStory = async (values: FormValues) => {
+    if (!values.eage || !values.category || !values.length) {
       return;
     }
 
@@ -44,16 +44,36 @@ const Home: NextPage = () => {
       setStory("");
     }
 
-    chat(
-      {
-        message: `انا ام او اب واريد تعليم ابني، هل يمكنك كتابة قصة عن ${data.category} لشخص عمره ما بين ${data.eage} ولا تتعدى ${data.length}`,
+    const response = await fetch("/api/openai/chat", {
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        onSuccess: (data) => {
-          setStory(data);
-        },
-      }
-    );
+      method: "POST",
+      body: JSON.stringify({
+        message: `انا ام او اب واريد تعليم ابني، هل يمكنك كتابة قصة عن ${values.category} لشخص عمره ما بين ${values.eage} ولا تتعدى سطر واحد}`,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    const data = response.body;
+    if (!data) {
+      return;
+    }
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+      setStory((prev) => prev + chunkValue);
+    }
+
+    setIsLoading(false);
   };
 
   return (
