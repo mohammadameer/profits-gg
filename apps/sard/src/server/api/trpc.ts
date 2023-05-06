@@ -15,14 +15,14 @@
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { createTRPCUpstashLimiter } from "@trpc-limiter/upstash";
+// import { createTRPCUpstashLimiter } from "@trpc-limiter/upstash";
 import { type Session } from "next-auth";
 
 import { getServerAuthSession } from "~/server/auth";
 import { prisma } from "~/server/db";
 
 type CreateContextOptions = {
-  req: CreateNextContextOptions["req"];
+  // req: CreateNextContextOptions["req"];
   session: Session | null;
 };
 
@@ -38,7 +38,7 @@ type CreateContextOptions = {
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
-    req: opts.req,
+    // req: opts.req,
     session: opts.session,
     prisma,
   };
@@ -57,7 +57,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const session = await getServerAuthSession({ req, res });
 
   return createInnerTRPCContext({
-    req,
+    // req,
     session,
   });
 };
