@@ -2,7 +2,7 @@ import { z } from "zod";
 import { OpenAIApi, Configuration } from "openai";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { openai } from "~/server/openai";
+import { getOpenaiClient } from "~/server/openai";
 
 export const openaiRouter = createTRPCRouter({
   chat: publicProcedure
@@ -12,12 +12,7 @@ export const openaiRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const configuration = new Configuration({
-        organization: process.env.OPENAI_ORG_ID,
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-
-      const openai = new OpenAIApi(configuration);
+      const openai = await getOpenaiClient();
 
       const res = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
