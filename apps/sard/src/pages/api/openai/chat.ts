@@ -14,8 +14,7 @@ export const config = {
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(2, "1 m"),
-  analytics: true,
+  limiter: Ratelimit.slidingWindow(2, "1 d"),
 });
 
 export default async function handler(req: Request) {
