@@ -4,12 +4,30 @@ import {
   ReconnectInterval,
   createParser,
 } from "eventsource-parser";
+import cors from "@profits-gg/lib/cors";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 export const config = {
   runtime: "edge",
 };
 
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(2, "1 m"),
+  analytics: true,
+});
+
 export default async function handler(req: Request) {
+  const xff = req.headers.get("x-forwarded-for");
+  const identifier = xff ? xff.split(",")[0] : process.env.NEXTAUTH_URL;
+
+  const { success } = await ratelimit.limit(identifier as string);
+
+  if (!success) {
+    return new Response("Rate limit exceeded", { status: 429 });
+  }
+
   const { message } = (await req.json()) as {
     message: string;
   };
@@ -77,5 +95,8 @@ export default async function handler(req: Request) {
     },
   });
 
-  return new Response(stream);
+  return cors(req, new Response(stream), {
+    origin: process.env.NEXTAUTH_URL,
+    methods: ["POST"],
+  });
 }
