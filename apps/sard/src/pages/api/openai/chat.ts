@@ -37,6 +37,14 @@ export default async function handler(req: Request) {
     return new Response("Recaptcha failed", { status: 400 });
   }
 
+  if (
+    process.env.NODE_ENV === "production" &&
+    recaptchaResponse.hostname !==
+      new URL(String(process.env.NEXTAUTH_URL)).hostname
+  ) {
+    return new Response("Recaptcha hostname mismatch", { status: 400 });
+  }
+
   if (recaptchaResponse.score < 0.5) {
     return new Response("Recaptcha score too low", { status: 400 });
   }
