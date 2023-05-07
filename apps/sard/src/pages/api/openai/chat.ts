@@ -11,22 +11,7 @@ import { Redis } from "@upstash/redis";
 export const config = {
   runtime: "edge",
 };
-
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(2, "1 d"),
-});
-
 export default async function handler(req: Request) {
-  const xff = req.headers.get("x-forwarded-for");
-  const identifier = xff ? xff.split(",")[0] : process.env.NEXTAUTH_URL;
-
-  const { success } = await ratelimit.limit(identifier as string);
-
-  if (!success) {
-    return new Response("Rate limit exceeded", { status: 429 });
-  }
-
   const { message } = (await req.json()) as {
     message: string;
   };
@@ -40,7 +25,7 @@ export default async function handler(req: Request) {
 
   let counter = 0;
 
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -88,7 +73,7 @@ export default async function handler(req: Request) {
       const parser = createParser(onParse);
 
       // https://web.dev/streams/#asynchronous-iteration
-      for await (const chunk of res.body as any) {
+      for await (const chunk of response.body as any) {
         parser.feed(decoder.decode(chunk));
       }
     },
