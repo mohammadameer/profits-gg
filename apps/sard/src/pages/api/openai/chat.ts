@@ -11,13 +11,38 @@ import { Redis } from "@upstash/redis";
 export const config = {
   runtime: "edge",
 };
+
+const verifyRecaptcha = async (token: string) => {
+  const secretKey = process.env.RECAPTCHA_V3_SECRET_KEY;
+
+  const response = await fetch(
+    `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`,
+    {
+      method: "POST",
+    }
+  );
+
+  return await response.json();
+};
+
 export default async function handler(req: Request) {
-  const { message } = (await req.json()) as {
+  const { message, token } = (await req.json()) as {
     message: string;
+    token: string;
   };
 
+  const recaptchaResponse = await verifyRecaptcha(token);
+
+  if (!recaptchaResponse.success) {
+    return new Response("Recaptcha failed", { status: 400 });
+  }
+
+  if (recaptchaResponse.score < 0.5) {
+    return new Response("Recaptcha score too low", { status: 400 });
+  }
+
   if (!message) {
-    throw new Error("No message provided");
+    return new Response("Message is required", { status: 400 });
   }
 
   const encoder = new TextEncoder();

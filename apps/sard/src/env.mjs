@@ -7,10 +7,10 @@ import { z } from "zod";
 const server = z.object({
   // DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
-  OPENAI_ORG_ID: z.string(),
-  OPENAI_API_KEY: z.string(),
-  UPSTASH_REDIS_REST_URL: z.string(),
-  UPSTASH_REDIS_REST_TOKEN: z.string(),
+  OPENAI_ORG_ID: z.string().min(1),
+  OPENAI_API_KEY: z.string().min(1),
+  UPSTASH_REDIS_REST_URL: z.string().min(1),
+  UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
   NEXTAUTH_URL: z.preprocess(
     // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
     // Since NextAuth.js automatically uses the VERCEL_URL if present.
@@ -18,6 +18,7 @@ const server = z.object({
     // VERCEL_URL doesn't include `https` so it cant be validated as a URL
     process.env.VERCEL ? z.string().min(1) : z.string().url()
   ),
+  RECAPTCHA_V3_SECRET_KEY: z.string().min(1),
   // NEXTAUTH_SECRET:
   //   process.env.NODE_ENV === "production"
   //     ? z.string().min(1)
@@ -32,11 +33,10 @@ const server = z.object({
  * built with invalid env vars. To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 const client = z.object(
-  /** @satisfies {Record<`NEXT_PUBLIC_${string}`, import('zod').ZodType>} */ (
-    {
-      // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
-    }
-  )
+  /** @satisfies {Record<`NEXT_PUBLIC_${string}`, import('zod').ZodType>} */ ({
+    // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+    NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY: z.string().min(1),
+  })
 );
 
 /**
@@ -54,9 +54,12 @@ const processEnv = {
   UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
   // NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+  RECAPTCHA_V3_SECRET_KEY: process.env.RECAPTCHA_V3_SECRET_KEY,
   // DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
   // DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+  NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY:
+    process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY,
 };
 
 // Don't touch the part below

@@ -5,7 +5,8 @@ import { api } from "~/utils/api";
 import { Button, SelectInput } from "@profits-gg/ui";
 import { useForm } from "react-hook-form";
 import { required } from "@profits-gg/lib/utils/formRules";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useReCaptcha } from "next-recaptcha-v3";
 import va from "@vercel/analytics";
 
 type FormValues = {
@@ -29,57 +30,64 @@ const SelectInputClassNames = {
 const Home: NextPage = () => {
   const { control, handleSubmit } = useForm<FormValues>();
 
+  const { executeRecaptcha } = useReCaptcha();
+
   const [story, setStory] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const createStory = async (values: FormValues) => {
-    if (!values.eage || !values.category || !values.length) {
-      return;
-    }
+  const createStory = useCallback(
+    async (values: FormValues) => {
+      if (!values.eage || !values.category || !values.length) {
+        return;
+      }
 
-    if (isLoading) {
-      return;
-    }
+      if (isLoading) {
+        return;
+      }
 
-    if (story) {
       setStory("");
-    }
 
-    va.track("story-created");
-    
-    setIsLoading(true);
+      va.track("creating-story");
 
-    const response = await fetch("/api/openai/chat", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify({
-        message: `انا ام او اب واريد تعليم ابني، هل يمكنك كتابة قصة عن ${values.category} لشخص عمره ما بين ${values.eage} ولا تتعدى ${values.length}`,
-      }),
-    });
+      const token = await executeRecaptcha?.("createStory");
 
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
+      setIsLoading(true);
 
-    const data = response.body;
-    if (!data) {
-      return;
-    }
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
+      const response = await fetch("/api/openai/chat", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          message: `انا ام او اب واريد تعليم ابني، هل يمكنك كتابة قصة عن ${values.category} لشخص عمره ما بين ${values.eage} ولا تتعدى ${values.length}`,
+          token,
+        }),
+      });
 
-    while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
-      setStory((prev) => prev + chunkValue);
-    }
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
 
-    setIsLoading(false);
-  };
+      const data = response.body;
+      if (!data) {
+        return;
+      }
+      const reader = data.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        const chunkValue = decoder.decode(value);
+        setStory((prev) => prev + chunkValue);
+      }
+
+      setIsLoading(false);
+      va.track("created-story");
+    },
+    [executeRecaptcha]
+  );
 
   return (
     <>
