@@ -6,6 +6,8 @@ import { z } from "zod";
  */
 const server = z.object({
   // DATABASE_URL: z.string().url(),
+  POSTGRES_PRISMA_URL: z.string().url(),
+  POSTGRES_URL_NON_POOLING: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
   OPENAI_ORG_ID: z.string().min(1),
   OPENAI_API_KEY: z.string().min(1),
@@ -47,6 +49,8 @@ const client = z.object(
  */
 const processEnv = {
   // DATABASE_URL: process.env.DATABASE_URL,
+  POSTGRES_PRISMA_URL: process.env.POSTGRES_PRISMA_URL,
+  POSTGRES_URL_NON_POOLING: process.env.POSTGRES_URL_NON_POOLING,
   NODE_ENV: process.env.NODE_ENV,
   OPENAI_ORG_ID: process.env.OPENAI_ORG_ID,
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
