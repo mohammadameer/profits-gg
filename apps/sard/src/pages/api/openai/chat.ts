@@ -5,8 +5,7 @@ import {
   createParser,
 } from "eventsource-parser";
 import cors from "@profits-gg/lib/cors";
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { ipRateLimit } from "@profits-gg/lib/ip-rate-limit";
 
 export const config = {
   runtime: "edge",
@@ -26,6 +25,10 @@ const verifyRecaptcha = async (token: string) => {
 };
 
 export default async function handler(req: Request) {
+  const res = await ipRateLimit(req);
+
+  if (res.status !== 200) return res;
+
   const { message, token } = (await req.json()) as {
     message: string;
     token: string;

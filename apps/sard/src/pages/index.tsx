@@ -8,6 +8,7 @@ import { required } from "@profits-gg/lib/utils/formRules";
 import { useCallback, useState } from "react";
 import { useReCaptcha } from "next-recaptcha-v3";
 import va from "@vercel/analytics";
+import { toast } from "react-hot-toast";
 
 type FormValues = {
   eage: string;
@@ -59,12 +60,19 @@ const Home: NextPage = () => {
         },
         method: "POST",
         body: JSON.stringify({
-          message: `انا ام او اب واريد تعليم ابني، هل يمكنك كتابة قصة عن ${values.category} لشخص عمره ما بين ${values.eage} ولا تتعدى ${values.length}`,
+          message: `انت كاتب قصص للأطفال،
+
+            القصص يجب ان تكون قصيرة لا تتعدى الدقيقة
+            ويجب ان تكون ممتعة،
+
+            استعمل ال emojies للتعبير عن الأشياء والحالات قدر الممكن في اجزاء القصة المختلفة،
+             
+            اكتب لي قصة عن ${values.category}`,
           token,
         }),
       });
 
-      if (!response.ok) {
+      if (!response.ok && response.status !== 429) {
         throw new Error(response.statusText);
       }
 
@@ -80,6 +88,14 @@ const Home: NextPage = () => {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);
+
+        if (chunkValue.includes("rate limit exceeded")) {
+          toast.error("وصلت الحد الاقصى للقصص المسموحة لك اليوم");
+          setIsLoading(false);
+          va.track("rate-limit-exceeded");
+          return;
+        }
+
         setStory((prev) => prev + chunkValue);
       }
 
@@ -104,47 +120,18 @@ const Home: NextPage = () => {
         </div>
 
         <h1 className="p-6 py-10 text-6xl font-bold md:py-24 md:text-8xl">
-          قصص تعليمية
+          قصص اطفال تعليمية قصيرة
         </h1>
 
         <form
           onSubmit={handleSubmit(createStory)}
-          className="flex grow flex-col items-center justify-center p-6"
+          className="flex flex-col items-center justify-center p-6"
         >
-          <div className="flex w-full flex-col gap-4 p-6 md:flex-row">
-            <SelectInput
-              name="eage"
-              label="العمر"
-              options={[
-                {
-                  label: "٠ - ٥ سنوات",
-                  value: "٠ - ٥ سنوات",
-                },
-                {
-                  label: "٥ - ١٠ سنوات",
-                  value: "٥ - ١٠ سنوات",
-                },
-                {
-                  label: "١٠ - ١٥ سنوات",
-                  value: "١٠ - ١٥ سنوات",
-                },
-                {
-                  label: "١٥ - ٢٠ سنوات",
-                  value: "١٥ - ٢٠ سنوات",
-                },
-                {
-                  label: "آكبر من ٢٠ سنة",
-                  value: "آكبر من ٢٠ سنة",
-                },
-              ]}
-              control={control}
-              disabled={isLoading}
-              classNames={SelectInputClassNames}
-              rules={{ required }}
-            />
+          <div className="flex w-full flex-col justify-center gap-4 p-6 md:flex-row">
             <SelectInput
               name="category"
               label="موضوع القصة"
+              className="w-full md:w-2/3 lg:w-1/3"
               options={[
                 {
                   label: "النوم في الوقت المناسب",
@@ -177,28 +164,6 @@ const Home: NextPage = () => {
                 {
                   label: "الصدق",
                   value: "الصدق",
-                },
-              ]}
-              control={control}
-              disabled={isLoading}
-              classNames={SelectInputClassNames}
-              rules={{ required }}
-            />
-            <SelectInput
-              name="length"
-              label="طول القصة"
-              options={[
-                {
-                  label: "دقيقة واحدة",
-                  value: "دقيقة واحدة",
-                },
-                {
-                  label: "٣ دقائق",
-                  value: "٣ دقائق",
-                },
-                {
-                  label: "٥ دقائق",
-                  value: "٥ دقائق",
                 },
               ]}
               control={control}
