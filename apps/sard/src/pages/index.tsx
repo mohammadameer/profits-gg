@@ -60,7 +60,7 @@ const Home: NextPage = () => {
         },
         method: "POST",
         body: JSON.stringify({
-          message: `انت كاتب قصص للأطفال،
+          message: `انت افضل كاتب قصص للأطفال،
 
             القصص يجب ان تكون قصيرة لا تتعدى الدقيقة
             ويجب ان تكون ممتعة،
@@ -90,7 +90,7 @@ const Home: NextPage = () => {
         const chunkValue = decoder.decode(value);
 
         if (chunkValue.includes("rate limit exceeded")) {
-          toast.error("وصلت الحد الاقصى للقصص المسموحة لك اليوم");
+          toast.error("انتظر دقيقتين وحاول مرة اخرى");
           setIsLoading(false);
           va.track("rate-limit-exceeded");
           return;
