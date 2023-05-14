@@ -38,7 +38,7 @@ const Home: NextPage = () => {
 
   const createStory = useCallback(
     async (values: FormValues) => {
-      if (!values.eage || !values.category || !values.length) {
+      if (!values.category) {
         return;
       }
 
