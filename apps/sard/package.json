@@ -12,7 +12,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@mdx-js/loader": "^2.3.0",
+    "@mdx-js/react": "^2.3.0",
     "@next-auth/prisma-adapter": "^1.0.5",
+    "@next/mdx": "^13.4.2",
     "@prisma/client": "^4.11.0",
     "@profits-gg/config": "*",
     "@profits-gg/lib": "*",

@@ -33,11 +33,18 @@ const Home: NextPage = () => {
 
   const { executeRecaptcha } = useReCaptcha();
 
+  const { mutate: createStory } = api.story.create.useMutation();
+  // const { data: stories } = api.story.list.useQuery({});
+
+  // console.log("stories", stories);
+
   const [story, setStory] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const createStory = useCallback(
+  const handleCreateStory = useCallback(
     async (values: FormValues) => {
+      va.track("create-story");
+
       if (!values.category) {
         return;
       }
@@ -48,11 +55,11 @@ const Home: NextPage = () => {
 
       setStory("");
 
-      va.track("creating-story");
-
       const token = await executeRecaptcha?.("createStory");
 
       setIsLoading(true);
+
+      va.track("creating-story");
 
       const response = await fetch("/api/openai/chat", {
         headers: {
@@ -60,14 +67,7 @@ const Home: NextPage = () => {
         },
         method: "POST",
         body: JSON.stringify({
-          message: `انت افضل كاتب قصص للأطفال،
-
-            القصص يجب ان تكون قصيرة لا تتعدى الدقيقة
-            ويجب ان تكون ممتعة،
-
-            استعمل ال emojies للتعبير عن الأشياء والحالات قدر الممكن في اجزاء القصة المختلفة،
-             
-            اكتب لي قصة عن ${values.category}`,
+          category: values.category,
           token,
         }),
       });
@@ -99,6 +99,22 @@ const Home: NextPage = () => {
         setStory((prev) => prev + chunkValue);
       }
 
+      console.log("story done");
+      if (story) {
+        console.log("story", story);
+        createStory(
+          {
+            category: values.category,
+            content: story,
+          },
+          {
+            onSuccess: () => {
+              console.log("success");
+            },
+          }
+        );
+      }
+
       setIsLoading(false);
       va.track("created-story");
     },
@@ -124,7 +140,7 @@ const Home: NextPage = () => {
         </h1>
 
         <form
-          onSubmit={handleSubmit(createStory)}
+          onSubmit={handleSubmit(handleCreateStory)}
           className="flex flex-col items-center justify-center p-6"
         >
           <div className="flex w-full flex-col justify-center gap-4 p-6 md:flex-row">
@@ -135,35 +151,35 @@ const Home: NextPage = () => {
               options={[
                 {
                   label: "النوم في الوقت المناسب",
-                  value: "النوم في الوقت المناسب",
+                  value: "Sleeping on time",
                 },
                 {
                   label: "النظافة الشخصية",
-                  value: "النظافة الشخصية",
+                  value: "Personal hygiene",
                 },
                 {
                   label: "التنمر",
-                  value: "التنمر",
+                  value: "Bullying",
                 },
                 {
                   label: "الثقة في النفس",
-                  value: "الثقة في النفس",
+                  value: "Self-confidence",
                 },
                 {
                   label: "المسؤولية",
-                  value: "المسؤولية",
+                  value: "Responsibility",
                 },
                 {
                   label: "التعاون",
-                  value: "التعاون",
+                  value: "Cooperation",
                 },
                 {
                   label: "التسامح",
-                  value: "التسامح",
+                  value: "Tolerance",
                 },
                 {
                   label: "الصدق",
-                  value: "الصدق",
+                  value: "Honesty",
                 },
               ]}
               control={control}

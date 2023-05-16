@@ -27,10 +27,10 @@ const verifyRecaptcha = async (token: string) => {
 export default async function handler(req: Request) {
   const res = await ipRateLimit(req);
 
-  if (res.status !== 200) return res;
+  // if (res.status !== 200) return res;
 
-  const { message, token } = (await req.json()) as {
-    message: string;
+  const { category, token } = (await req.json()) as {
+    category: string;
     token: string;
   };
 
@@ -52,8 +52,8 @@ export default async function handler(req: Request) {
     return new Response("Recaptcha score too low", { status: 400 });
   }
 
-  if (!message) {
-    return new Response("Message is required", { status: 400 });
+  if (!category) {
+    return new Response("Category is required", { status: 400 });
   }
 
   const encoder = new TextEncoder();
@@ -73,7 +73,14 @@ export default async function handler(req: Request) {
       messages: [
         {
           role: "user",
-          content: message,
+          content: `
+          in arabic write a storey about ${category}
+
+          you are the best storyteller
+
+          stories should not be longer that 1 minute
+
+          after every 5 words use an emoji `,
         },
       ],
     }),
