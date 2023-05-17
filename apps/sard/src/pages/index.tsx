@@ -46,10 +46,12 @@ const Home: NextPage = () => {
       va.track("create-story");
 
       if (!values.category) {
+        va.track("create-story-no-category");
         return;
       }
 
       if (isLoading) {
+        va.track("create-story-already-loading");
         return;
       }
 
@@ -99,26 +101,17 @@ const Home: NextPage = () => {
         setStory((prev) => prev + chunkValue);
       }
 
-      console.log("story done");
       if (story) {
-        console.log("story", story);
-        createStory(
-          {
-            category: values.category,
-            content: story,
-          },
-          {
-            onSuccess: () => {
-              console.log("success");
-            },
-          }
-        );
+        createStory({
+          category: values.category,
+          content: story,
+        });
       }
 
       setIsLoading(false);
       va.track("created-story");
     },
-    [executeRecaptcha]
+    [executeRecaptcha, story, createStory, isLoading]
   );
 
   return (

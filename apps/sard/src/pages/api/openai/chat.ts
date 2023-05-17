@@ -74,13 +74,16 @@ export default async function handler(req: Request) {
         {
           role: "user",
           content: `
-          in arabic write a storey about ${category}
+          write a storey about ${category}
 
           you are the best storyteller
 
           stories should not be longer that 1 minute
 
-          after every 5 words use an emoji `,
+          after every 5 words use an emoji 
+          
+          respond in arabic
+          `,
         },
       ],
     }),
