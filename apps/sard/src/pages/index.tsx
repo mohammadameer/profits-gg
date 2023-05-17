@@ -144,35 +144,35 @@ const Home: NextPage = () => {
               options={[
                 {
                   label: "النوم في الوقت المناسب",
-                  value: "Sleeping on time",
+                  value: "sleeping-on-time",
                 },
                 {
                   label: "النظافة الشخصية",
-                  value: "Personal hygiene",
+                  value: "personal-hygiene",
                 },
                 {
                   label: "التنمر",
-                  value: "Bullying",
+                  value: "bullying",
                 },
                 {
                   label: "الثقة في النفس",
-                  value: "Self-confidence",
+                  value: "self-confidence",
                 },
                 {
                   label: "المسؤولية",
-                  value: "Responsibility",
+                  value: "responsibility",
                 },
                 {
                   label: "التعاون",
-                  value: "Cooperation",
+                  value: "cooperation",
                 },
                 {
                   label: "التسامح",
-                  value: "Tolerance",
+                  value: "tolerance",
                 },
                 {
                   label: "الصدق",
-                  value: "Honesty",
+                  value: "honesty",
                 },
               ]}
               control={control}
