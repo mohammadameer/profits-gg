@@ -13,18 +13,15 @@ export const storyRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-
-      let category = await ctx.prisma.category.findUnique({
-        where: { name: input.category },
+      const category = await ctx.prisma.category.upsert({
+        where: {
+          name: input.category,
+        },
+        create: {
+          name: input.category,
+        },
+        update: {},
       });
-
-      if (!category) {
-        category = await ctx.prisma.category.create({
-          data: {
-            name: input.category,
-          },
-        });
-      }
 
       return ctx.prisma.story.create({
         data: {
