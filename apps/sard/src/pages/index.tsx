@@ -30,14 +30,16 @@ const SelectInputClassNames = {
 };
 
 const Home: NextPage = () => {
-  const { control, handleSubmit } = useForm<FormValues>();
+  const { control, handleSubmit, watch } = useForm<FormValues>();
+
+  const category = watch("category");
 
   const { executeRecaptcha } = useReCaptcha();
 
   const { mutate: createStory } = api.story.create.useMutation();
-  const { data: stories } = api.story.list.useQuery({
-    category: 
-  });
+  // const { data: stories } = api.story.list.useQuery({
+  //   category: category ? category : undefined,
+  // });
 
   // console.log("stories", stories);
 
