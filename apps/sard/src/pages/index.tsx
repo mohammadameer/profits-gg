@@ -1,5 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
+import { NextSeo } from "next-seo";
 
 import { api } from "~/utils/api";
 import { Button, SelectInput } from "@profits-gg/ui";
@@ -34,7 +35,9 @@ const Home: NextPage = () => {
   const { executeRecaptcha } = useReCaptcha();
 
   const { mutate: createStory } = api.story.create.useMutation();
-  // const { data: stories } = api.story.list.useQuery({});
+  const { data: stories } = api.story.list.useQuery({
+    category: 
+  });
 
   // console.log("stories", stories);
 
@@ -116,11 +119,18 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Head>
-        <title>📖 سرد</title>
-        <meta name="description" content="سرد - قصص" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <NextSeo
+        title="قصص اطفال تعليمية قصيرة "
+        description="قصص اطفال عربية، جديدة، تعليمية، مؤثرة، قيمة، جميلة قصيرة، و مخصصة لطفلك، لقبل النوم وللتعليم"
+        canonical="https://sard.dev/"
+        openGraph={{
+          url: "https://sard.dev/",
+          title: "قصص اطفال تعليمية قصيرة",
+          description:
+            "قصص اطفال عربية، جديدة، تعليمية، مؤثرة، قيمة، جميلة قصيرة، و مخصصة لطفلك، لقبل النوم وللتعليم",
+          siteName: "سرد",
+        }}
+      />
       <div className="flex min-h-screen flex-col bg-gray-200 pb-20">
         <div className="p-5">
           <p className="text text-4xl font-bold text-gray-900 md:text-5xl">
