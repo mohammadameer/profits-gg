@@ -20,7 +20,7 @@ const categories = {
 
 export default function Story() {
   const router = useRouter();
-  const { slug: slugFromRouter, category, gender } = router.query;
+  const { slug: slugFromRouter, category, place } = router.query;
 
   const { executeRecaptcha, loaded: isRecaptchaLoaded } = useReCaptcha();
 
@@ -193,7 +193,7 @@ export default function Story() {
           imagePrompt,
           content: debouncedContent,
           category: category as string,
-          gender: gender as string,
+          place: place as string,
           wordCount: debouncedContent.split(" ").length,
           language: "ar",
           version: 2,
