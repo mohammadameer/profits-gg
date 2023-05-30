@@ -7,7 +7,7 @@ function generateSiteMap() {
 
       <url>
         <loc>https://www.sard.dev/</loc>
-        <lastmod>2023-05-20</lastmod>
+        <lastmod>${new Date().toISOString()}</lastmod>
       </url>
 
      </urlset>

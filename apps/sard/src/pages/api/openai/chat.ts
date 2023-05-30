@@ -27,7 +27,7 @@ const verifyRecaptcha = async (token: string) => {
 export default async function handler(req: Request) {
   const res = await ipRateLimit(req);
 
-  // if (res.status !== 200) return res;
+  if (res.status !== 200) return res;
 
   const { category, token } = (await req.json()) as {
     category: string;
@@ -70,19 +70,67 @@ export default async function handler(req: Request) {
     body: JSON.stringify({
       model: "gpt-3.5-turbo",
       stream: true,
+      temperature: 0.8,
+      top_p: 0.7,
+      max_tokens: 800,
       messages: [
         {
-          role: "user",
+          role: "system",
           content: `
-          write a storey about ${category}
+          act as a storyteller
 
-          you are the best storyteller
+          i want a title, description, url slug, image prompt for open ai dalle model and the content of the story
 
-          stories should not be longer that 1 minute
+          the story category is ${category}
 
-          after every 5 words use an emoji 
-          
-          respond in arabic
+          the title should contain a character and a place
+
+          the description should be short and contain the main story parts
+
+          the character can be a person name, an animal, an inanimate
+                                        
+          use arabic for the title, slug and the content without translation
+
+          the content length should be between 200 -  300 word and after every 5 words use a proper emoji 
+
+          image prompt should use description with min 6 words and should be in english
+
+          response structure example
+
+
+          title
+          #
+          description
+          #
+          slug
+          #
+          image prompt
+          #
+          content
+
+          response examples
+
+          الأطفال و التلفاز الشرير
+          #
+          تلفاز شرير يمنع الأطفال من النوم
+          #
+          التلفاز-الشرير
+          #
+          wide white tv in a black room and children looking at it
+          #
+          كان هناك تلفاز شرير
+
+
+
+          مدرسة الأطفال النائمة
+          #
+          مدرسة كل الأطفال فيها لا ينامون
+          #
+          مدرسة -لأطفال
+          #
+          sleepy children in a school 
+          #
+          في يوم من الأيام في احد المدارس
           `,
         },
       ],

@@ -41,7 +41,6 @@ function isOriginAllowed(origin: string, allowed: StaticOrigin): boolean {
 
 function getOriginHeaders(reqOrigin: string | undefined, origin: StaticOrigin) {
   const headers = new Headers();
-  console.log("getOriginHeaders", reqOrigin, origin);
   if (origin === "*") {
     // Allow any origin
     headers.set("Access-Control-Allow-Origin", "*");

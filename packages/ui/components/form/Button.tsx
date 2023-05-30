@@ -34,7 +34,7 @@ const Button: FC<ButtonProps> = ({
         className,
       )}
     >
-      {loading ? <p>🪄</p> : <p className="text-black/80">{text}</p>}
+      {loading ? "🪄" : text}
     </button>
   );
 };

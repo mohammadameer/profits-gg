@@ -74,15 +74,13 @@ export default function GoogleMaps() {
     }
   }, [lat, lng]);
 
-  console.log("places", places);
-
   return (
     <Page title="🗺️ خرائط قوقل">
       <div className="grid w-full grid-cols-12 gap-4">
         <div
           className={clsx(
             "col-span-12 h-[450px] overflow-hidden rounded-md p-4 md:h-[65vh]",
-            fullScreen ? "fixed top-0 left-0 h-full w-full" : "",
+            fullScreen ? "fixed left-0 top-0 h-full w-full" : "",
           )}
         >
           {isLoaded ? (

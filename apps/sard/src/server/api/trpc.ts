@@ -39,6 +39,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     // session: opts.session,
     prisma,
+    openai,
   };
 };
 
@@ -73,6 +74,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import { NextApiRequest } from "next";
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
+import { openai } from "~/server/openai";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -105,7 +107,6 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 //       (hitInfo.reset - Date.now()) / 1000
 //     )}`,
 //   onLimit: (hitInfo) => {
-//     console.log(hitInfo);
 //   },
 //   max: 1,
 // });

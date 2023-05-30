@@ -6,15 +6,19 @@ import { api } from "~/utils/api";
 import { Button, SelectInput } from "@profits-gg/ui";
 import { useForm } from "react-hook-form";
 import { required } from "@profits-gg/lib/utils/formRules";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useReCaptcha } from "next-recaptcha-v3";
 import va from "@vercel/analytics";
 import { toast } from "react-hot-toast";
+import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import categories from "~/utils/categories";
+import places from "~/utils/places";
 
 type FormValues = {
-  eage: string;
   category: string;
-  length: string;
+  place: string;
 };
 
 const SelectInputClassNames = {
@@ -30,94 +34,55 @@ const SelectInputClassNames = {
 };
 
 const Home: NextPage = () => {
+  const router = useRouter();
   const { control, handleSubmit, watch } = useForm<FormValues>();
 
-  const category = watch("category");
+  const [category, setCategory] = useState<string>();
+  const [place, setPlace] = useState<string>();
 
-  const { executeRecaptcha } = useReCaptcha();
+  const {
+    data: stories,
+    isLoading: isLoadingData,
+    isFetching,
+    isFetchingNextPage,
+    hasNextPage,
+    status,
+    fetchNextPage,
+    refetch: refetchStories,
+  } = api.story.list.useInfiniteQuery(
+    {
+      category: category as string,
+      place: place as string,
+    },
+    {
+      enabled: false,
+    }
+  );
 
-  const { mutate: createStory } = api.story.create.useMutation();
-  // const { data: stories } = api.story.list.useQuery({
-  //   category: category ? category : undefined,
-  // });
-
-  // console.log("stories", stories);
-
-  const [story, setStory] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreateStory = useCallback(
-    async (values: FormValues) => {
-      va.track("create-story");
+  const handleFetchNextPage = () => {
+    if (!isFetching && hasNextPage && status === "success") {
+      fetchNextPage();
+    }
+  };
 
-      if (!values.category) {
-        va.track("create-story-no-category");
-        return;
-      }
+  const buttonInView = useInViewObserver(handleFetchNextPage);
 
-      if (isLoading) {
-        va.track("create-story-already-loading");
-        return;
-      }
+  const handleSearchStories = (values: FormValues) => {
+    setCategory(values.category);
+    setPlace(values.place);
+  };
 
-      setStory("");
+  const handleCreateStory = (values: FormValues) => {
+    router.push(
+      `/stories/new?category=${values.category}&place=${values.place}`
+    );
+  };
 
-      const token = await executeRecaptcha?.("createStory");
-
-      setIsLoading(true);
-
-      va.track("creating-story");
-
-      const response = await fetch("/api/openai/chat", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify({
-          category: values.category,
-          token,
-        }),
-      });
-
-      if (!response.ok && response.status !== 429) {
-        throw new Error(response.statusText);
-      }
-
-      const data = response.body;
-      if (!data) {
-        return;
-      }
-      const reader = data.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        const chunkValue = decoder.decode(value);
-
-        if (chunkValue.includes("rate limit exceeded")) {
-          toast.error("انتظر دقيقتين وحاول مرة اخرى");
-          setIsLoading(false);
-          va.track("rate-limit-exceeded");
-          return;
-        }
-
-        setStory((prev) => prev + chunkValue);
-      }
-
-      if (story) {
-        createStory({
-          category: values.category,
-          content: story,
-        });
-      }
-
-      setIsLoading(false);
-      va.track("created-story");
-    },
-    [executeRecaptcha, story, createStory, isLoading]
-  );
+  useEffect(() => {
+    refetchStories();
+  }, [category, place]);
 
   return (
     <>
@@ -133,83 +98,104 @@ const Home: NextPage = () => {
           siteName: "سرد",
         }}
       />
-      <div className="flex min-h-screen flex-col bg-gray-200 pb-20">
-        <div className="p-5">
-          <p className="text text-4xl font-bold text-gray-900 md:text-5xl">
-            📖 سرد
-          </p>
+
+      <h1 className="p-6 py-10 text-6xl font-bold md:pb-14 md:pt-24 md:text-8xl">
+        قصص اطفال تعليمية قصيرة
+      </h1>
+
+      <form
+        onSubmit={handleSubmit(handleSearchStories)}
+        className="flex flex-col items-center justify-between p-6 lg:flex-row"
+      >
+        <div className="flex w-full gap-4 md:flex-row">
+          <SelectInput
+            name="category"
+            label="موضوع القصة"
+            className="w-full lg:w-1/4"
+            options={categories}
+            control={control}
+            disabled={isLoading}
+            classNames={SelectInputClassNames}
+            rules={{ required }}
+          />
+          <SelectInput
+            name="place"
+            label="المكان"
+            className="w-full lg:w-1/4"
+            options={places}
+            control={control}
+            disabled={isLoading}
+            classNames={SelectInputClassNames}
+          />
         </div>
-
-        <h1 className="p-6 py-10 text-6xl font-bold md:py-24 md:text-8xl">
-          قصص اطفال تعليمية قصيرة
-        </h1>
-
-        <form
-          onSubmit={handleSubmit(handleCreateStory)}
-          className="flex flex-col items-center justify-center p-6"
-        >
-          <div className="flex w-full flex-col justify-center gap-4 p-6 md:flex-row">
-            <SelectInput
-              name="category"
-              label="موضوع القصة"
-              className="w-full md:w-2/3 lg:w-1/3"
-              options={[
-                {
-                  label: "النوم في الوقت المناسب",
-                  value: "sleeping-on-time",
-                },
-                {
-                  label: "النظافة الشخصية",
-                  value: "personal-hygiene",
-                },
-                {
-                  label: "التنمر",
-                  value: "bullying",
-                },
-                {
-                  label: "الثقة في النفس",
-                  value: "self-confidence",
-                },
-                {
-                  label: "المسؤولية",
-                  value: "responsibility",
-                },
-                {
-                  label: "التعاون",
-                  value: "cooperation",
-                },
-                {
-                  label: "التسامح",
-                  value: "tolerance",
-                },
-                {
-                  label: "الصدق",
-                  value: "honesty",
-                },
-              ]}
-              control={control}
-              disabled={isLoading}
-              classNames={SelectInputClassNames}
-              rules={{ required }}
-            />
-          </div>
+        <div className="flex w-full flex-col gap-4 md:flex-row lg:w-1/3">
           <Button
-            text="قصة جديدة"
+            text="بحث"
             type="submit"
             loading={isLoading}
-            className="w-full md:w-2/6"
+            className="w-full"
           />
-        </form>
-
-        <div className="flex flex-col items-center justify-center gap-4 p-6">
-          {story && (
-            <div className="flex flex-col items-center justify-center gap-4 p-6">
-              <p className="text text-2xl font-bold leading-10 text-gray-900 md:text-3xl">
-                {story}
-              </p>
-            </div>
-          )}
+          <Button
+            text="أنشئ قصة خاصة"
+            onClick={handleSubmit(handleCreateStory)}
+            loading={isLoading}
+            className="w-full !bg-blue-500 !text-white"
+          />
         </div>
+      </form>
+
+      <div className="grid grid-cols-12 gap-4 p-6">
+        {stories?.pages?.length && stories?.pages[0]?.stories?.length ? (
+          stories?.pages?.map((page) =>
+            page?.stories.map((story) => (
+              <div
+                key={story.id}
+                className="col-span-full flex cursor-pointer flex-col items-center justify-center gap-4 rounded-md bg-white p-6 shadow-sm md:col-span-6 lg:col-span-4"
+                onClick={() => {
+                  router.push(`/stories/${story.slug}`);
+                }}
+              >
+                <div className="relative h-64 w-full">
+                  <Image
+                    src={story.mainImage as string}
+                    alt={story.title as string}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-md"
+                  />
+                </div>
+                <p className="text text-xl font-bold leading-10 text-gray-900 md:text-2xl">
+                  {story.title}
+                </p>
+                <p className="text text-lg leading-10 text-gray-900 md:text-xl">
+                  {story.description}
+                </p>
+              </div>
+            ))
+          )
+        ) : isFetching ? (
+          Array.from({ length: 6 }).map(() => (
+            <div className="col-span-full flex cursor-wait flex-col items-center justify-center gap-4 rounded-md bg-white p-6 md:col-span-6 lg:col-span-4 ">
+              <div className="h-64 w-full animate-pulse rounded-md bg-gray-400" />
+              <div className="h-8 w-1/2 animate-pulse rounded-md bg-gray-400" />
+              <div className="h-8 w-3/4 animate-pulse rounded-md bg-gray-400" />
+            </div>
+          ))
+        ) : (
+          <div className="col-span-full flex h-96 flex-col items-center justify-center gap-8 rounded-md p-6">
+            <p className="text text-xl font-bold leading-10 text-gray-900 md:text-2xl">
+              لا توجد قصص في هذا الموضوع حالياً
+            </p>
+
+            <div>
+              <Button
+                text="أنشئ قصة خاصة"
+                onClick={handleSubmit(handleCreateStory)}
+                className="w-full !bg-blue-500 !text-white"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

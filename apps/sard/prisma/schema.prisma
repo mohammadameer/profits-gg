@@ -30,12 +30,17 @@ model Category {
 
 model Story {
     id        String   @id @default(cuid())
-    title     String?
+    title     String? @unique
+    description String?
+    slug      String? @unique
+    mainImage String?
+    place    String?
+    imagePrompt String?
     content   String?
     categories Category[]
     age       Int?
     wordCount Int?
-    language  String?   
+    language  String?
     version   Int?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

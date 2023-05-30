@@ -19,6 +19,15 @@ const config = {
     "@profits-gg/lib",
     "@profits-gg/config",
   ],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "oaidalleapiprodscus.blob.core.windows.net",
+        port: "",
+      },
+    ],
+  },
   i18n: {
     locales: ["en"],
     defaultLocale: "en",

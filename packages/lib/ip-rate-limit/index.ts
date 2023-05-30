@@ -11,7 +11,7 @@ export const ipRateLimit = initRateLimit((request) => ({
   id: `ip:${getIP(request)}`,
   count: increment,
   limit: 1,
-  timeframe: 120,
+  timeframe: 60 * 60 * 24 * 1, // 1 day
 }));
 
 const increment: CountFn = async ({ response, key, timeframe }) => {
