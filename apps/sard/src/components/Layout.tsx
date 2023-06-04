@@ -42,6 +42,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     },
     {
       enabled: checkout_session_id ? true : false,
+      retry: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
       onSuccess: (data) => {
         if (data?.payment_status == "paid") {
           va.track("Checkout Session Success");
@@ -50,7 +53,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       },
     }
   );
-
   const { data: user } = api.user.get.useQuery(
     {
       id: userId,
@@ -66,8 +68,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           : false,
       onSuccess: (data) => {
         if (data?.id) {
-          va.track("User Set");
           setUserId(data?.id as string);
+          va.track("User Set");
         }
       },
     }
@@ -210,8 +212,27 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           expirationSeconds != undefined ? (
             <span className="font-bold">
               {new Date(
-                new Date().getTime() + expirationSeconds * 1000
-              ).toLocaleDateString("ar-EG")}
+                new Date(
+                  (checkoutSession?.created as number) * 1000
+                ).getTime() +
+                  expirationSeconds * 1000
+              ).toLocaleString("ar-EG", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })}{" "}
+              -{" "}
+              {new Date(
+                new Date(
+                  (checkoutSession?.created as number) * 1000
+                ).getTime() +
+                  expirationSeconds * 1000
+              ).toLocaleString("ar-EG", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </span>
           ) : null}
         </p>

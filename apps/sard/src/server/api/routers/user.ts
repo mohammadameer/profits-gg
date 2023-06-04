@@ -14,9 +14,11 @@ export const userRouter = createTRPCRouter({
     .query(async ({ ctx, input }) =>
       ctx.prisma.user.findFirst({
         where: {
-          id: input.id ?? undefined,
-          email: input.email ?? undefined,
-          phoneNumber: input.phoneNumber ?? undefined,
+          OR: [
+            { id: input.id ?? undefined },
+            { email: input.email ?? undefined },
+            { phoneNumber: input.phoneNumber ?? undefined },
+          ],
         },
       })
     ),
