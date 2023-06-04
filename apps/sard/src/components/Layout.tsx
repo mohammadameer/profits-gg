@@ -13,6 +13,7 @@ import { set, useForm } from "react-hook-form";
 import { required } from "@profits-gg/lib/utils/formRules";
 import { toast } from "react-hot-toast";
 import va from "@vercel/analytics";
+import { usePostHog } from "posthog-js/react/dist/types";
 
 type FormValues = {
   emailOrPhoneNumber: string;
@@ -21,6 +22,8 @@ type FormValues = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { checkout_session_id } = router.query;
+
+  const posthog = usePostHog();
 
   const [userId, setUserId] = useLocalStorage<string>("userId", "");
 
@@ -47,8 +50,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       refetchOnMount: false,
       onSuccess: (data) => {
         if (data?.payment_status == "paid") {
-          va.track("Checkout Session Success");
           setCheckoutSessionSuccess(true);
+          va.track("Checkout Session Success");
         }
       },
     }
@@ -69,6 +72,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       onSuccess: (data) => {
         if (data?.id) {
           setUserId(data?.id as string);
+          posthog?.identify(data?.id as string, {
+            name: data?.name,
+            email: data?.email,
+            phoneNumber: data?.phoneNumber,
+          });
           va.track("User Set");
         }
       },
@@ -102,6 +110,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         onSuccess: (data) => {
           if (data?.id) {
             setUserId(data?.id);
+            posthog?.identify(data?.id as string, {
+              name: data?.name,
+              email: data?.email,
+              phoneNumber: data?.phoneNumber,
+            });
             va.track("Activate Membership User Set");
             if (data?.membershipExpiration) {
               if (new Date(data?.membershipExpiration) > new Date()) {
@@ -140,6 +153,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!user) return;
     setUserId(user?.id as string);
+    posthog?.identify(user?.id as string, {
+      name: user?.name,
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
+    });
   }, [user]);
 
   const membership = memberships.find(
