@@ -292,7 +292,7 @@ export default function Story() {
             height={500}
           />
         ) : (
-          <div className="h-96 w-96 animate-pulse rounded-md bg-gray-400" />
+          <div className="h-96 w-full animate-pulse rounded-md bg-gray-400 md:w-96" />
         )}
 
         {content ? (
