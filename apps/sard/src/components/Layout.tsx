@@ -117,6 +117,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 return;
               }
             }
+          } else {
+            va.track("Activate Membership User Not Found");
+            toast.error(
+              "لم يتم العثور على حساب مرتبط بهذا البريد الإلكتروني أو رقم الجوال"
+            );
+            return;
           }
         },
         onError: () => {
