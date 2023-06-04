@@ -20,7 +20,9 @@ export interface RateLimitContext extends RateLimitContextBase {
 
 export type RateLimitHandler = (
   request: Request,
-  response?: Response,
+  id?: string,
+  limit?: number,
+  timeframe?: number,
 ) => Promise<RateLimitResult> | RateLimitResult;
 
 export type RateLimitResult =
@@ -118,15 +120,20 @@ async function rateLimit(context: RateLimitContext): Promise<Response> {
 }
 
 export const initRateLimit = (fn: RateLimitHandler) =>
-  async function isRateLimited(request: Request, response?: Response) {
-    const ctx = await fn(request, response);
+  async function isRateLimited(
+    request: Request,
+    id?: string,
+    limit?: number,
+    timeframe?: number,
+  ) {
+    const ctx = await fn(request, id, limit, timeframe);
 
     if (ctx instanceof Response) return ctx;
 
     return rateLimit({
       ...ctx,
       request: ctx.request ?? request,
-      response: ctx.response ?? response ?? new Response(null),
+      response: ctx.response ?? new Response(null),
       headers: getHeaders(ctx.headers),
       onRateLimit: ctx.onRateLimit ?? rateLimited,
     });

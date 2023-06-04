@@ -5,7 +5,6 @@ export default [
   { label: "الجبل", value: "mountain" },
   { label: "الحديقة", value: "garden" },
   { label: "المستشفى", value: "hospital" },
-  { label: "المسجد", value: "mosque" },
   { label: "الفضاء", value: "space" },
   { label: "المطعم", value: "restaurant" },
   { label: "المكتبة", value: "library" },

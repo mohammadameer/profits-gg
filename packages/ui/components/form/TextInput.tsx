@@ -22,6 +22,7 @@ export type TextInputProps<T extends FieldValues> = {
   defaultValue?: unknown;
   control?: Control<T>;
   className?: string;
+  inputClassName?: string;
   autoComplete?: "false" | "true";
 };
 
@@ -32,6 +33,7 @@ export default function TextInput<T extends FieldValues>({
   control = undefined,
   rules = {},
   className = "",
+  inputClassName = "",
   autoComplete = "false",
 }: TextInputProps<T>) {
   const {
@@ -57,9 +59,12 @@ export default function TextInput<T extends FieldValues>({
         onChange={onChange}
         autoComplete={autoComplete}
         onBlur={onBlur}
-        className={`h-10 w-full rounded-lg border border-gray-500 bg-gray-800 px-2 outline-none focus:border-white ${
-          error ? "border-red-500" : ""
-        }`}
+        className={clsx(
+          `h-10 w-full rounded-lg border border-gray-500 bg-gray-800 px-2 outline-none focus:border-white ${
+            error ? "border-red-500" : ""
+          }`,
+          inputClassName,
+        )}
       />
 
       {error ? <Error error={error.message} /> : <div className="h-[25px]" />}

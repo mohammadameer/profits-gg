@@ -1,5 +1,7 @@
 import { openaiRouter } from "~/server/api/routers/openai";
+import { stripeRouter } from "~/server/api/routers/stripe";
 import { storyRouter } from "~/server/api/routers/story";
+import { userRouter } from "~/server/api/routers/user";
 import { createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -9,7 +11,9 @@ import { createTRPCRouter } from "~/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   openai: openaiRouter,
+  stripe: stripeRouter,
   story: storyRouter,
+  user: userRouter,
 });
 
 // export type definition of API

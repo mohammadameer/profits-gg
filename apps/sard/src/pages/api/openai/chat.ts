@@ -6,6 +6,7 @@ import {
 } from "eventsource-parser";
 import cors from "@profits-gg/lib/cors";
 import { ipRateLimit } from "@profits-gg/lib/ip-rate-limit";
+import { prisma } from "~/server/db";
 
 export const config = {
   runtime: "edge",
@@ -25,16 +26,29 @@ const verifyRecaptcha = async (token: string) => {
 };
 
 export default async function handler(req: Request) {
-  const res = await ipRateLimit(req);
-
-  if (res.status !== 200) return res;
-
-  const { category, token } = (await req.json()) as {
+  const { category, place, userId, token } = (await req.json()) as {
     category: string;
     token: string;
+    place: string;
+    userId: string;
   };
 
   const recaptchaResponse = await verifyRecaptcha(token);
+
+  let res;
+
+  if (userId) {
+    res = await ipRateLimit(
+      req,
+      userId,
+      1,
+      60 // 1 minute
+    );
+  } else {
+    res = await ipRateLimit(req);
+  }
+
+  if (res.status !== 200) return res;
 
   if (!recaptchaResponse.success) {
     return new Response("Recaptcha failed", { status: 400 });
@@ -72,7 +86,7 @@ export default async function handler(req: Request) {
       stream: true,
       temperature: 0.8,
       top_p: 0.7,
-      max_tokens: 800,
+      max_tokens: 1000,
       messages: [
         {
           role: "system",
@@ -85,13 +99,15 @@ export default async function handler(req: Request) {
 
           the title should contain a character and a place
 
+          ${place ? `the place is ${place}` : ""}
+
           the description should be short and contain the main story parts
 
           the character can be a person name, an animal, an inanimate
                                         
           use arabic for the title, slug and the content without translation
 
-          the content length should be between 200 -  300 word and after every 5 words use a proper emoji 
+          the content length should be between 300 -  450 word and after every 5 words use a proper emoji 
 
           image prompt should use description with min 6 words and should be in english
 

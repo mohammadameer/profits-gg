@@ -6,6 +6,10 @@ import { api } from "~/utils/api";
 import va from "@vercel/analytics";
 import Image from "next/image";
 import useDebounce from "@profits-gg/lib/hooks/useDebounce";
+import clsx from "clsx";
+import { useMempershipModalOpen } from "~/contexts/membership";
+import { useLocalStorage } from "usehooks-ts";
+import places from "~/utils/places";
 
 const categories = {
   "sleeping-on-time": "النوم في الوقت المناسب",
@@ -26,6 +30,11 @@ export default function Story() {
 
   const createCalledRef = useRef(false);
 
+  const { isMempershipModalOpen, setIsMempershipModalOpen } =
+    useMempershipModalOpen();
+
+  const [userId, setUserId] = useLocalStorage<string>("userId", "");
+
   const { data: storyData, refetch: refetchStory } = api.story.get.useQuery(
     {
       slug: slugFromRouter as string,
@@ -40,6 +49,14 @@ export default function Story() {
         setContent(data?.content as string);
         setImagePrompt(data?.imagePrompt as string);
       },
+    }
+  );
+  const { data: user } = api.user.get.useQuery(
+    {
+      id: userId,
+    },
+    {
+      enabled: userId ? true : false,
     }
   );
   const { mutate: getImage, isLoading: isGettingImage } =
@@ -69,6 +86,16 @@ export default function Story() {
     setContent("");
     setImagePrompt("");
 
+    if (user && user?.membershipExpiration) {
+      const membershipExpiration = new Date(user?.membershipExpiration);
+
+      if (membershipExpiration < new Date()) {
+        va.track("create story expired membership");
+        setIsMempershipModalOpen(true);
+        return;
+      }
+    }
+
     const token = await executeRecaptcha?.("createStory");
 
     va.track("creating-story");
@@ -80,6 +107,8 @@ export default function Story() {
       method: "POST",
       body: JSON.stringify({
         category: category as string,
+        place: place as string,
+        userId,
         token,
       }),
     });
@@ -104,10 +133,22 @@ export default function Story() {
       const chunkValue = decoder.decode(value);
 
       if (chunkValue.includes("rate limit exceeded")) {
-        toast.error("وصلت الحد الأقصى للقصص في اليوم");
-        setIsLoading(false);
         va.track("rate-limit-exceeded");
-        router.back();
+        setIsLoading(false);
+        if (user && user?.membershipExpiration) {
+          const membershipExpiration = new Date(user?.membershipExpiration);
+
+          if (membershipExpiration > new Date()) {
+            va.track("rate limit exceeded but membership is valid");
+            toast.error("اصبر شوي وحاول مرة ثانية", {
+              icon: "👀",
+            });
+            router.push("/");
+          }
+        } else {
+          setIsMempershipModalOpen(true);
+        }
+
         return;
       }
 
@@ -136,13 +177,17 @@ export default function Story() {
       !createCalledRef.current
     ) {
       // check if category is valid
-      if (categories[category as keyof typeof categories]) {
+      if (
+        categories[category as keyof typeof categories] ||
+        places[place as keyof typeof places]
+      ) {
         // check if story is already created
         if (!title && !description && !slug && !mainImage && !content) {
           handleCreateStory();
           createCalledRef.current = true;
         }
       } else {
+        va.track("invalid params");
         toast.error("الموضوع غير موجود");
         router.back();
       }
@@ -159,6 +204,7 @@ export default function Story() {
   // get image if image prompt is set
   useEffect(() => {
     if (debouncedImagePrompt && !mainImage && !isGettingImage) {
+      va.track("getting-image");
       getImage(
         {
           prompt: debouncedImagePrompt as string,
@@ -208,62 +254,64 @@ export default function Story() {
   }, [title, description, debouncedContent, imagePrompt, mainImage]);
 
   return (
-    <div className="flex flex-col gap-8 p-6 py-10  pb-20 md:pt-24">
-      {/* className="p-6 py-10 text-6xl font-bold md:pb-14 md:pt-24 md:text-8xl" */}
-      {title ? (
-        <h1 className="text-6xl font-bold md:pb-14 md:text-8xl">
-          عنوان القصة: {title}
-        </h1>
-      ) : (
-        <div className="h-24 w-3/4 animate-pulse rounded-md bg-gray-400" />
-      )}
-      {description ? (
-        <p className="text-xl">وصف القصة: {description}</p>
-      ) : (
-        <div className="h-10 w-2/4 animate-pulse rounded-md bg-gray-400" />
-      )}
-      {slug ? (
-        <p className="text-xl">
-          الموضوع:{" "}
-          {storyData?.categories?.[0]?.name
-            ? categories[
-                storyData?.categories?.[0]?.name as keyof typeof categories
-              ]
-            : category
-            ? categories[category as keyof typeof categories]
-            : ""}
-        </p>
-      ) : (
-        <div className="h-6 w-1/6 animate-pulse rounded-md bg-gray-400" />
-      )}
+    <>
+      <div className={clsx("flex flex-col gap-8 p-6 py-10  pb-20 md:pt-24")}>
+        {/* className="p-6 py-10 text-6xl font-bold md:pb-14 md:pt-24 md:text-8xl" */}
+        {title ? (
+          <h1 className="text-6xl font-bold md:pb-14 md:text-8xl">
+            عنوان القصة: {title}
+          </h1>
+        ) : (
+          <div className="h-24 w-3/4 animate-pulse rounded-md bg-gray-400" />
+        )}
+        {description ? (
+          <p className="text-xl">وصف القصة: {description}</p>
+        ) : (
+          <div className="h-10 w-2/4 animate-pulse rounded-md bg-gray-400" />
+        )}
+        {slug ? (
+          <p className="text-xl">
+            الموضوع:{" "}
+            {storyData?.categories?.[0]?.name
+              ? categories[
+                  storyData?.categories?.[0]?.name as keyof typeof categories
+                ]
+              : category
+              ? categories[category as keyof typeof categories]
+              : ""}
+          </p>
+        ) : (
+          <div className="h-6 w-1/6 animate-pulse rounded-md bg-gray-400" />
+        )}
 
-      {mainImage ? (
-        <Image
-          src={mainImage as string}
-          alt={(imagePrompt || storyData?.imagePrompt) as string}
-          width={500}
-          height={500}
-        />
-      ) : (
-        <div className="h-96 w-96 animate-pulse rounded-md bg-gray-400" />
-      )}
-
-      {content ? (
-        <div className="flex flex-col gap-4">
-          {content?.split("\n").map((paragraph, index) => (
-            <p key={index} className="text-2xl">
-              {paragraph}
-            </p>
-          ))}
-        </div>
-      ) : (
-        Array.from({ length: 5 }).map((_, index) => (
-          <div
-            key={index}
-            className="h-10 w-full animate-pulse rounded-md bg-gray-400"
+        {mainImage ? (
+          <Image
+            src={mainImage as string}
+            alt={(imagePrompt || storyData?.imagePrompt) as string}
+            width={500}
+            height={500}
           />
-        ))
-      )}
-    </div>
+        ) : (
+          <div className="h-96 w-96 animate-pulse rounded-md bg-gray-400" />
+        )}
+
+        {content ? (
+          <div className="flex flex-col gap-4">
+            {content?.split("\n").map((paragraph, index) => (
+              <p key={index} className="text-2xl">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        ) : (
+          Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-10 w-full animate-pulse rounded-md bg-gray-400"
+            />
+          ))
+        )}
+      </div>
+    </>
   );
 }

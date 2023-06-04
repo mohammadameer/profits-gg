@@ -107,7 +107,7 @@ const Home: NextPage = () => {
         onSubmit={handleSubmit(handleSearchStories)}
         className="flex flex-col items-center justify-between p-6 lg:flex-row"
       >
-        <div className="flex w-full gap-4 md:flex-row">
+        <div className="flex w-full flex-col md:flex-row md:gap-4">
           <SelectInput
             name="category"
             label="موضوع القصة"
@@ -150,7 +150,7 @@ const Home: NextPage = () => {
             page?.stories.map((story) => (
               <div
                 key={story.id}
-                className="col-span-full flex cursor-pointer flex-col items-center justify-center gap-4 rounded-md bg-white p-6 shadow-sm md:col-span-6 lg:col-span-4"
+                className="col-span-full flex cursor-pointer flex-col items-center gap-4 rounded-md bg-white p-6 shadow-sm md:col-span-6 lg:col-span-4"
                 onClick={() => {
                   router.push(`/stories/${story.slug}`);
                 }}
@@ -159,8 +159,9 @@ const Home: NextPage = () => {
                   <Image
                     src={story.mainImage as string}
                     alt={story.title as string}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: "cover" }}
+                    sizes="500px"
                     className="rounded-md"
                   />
                 </div>

@@ -77,6 +77,9 @@ model User {
     id            String    @id @default(cuid())
     name          String?
     email         String?   @unique
+    phoneNumber   String?  @unique
+    stripeCustomerId String?
+    membershipExpiration DateTime?
     emailVerified DateTime?
     image         String?
     accounts      Account[]
@@ -89,4 +92,19 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+
+model StripeEvent {
+    id               String   @id @default(cuid())
+    stripeId         String   @unique
+    api_version      String?
+    data             Json
+    request          Json?
+    type             String
+    object           String
+    account          String?
+    created          DateTime
+    livemode         Boolean
+    pending_webhooks Int
 }

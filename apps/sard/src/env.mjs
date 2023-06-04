@@ -21,6 +21,9 @@ const server = z.object({
     process.env.VERCEL ? z.string().min(1) : z.string().url()
   ),
   RECAPTCHA_V3_SECRET_KEY: z.string().min(1),
+  STRIPE_PUBLIC_KEY: z.string().min(1),
+  STRIPE_SECRET_KEY: z.string().min(1),
+  STRIPE_WEBHOOK_SECRET_KEY: z.string().min(1),
   // NEXTAUTH_SECRET:
   //   process.env.NODE_ENV === "production"
   //     ? z.string().min(1)
@@ -38,6 +41,10 @@ const client = z.object(
   /** @satisfies {Record<`NEXT_PUBLIC_${string}`, import('zod').ZodType>} */ ({
     // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
     NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY: z.string().min(1),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
+    NEXT_PUBLIC_STRIPE_ONE_DAY_PAYMENT_LINK: z.string().min(1),
+    NEXT_PUBLIC_STRIPE_ONE_MONTH_PAYMENT_LINK: z.string().min(1),
+    NEXT_PUBLIC_STRIPE_ONE_YEAR_PAYMENT_LINK: z.string().min(1),
   })
 );
 
@@ -56,6 +63,9 @@ const processEnv = {
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   KV_REST_API_URL: process.env.KV_REST_API_URL,
   KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN,
+  STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  STRIPE_WEBHOOK_SECRET_KEY: process.env.STRIPE_WEBHOOK_SECRET_KEY,
   // NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   RECAPTCHA_V3_SECRET_KEY: process.env.RECAPTCHA_V3_SECRET_KEY,
@@ -64,6 +74,13 @@ const processEnv = {
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY:
     process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY,
+  NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+  NEXT_PUBLIC_STRIPE_ONE_DAY_PAYMENT_LINK:
+    process.env.NEXT_PUBLIC_STRIPE_ONE_DAY_PAYMENT_LINK,
+  NEXT_PUBLIC_STRIPE_ONE_MONTH_PAYMENT_LINK:
+    process.env.NEXT_PUBLIC_STRIPE_ONE_MONTH_PAYMENT_LINK,
+  NEXT_PUBLIC_STRIPE_ONE_YEAR_PAYMENT_LINK:
+    process.env.NEXT_PUBLIC_STRIPE_ONE_YEAR_PAYMENT_LINK,
 };
 
 // Don't touch the part below

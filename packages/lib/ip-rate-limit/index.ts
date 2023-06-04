@@ -7,12 +7,19 @@ export default function getIP(request: Request) {
   return xff ? xff.split(",")[0] : "127.0.0.1";
 }
 
-export const ipRateLimit = initRateLimit((request) => ({
-  id: `ip:${getIP(request)}`,
-  count: increment,
-  limit: 1,
-  timeframe: 60 * 60 * 24 * 1, // 1 day
-}));
+export const ipRateLimit = initRateLimit(
+  (
+    request,
+    id = `ip:${getIP(request)}`,
+    limit = 1,
+    timeframe = 60 * 60 * 24 * 1, // 1 day
+  ) => ({
+    id,
+    count: increment,
+    limit,
+    timeframe,
+  }),
+);
 
 const increment: CountFn = async ({ response, key, timeframe }) => {
   // Latency logging

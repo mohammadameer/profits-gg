@@ -28,10 +28,6 @@ export default [
     value: "cooperation",
   },
   {
-    label: "التسامح",
-    value: "tolerance",
-  },
-  {
     label: "الصدق",
     value: "honesty",
   },
