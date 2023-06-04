@@ -13,7 +13,7 @@ import { set, useForm } from "react-hook-form";
 import { required } from "@profits-gg/lib/utils/formRules";
 import { toast } from "react-hot-toast";
 import va from "@vercel/analytics";
-import { usePostHog } from "posthog-js/react/dist/types";
+import { usePostHog } from "posthog-js/react";
 
 type FormValues = {
   emailOrPhoneNumber: string;
