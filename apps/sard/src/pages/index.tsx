@@ -155,13 +155,13 @@ const Home: NextPage = () => {
                   router.push(`/stories/${story.slug}`);
                 }}
               >
-                <div className="relative h-64 w-full">
+                <div className="relative h-64 w-full overflow-hidden">
                   <Image
                     src={story.mainImage as string}
                     alt={story.title as string}
-                    fill
+                    width={500}
+                    height={500}
                     style={{ objectFit: "cover" }}
-                    sizes="500px"
                     className="rounded-md"
                   />
                 </div>
