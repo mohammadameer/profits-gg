@@ -277,6 +277,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             e.preventDefault();
 
             if (!selectedMembership) return;
+            gtag?.("event", "conversion", {
+              send_to: "AW-10865811504/Z5RhCNPd8KcYELDAnL0o",
+              value: selectedMembership?.discountPrice,
+              currency: "SAR",
+            });
             window.open(selectedMembership?.url, "_blank");
           }}
           className="flex w-full flex-col gap-4"
