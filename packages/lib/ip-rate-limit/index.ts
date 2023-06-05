@@ -10,11 +10,11 @@ export default function getIP(request: Request) {
 export const ipRateLimit = initRateLimit(
   (
     request,
-    id = `ip:${getIP(request)}`,
+    id = "",
     limit = 1,
     timeframe = 60 * 60 * 24 * 1, // 1 day
   ) => ({
-    id,
+    id: id || `ip:${getIP(request)}`,
     count: increment,
     limit,
     timeframe,
