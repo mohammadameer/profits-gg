@@ -1594,6 +1594,11 @@
   resolved "https://registry.npmjs.org/@vercel/analytics/-/analytics-1.0.0.tgz"
   integrity sha512-RQmj7pv82JwGDHrnKeRc6TtSw2U7rWNubc2IH0ernTzWTj02yr9zvIYiYJeztsBzrJtWv7m8Nz6vxxb+cdEtJw==
 
+"@vercel/edge@^0.3.4":
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@vercel/edge/-/edge-0.3.4.tgz#4b88bc202e1ba3b70096b588219b57fe82c4a5de"
+  integrity sha512-dFU+yAUDQRwpuRGxRDlEO1LMq0y1LGsBgkyryQWe4w15/Fy2/lCnpvdIoAhHl3QvIGAxCLHzwRHsqfLRdpxgJQ==
+
 abort-controller@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/abort-controller/-/abort-controller-3.0.0.tgz"

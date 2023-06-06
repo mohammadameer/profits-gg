@@ -1,10 +1,11 @@
 import type { CountFn } from "./rate-limit";
 import { initRateLimit } from "./rate-limit";
 import { upstashRest } from "./upstash";
+import { ipAddress } from "@vercel/edge";
 
 export default function getIP(request: Request) {
-  const xff = request.headers.get("x-forwarded-for");
-  return xff ? xff.split(",")[0] : "127.0.0.1";
+  const ip = ipAddress(request) || "127.0.0.1";
+  return ip;
 }
 
 export const ipRateLimit = initRateLimit(
