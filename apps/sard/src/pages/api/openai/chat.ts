@@ -84,8 +84,8 @@ export default async function handler(req: Request) {
     body: JSON.stringify({
       model: "gpt-3.5-turbo",
       stream: true,
-      temperature: 0.8,
-      top_p: 0.7,
+      temperature: 1,
+      top_p: 1,
       max_tokens: 1100,
       messages: [
         {
@@ -94,7 +94,7 @@ export default async function handler(req: Request) {
           act as a storyteller
 
           - i want a title, description, url slug, image prompt for open ai dalle model and the content of the story
-          - the story category is honesty
+          - the story category is ${category}
           - the title should contain a character and a place
           - the description should be short and contain the main story parts
           - the character can be a person name, an animal, an inanimate
