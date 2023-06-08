@@ -14,6 +14,7 @@ import { required } from "@profits-gg/lib/utils/formRules";
 import { toast } from "react-hot-toast";
 import va from "@vercel/analytics";
 import { usePostHog } from "posthog-js/react";
+import NewStoryModal from "~/components/modals/NewStoryModal";
 
 type FormValues = {
   emailOrPhoneNumber: string;
@@ -34,6 +35,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [selectedMembership, setSelectedMembership] = useState<
     Membership | undefined
   >();
+  const [newStoryModalOpen, setNewStoryModalOpen] = useState<boolean>(false);
   const [isActivateMembershipModalOpen, setIsActivateMembershipModalOpen] =
     useState<boolean>(false);
   const [checkoutSessionSuccess, setCheckoutSessionSuccess] =
@@ -176,18 +178,24 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           "flex min-h-screen flex-col bg-gray-200 transition-all duration-300",
           isMempershipModalOpen ||
             checkoutSessionSuccess ||
-            isActivateMembershipModalOpen
+            isActivateMembershipModalOpen ||
+            newStoryModalOpen
             ? "blur-3xl"
             : null
         )}
       >
-        <div className="flex w-full pr-5 pt-5">
+        <div className="flex w-full items-center justify-between p-6">
           <p
             className="text transform cursor-pointer text-4xl font-bold text-gray-900 duration-300 hover:scale-105 active:scale-95 md:text-5xl"
             onClick={() => router.push("/")}
           >
             📖 سرد
           </p>
+          <Button
+            text="قصة جديدة"
+            onClick={() => setNewStoryModalOpen(true)}
+            className=" !bg-blue-500 !text-white"
+          />
         </div>
         {children}
         <div className="flex justify-end gap-4 p-4">
@@ -208,6 +216,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </a>
         </div>
       </div>
+
+      {/* New Story Modal */}
+      <NewStoryModal open={newStoryModalOpen} setOpen={setNewStoryModalOpen} />
 
       {/* Checkout Session Success Modal */}
       <Modal

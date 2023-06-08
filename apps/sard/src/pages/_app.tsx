@@ -6,6 +6,7 @@ import { ReCaptchaProvider } from "next-recaptcha-v3";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import { api } from "~/utils/api";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import "~/styles/globals.css";
 import { Toaster } from "react-hot-toast";
@@ -43,17 +44,19 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <PostHogProvider client={posthog}>
       <MempershipModalOpenProvider>
         <Layout>
-          <SessionProvider session={session}>
-            <ReCaptchaProvider
-              reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY}
-              useEnterprise={true}
-            >
-              <Component {...pageProps} />
-            </ReCaptchaProvider>
-            <Analytics />
-          </SessionProvider>
+          {/* <SessionProvider session={session}> */}
+          <ReCaptchaProvider
+            reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY}
+            useEnterprise={true}
+          >
+            <Component {...pageProps} />
+          </ReCaptchaProvider>
+          <Analytics />
+          {/* </SessionProvider> */}
         </Layout>
         <Toaster />
+
+        <ReactQueryDevtools initialIsOpen={false} />
       </MempershipModalOpenProvider>
     </PostHogProvider>
   );

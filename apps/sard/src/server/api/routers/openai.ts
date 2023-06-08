@@ -13,7 +13,7 @@ export const openaiRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.openai.createImage({
         prompt:
-          "cartoonic, oit paster and child painting style of " + input.prompt,
+          "cartoonic, colorful and oil paster painting of " + input.prompt,
         response_format: "url",
       });
 

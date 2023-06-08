@@ -77,7 +77,7 @@ import { NextApiRequest } from "next";
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { openai } from "~/server/openai";
 
-const t = initTRPC.context<typeof createTRPCContext>().create({
+export const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     return {

@@ -10,17 +10,7 @@ import clsx from "clsx";
 import { useMempershipModalOpen } from "~/contexts/membership";
 import { useLocalStorage } from "usehooks-ts";
 import places from "~/utils/places";
-
-const categories = {
-  "sleeping-on-time": "النوم في الوقت المناسب",
-  "personal-hygiene": "النظافة الشخصية",
-  bullying: "التنمر",
-  "self-confidence": "الثقة في النفس",
-  responsibility: "المسؤولية",
-  cooperation: "التعاون",
-  tolerance: "التسامح",
-  honesty: "الصدق",
-};
+import categories from "~/utils/categories";
 
 export default function Story() {
   const router = useRouter();
@@ -51,6 +41,7 @@ export default function Story() {
       },
     }
   );
+
   const { data: user } = api.user.get.useQuery(
     {
       id: userId,
@@ -177,10 +168,7 @@ export default function Story() {
       !createCalledRef.current
     ) {
       // check if category is valid
-      if (
-        categories[category as keyof typeof categories] ||
-        places[place as keyof typeof places]
-      ) {
+      if (categories?.find((categoryItem) => categoryItem.value === category)) {
         // check if story is already created
         if (!title && !description && !slug && !mainImage && !content) {
           handleCreateStory();
@@ -189,7 +177,7 @@ export default function Story() {
       } else {
         va.track("invalid params");
         toast.error("الموضوع غير موجود");
-        router.back();
+        router.push("/");
       }
     }
   }, [category, isRecaptchaLoaded, slugFromRouter, isLoading]);
@@ -272,13 +260,13 @@ export default function Story() {
         {slug ? (
           <p className="text-xl">
             الموضوع:{" "}
-            {storyData?.categories?.[0]?.name
-              ? categories[
-                  storyData?.categories?.[0]?.name as keyof typeof categories
-                ]
-              : category
-              ? categories[category as keyof typeof categories]
-              : ""}
+            {
+              categories?.find(
+                (categoryItem) =>
+                  categoryItem.value === category ||
+                  categoryItem.value === storyData?.categories?.[0]?.name
+              )?.label
+            }
           </p>
         ) : (
           <div className="h-6 w-1/6 animate-pulse rounded-md bg-gray-400" />

@@ -8,6 +8,7 @@
     "prettier-preset.js"
   ],
   "dependencies": {
+    "autoprefixer": "^10.4.14",
     "eslint-config-turbo": "^0.0.7",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier-plugin-tailwindcss": "^0.2.8"

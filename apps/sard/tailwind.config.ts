@@ -4,4 +4,5 @@ const base = require("@profits-gg/config/tailwind-preset");
 module.exports = {
   ...base,
   content: [...base.content],
+  plugins: [],
 };

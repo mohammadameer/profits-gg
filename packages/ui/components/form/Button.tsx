@@ -8,6 +8,7 @@ export type ButtonProps = {
   disabled?: boolean;
   loading?: boolean;
   className?: string;
+  styles?: React.CSSProperties;
   noStyles?: boolean;
 };
 
@@ -18,6 +19,7 @@ const Button: FC<ButtonProps> = ({
   disabled = false,
   loading = false,
   className = "",
+  styles = {},
   noStyles = false,
 }) => {
   return (
@@ -26,6 +28,7 @@ const Button: FC<ButtonProps> = ({
         if (!disabled && !loading) onClick();
       }}
       type={type}
+      style={{ ...styles, ...(noStyles ? {} : styles) }}
       className={clsx(
         "rounded-lg px-6 py-4 transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 ",
         noStyles ? "text-white hover:bg-white/20" : `bg-white text-black/80`,
