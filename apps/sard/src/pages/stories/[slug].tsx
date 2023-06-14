@@ -301,7 +301,7 @@ export default function Story() {
           <div className="flex flex-col gap-4">
             {content?.split("\n").map((paragraph, index) => (
               <p key={index} className="text-2xl">
-                {paragraph}
+                {paragraph?.replace(/🍆|🌈|🏳️‍🌈|/gm, "")}
               </p>
             ))}
           </div>
