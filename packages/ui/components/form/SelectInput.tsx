@@ -13,7 +13,7 @@ import Error from "../Error";
 
 type Option = {
   label: string;
-  value: string | number | null;
+  value: string | number | boolean | null;
 };
 
 export type SelectInputProps<T extends FieldValues> = {
@@ -39,7 +39,7 @@ export type SelectInputProps<T extends FieldValues> = {
     menu?: () => string;
     option?: () => string;
   };
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 const defaultClassNames = {

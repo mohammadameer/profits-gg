@@ -193,7 +193,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </p>
           <Button
             text="قصة جديدة"
-            onClick={() => setNewStoryModalOpen(true)}
+            onClick={() => {
+              router.push("/");
+              setNewStoryModalOpen(true);
+            }}
             className=" !bg-blue-500 !text-white"
           />
         </div>

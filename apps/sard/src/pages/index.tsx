@@ -101,18 +101,23 @@ const Home = ({ stories }: { stories: Story[] }) => {
           stories?.map((story) => (
             <div
               key={story.id}
-              className="relative col-span-full flex h-64 cursor-pointer items-center justify-center overflow-hidden overflow-hidden rounded-md bg-white shadow-sm md:col-span-6 lg:col-span-4"
+              className="relative col-span-full flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-6 lg:col-span-4"
               onClick={() => {
                 router.push(`/stories/${story.slug}`);
+                (window as any)?.ttq?.track("ViewContent", {
+                  content_id: story.id,
+                  content_type: "product",
+                  content_name: story.title,
+                });
               }}
             >
               <Image
-                src={story.mainImage as string}
+                src={"data:image/png;base64," + story.mainImage}
                 alt={story.title as string}
-                width={500}
-                height={500}
+                fill
                 style={{ objectFit: "cover" }}
                 className="rounded-md"
+                unoptimized={true}
               />
               <div className="absolute bottom-0 left-0 flex w-full items-center justify-center bg-gradient-to-t from-black/50 via-black/50 p-2">
                 <p className="text text-2xl font-bold leading-10 text-white md:text-2xl">
@@ -126,14 +131,6 @@ const Home = ({ stories }: { stories: Story[] }) => {
             <p className="text text-xl font-bold leading-10 text-gray-900 md:text-2xl">
               لا توجد قصص حاليا
             </p>
-
-            <div>
-              <Button
-                text="أنشئ قصة خاصة"
-                onClick={handleSubmit(handleCreateStory)}
-                className="w-full !bg-blue-500 !text-white"
-              />
-            </div>
           </div>
         )}
       </div>
@@ -154,6 +151,8 @@ export async function getServerSideProps({
       createdAt: "desc",
     },
     where: {
+      version: 4,
+      hidden: false,
       mainImage: {
         not: null,
       },
@@ -166,11 +165,8 @@ export async function getServerSideProps({
     },
   });
 
-  // revalidate after day and stale while revalidate for day
-  res?.setHeader(
-    "Cache-Control",
-    "public, s-maxage=86400, stale-while-revalidate=86400"
-  );
+  // revalidate every 1 hour
+  res?.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
 
   return {
     props: {

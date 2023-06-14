@@ -16,7 +16,7 @@ export default [
     id: 2,
     emoji: "🧼",
     label: "النظافة الشخصية",
-    value: "personal-hygiene",
+    value: "self-cleaning",
   },
   {
     id: 3,
@@ -45,8 +45,8 @@ export default [
   {
     id: 7,
     emoji: "🤥",
-    label: "الصدق",
-    value: "honesty",
+    label: "الكذب",
+    value: "lying",
   },
   {
     id: 8,

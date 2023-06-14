@@ -3,7 +3,7 @@ import type { FC } from "react";
 
 export type ButtonProps = {
   text: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   loading?: boolean;
@@ -24,8 +24,8 @@ const Button: FC<ButtonProps> = ({
 }) => {
   return (
     <button
-      onClick={() => {
-        if (!disabled && !loading) onClick();
+      onClick={(e) => {
+        if (!disabled && !loading) onClick(e);
       }}
       type={type}
       style={{ ...styles, ...(noStyles ? {} : styles) }}

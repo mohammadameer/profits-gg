@@ -22,7 +22,11 @@ export const storyRouter = createTRPCRouter({
   list: publicProcedure
     .input(
       z.object({
+        id: z.string().nullish(),
+        title: z.string().nullish(),
+        slug: z.string().nullish(),
         category: z.string().nullish(),
+        hidden: z.boolean().nullish(),
         place: z.string().nullish(),
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.number().nullish(), // <-- "cursor" needs to exist, but can be any type
@@ -33,13 +37,18 @@ export const storyRouter = createTRPCRouter({
       const skip = input.cursor ?? 0;
 
       const query: Prisma.StoryFindManyArgs = {
+        orderBy: {
+          createdAt: "desc",
+        },
         where: {
           AND: {
+            id: input.id ?? undefined,
             categories: {
               some: {
                 name: input.category ?? undefined,
               },
             },
+            hidden: input.hidden ?? undefined,
             mainImage: {
               not: null,
             },
@@ -62,13 +71,13 @@ export const storyRouter = createTRPCRouter({
   create: publicProcedure
     .input(
       z.object({
+        account: z.string().nullish(),
         title: z.string(),
         description: z.string(),
         slug: z.string(),
         mainImage: z.string(),
         imagePrompt: z.string(),
         content: z.string(),
-        place: z.string(),
         category: z.string(),
         wordCount: z.number(),
         language: z.string(),
@@ -91,7 +100,6 @@ export const storyRouter = createTRPCRouter({
           title: input.title,
           description: input.description,
           slug: input.slug,
-          place: input.place,
           mainImage: input.mainImage,
           imagePrompt: input.imagePrompt,
           content: input.content,
@@ -121,6 +129,7 @@ export const storyRouter = createTRPCRouter({
         wordCount: z.number().nullish(),
         language: z.string().nullish(),
         version: z.number().nullish(),
+        hidden: z.boolean().nullish(),
       })
     )
     .mutation(async ({ ctx, input }) =>
@@ -138,11 +147,7 @@ export const storyRouter = createTRPCRouter({
           wordCount: input.wordCount,
           language: input.language,
           version: input.version,
-          categories: {
-            connect: {
-              name: input.category ?? undefined,
-            },
-          },
+          hidden: input.hidden ?? undefined,
         },
       })
     ),

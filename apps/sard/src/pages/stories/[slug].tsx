@@ -53,8 +53,11 @@ export default function Story() {
   const { mutate: getImage, isLoading: isGettingImage } =
     api.openai.getImage.useMutation();
 
-  const { mutate: createStory, isLoading: isCreatingStory } =
-    api.story.create.useMutation();
+  const {
+    mutate: createStory,
+    isLoading: isCreatingStory,
+    data: storyCreateData,
+  } = api.story.create.useMutation();
 
   const [title, setTitle] = useState<string>();
   const [description, setDescription] = useState<string>();
@@ -209,6 +212,7 @@ export default function Story() {
   // if title, description, content and image are set, update the story
   useEffect(() => {
     if (
+      !storyCreateData &&
       !storyData &&
       title &&
       description &&
@@ -220,6 +224,7 @@ export default function Story() {
     ) {
       createStory(
         {
+          account: userId,
           title,
           description,
           slug: slug.trim(),
@@ -227,10 +232,9 @@ export default function Story() {
           imagePrompt,
           content: debouncedContent,
           category: category as string,
-          place: place as string,
           wordCount: debouncedContent.split(" ").length,
           language: "ar",
-          version: 2,
+          version: 4,
         },
         {
           onSuccess: () => {
@@ -239,7 +243,14 @@ export default function Story() {
         }
       );
     }
-  }, [title, description, debouncedContent, imagePrompt, mainImage]);
+  }, [
+    title,
+    description,
+    debouncedContent,
+    imagePrompt,
+    mainImage,
+    isCreatingStory,
+  ]);
 
   return (
     <>
@@ -273,12 +284,15 @@ export default function Story() {
         )}
 
         {mainImage ? (
-          <Image
-            src={mainImage as string}
-            alt={(imagePrompt || storyData?.imagePrompt) as string}
-            width={500}
-            height={500}
-          />
+          <div className="relative h-[500px] w-full md:w-[500px]">
+            <Image
+              src={"data:image/jpeg;base64," + mainImage}
+              alt={(imagePrompt || storyData?.imagePrompt) as string}
+              width={500}
+              height={500}
+              unoptimized={true}
+            />
+          </div>
         ) : (
           <div className="h-96 w-full animate-pulse rounded-md bg-gray-400 md:w-96" />
         )}

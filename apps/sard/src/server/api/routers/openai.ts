@@ -13,15 +13,15 @@ export const openaiRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const data = await ctx.openai.createImage({
         prompt:
-          "cartoonic, colorful and oil paster painting of " + input.prompt,
-        response_format: "url",
+          "cartoonic, colorful and oil pastel painting of " + input.prompt,
+        response_format: "b64_json",
       });
 
-      if (!data?.data?.data?.[0]?.url) {
-        throw new Error("No url");
+      if (!data?.data?.data?.[0]?.b64_json) {
+        throw new Error("No image");
       }
 
-      return data.data.data[0].url;
+      return data.data.data[0].b64_json;
     }),
   createStory: publicProcedure
     .input(
