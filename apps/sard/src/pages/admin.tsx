@@ -1,5 +1,7 @@
+import { Story } from "@prisma/client";
 import useLocalStorage from "@profits-gg/lib/hooks/useLocalStorage";
 import { Button, SelectInput, TextInput } from "@profits-gg/ui";
+import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
@@ -11,17 +13,16 @@ import categories, { Category } from "~/utils/categories";
 export default function Admin() {
   const router = useRouter();
 
-  const { control, watch } = useForm();
+  const { control, watch, handleSubmit, getValues, reset } = useForm();
 
   const id = watch("id");
   const category = watch("category");
-  const title = watch("title");
-  const slug = watch("slug");
   const hidden = watch("hidden");
 
   const [userId, setUserId] = useLocalStorage("userId", "");
 
   const [isAdmin, setIsAdmin] = useState(false);
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
 
   const { data: user, isLoading } = api.user.get.useQuery(
     {
@@ -40,8 +41,6 @@ export default function Admin() {
     {
       id: id as string,
       category: category as string,
-      title: title as string,
-      slug: slug as string,
       hidden: hidden as boolean,
     },
     {
@@ -65,6 +64,8 @@ export default function Admin() {
       }
     }
   }, [userId, user, isLoading]);
+
+  const updateStoryDetails = async (data: any) => {};
 
   return (
     <>
@@ -147,21 +148,25 @@ export default function Admin() {
           label="الرابط"
         />
       </div>
-      <div className="grid w-full grid-cols-12 gap-4 p-6">
+      <div className="grid w-full grid-cols-12 grid-rows-6 gap-4 p-6">
         {stories?.pages?.length && stories?.pages?.[0]?.stories?.length ? (
           stories?.pages?.map((page) =>
             page?.stories?.map((story) => (
               <div
                 key={story.id}
-                className="relative col-span-full flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-6 lg:col-span-4"
-                onClick={() => {
-                  router.push(`/stories/${story.slug}`);
-                  (window as any)?.ttq?.track("ViewContent", {
-                    content_id: story.id,
-                    content_type: "product",
-                    content_name: story.title,
-                  });
-                }}
+                className={clsx(
+                  "relative col-span-full flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-6 lg:col-span-4",
+                  story.id === selectedStory?.id &&
+                    "!col-span-full !row-span-2 h-full"
+                )}
+                // onClick={() => {
+                //   router.push(`/stories/${story.slug}`);
+                //   (window as any)?.ttq?.track("ViewContent", {
+                //     content_id: story.id,
+                //     content_type: "product",
+                //     content_name: story.title,
+                //   });
+                // }}
               >
                 {story.mainImage ? (
                   <Image
@@ -177,30 +182,116 @@ export default function Admin() {
                     unoptimized={true}
                   />
                 ) : null}
-                <div className="absolute bottom-0 left-0 flex w-full items-center justify-center bg-gradient-to-t from-black/50 via-black/50 p-2">
-                  <p className="text text-2xl font-bold leading-10 text-white md:text-2xl">
-                    {story.title}
-                  </p>
-                </div>
+                {selectedStory?.id !== story.id ? (
+                  <div className="absolute bottom-0 left-0 flex w-full items-center justify-center bg-gradient-to-t from-black/50 via-black/50 p-2">
+                    <p className="text text-2xl font-bold leading-10 text-white md:text-2xl">
+                      {story.title}
+                    </p>
+                  </div>
+                ) : null}
 
-                <Button
-                  text={story?.hidden ? "إظهار" : "إخفاء"}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    updateStory(
-                      {
-                        id: story.id,
-                        hidden: !story.hidden,
-                      },
-                      {
-                        onSuccess: () => {
-                          refetchStories();
-                        },
+                {selectedStory?.id == story.id ? (
+                  <form
+                    onSubmit={handleSubmit(updateStoryDetails)}
+                    className="absolute bottom-0 right-0 grid w-full grid-cols-12 gap-2 p-6"
+                  >
+                    <TextInput
+                      className="col-span-6"
+                      inputClassName="!bg-gray-200 focus:!border-gray-500"
+                      name="title"
+                      control={control}
+                      placeholder="العنوان"
+                      defaultValue={story.title}
+                    />
+                    <TextInput
+                      className="col-span-6"
+                      inputClassName="!bg-gray-200 focus:!border-gray-500"
+                      name="description"
+                      control={control}
+                      placeholder="الوصف"
+                      defaultValue={story.description}
+                    />
+                    <TextInput
+                      className="col-span-6"
+                      inputClassName="!bg-gray-200 focus:!border-gray-500"
+                      name="slug"
+                      control={control}
+                      placeholder="الرابط"
+                      defaultValue={story.slug}
+                    />
+                    <TextInput
+                      className="col-span-10"
+                      inputClassName="!bg-gray-200 focus:!border-gray-500"
+                      name="content"
+                      control={control}
+                      placeholder="المحتوى"
+                      defaultValue={story.content}
+                    />
+
+                    <Button
+                      text="حفظ"
+                      type="submit"
+                      onClick={() => {
+                        updateStory(
+                          {
+                            id: story.id,
+                            title: getValues("title"),
+                            description: getValues("description"),
+                            slug: getValues("slug"),
+                            content: getValues("content"),
+                          },
+                          {
+                            onSuccess: () => {
+                              refetchStories();
+                              setSelectedStory(null);
+                            },
+                          }
+                        );
+                      }}
+                      className="col-span-4 select-none shadow-md"
+                    />
+                  </form>
+                ) : null}
+
+                <div className="absolute left-2 top-2 flex gap-2">
+                  <Button
+                    text={"تعديل"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (selectedStory?.id === story.id) {
+                        setSelectedStory(null);
+                      } else {
+                        setSelectedStory(story);
+                        reset({
+                          title: story.title,
+                          description: story.description,
+                          slug: story.slug,
+                          mainImage: story.mainImage,
+                          content: story.content,
+                        });
                       }
-                    );
-                  }}
-                  className="absolute left-2 top-2 select-none shadow-md"
-                />
+                    }}
+                    className="select-none shadow-md"
+                  />
+                  <Button
+                    text={story?.hidden ? "إظهار" : "إخفاء"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateStory(
+                        {
+                          id: story.id,
+                          hidden: !story.hidden,
+                        },
+                        {
+                          onSuccess: () => {
+                            refetchStories();
+                          },
+                        }
+                      );
+                    }}
+                    className="select-none shadow-md"
+                  />
+                </div>
               </div>
             ))
           )

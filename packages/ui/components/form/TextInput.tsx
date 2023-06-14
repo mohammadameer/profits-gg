@@ -12,7 +12,7 @@ import Error from "../Error";
 import clsx from "clsx";
 
 export type TextInputProps<T extends FieldValues> = {
-  label: string;
+  label?: string;
   placeholder?: string;
   name: Path<T>;
   rules?: Exclude<
