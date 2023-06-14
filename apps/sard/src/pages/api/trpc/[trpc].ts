@@ -7,6 +7,7 @@ import { appRouter } from "~/server/api/root";
 export const config = {
   responseLimit: false,
   api: {
+    responseLimit: false,
     bodyParser: {
       sizeLimit: "10mb",
     },
