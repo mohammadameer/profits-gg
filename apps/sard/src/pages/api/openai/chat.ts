@@ -94,13 +94,12 @@ export default async function handler(req: Request) {
           act as a storyteller for children
 
           - i want a title, description, url slug, image prompt for open ai dalle model and the content of the story
-          - the story category is ${category}
+          - the story is for childrens and is about ${category}
           - the description should be short and contain the main story parts
           - the character can be a person name, an animal, an inanimate
           - use arabic for the title, slug and the content without translation
           - the content length should be between 200 -  350 word and after every 5 words use a proper emoji 
           - image prompt should use description with min 10 words and should be in english
-          - don't use any of these emojies 🌈 🍆
 
           response structure example
 

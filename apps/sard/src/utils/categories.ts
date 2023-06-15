@@ -16,7 +16,7 @@ export default [
     id: 2,
     emoji: "🧼",
     label: "النظافة الشخصية",
-    value: "self-cleaning",
+    value: "personal-hygiene",
   },
   {
     id: 3,

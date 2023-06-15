@@ -1,14 +1,16 @@
 import { Story } from "@prisma/client";
 import useLocalStorage from "@profits-gg/lib/hooks/useLocalStorage";
-import { Button, SelectInput, TextInput } from "@profits-gg/ui";
+import { Button, SelectInput, TextAreaInput, TextInput } from "@profits-gg/ui";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import StoryImage from "~/components/StoryImage";
 import { api } from "~/utils/api";
 import categories, { Category } from "~/utils/categories";
+import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
 
 export default function Admin() {
   const router = useRouter();
@@ -37,17 +39,24 @@ export default function Admin() {
     data: stories,
     isFetching: isFetchingStories,
     refetch: refetchStories,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
   } = api.story.list.useInfiniteQuery(
     {
       id: id as string,
       category: category as string,
       hidden: hidden as boolean,
+      limit: 4,
     },
     {
       enabled: isAdmin,
+      getNextPageParam: (lastPage) => lastPage?.nextCursor,
     }
   );
 
+  console.log("hasNextPage", hasNextPage);
   const { mutate: updateStory } = api.story.update.useMutation();
 
   useEffect(() => {
@@ -64,6 +73,14 @@ export default function Admin() {
       }
     }
   }, [userId, user, isLoading]);
+
+  const handleFetchNextPage = () => {
+    if (!isFetchingStories && hasNextPage && status === "success") {
+      fetchNextPage();
+    }
+  };
+
+  const buttonInView = useInViewObserver(handleFetchNextPage);
 
   const updateStoryDetails = async (data: any) => {};
 
@@ -134,28 +151,15 @@ export default function Admin() {
           control={control}
           label="الرقم"
         />
-        <TextInput
-          className="w-full"
-          name="title"
-          control={control}
-          label="العنوان"
-          inputClassName="!bg-gray-200 focus:!border-gray-500"
-        />
-        <TextInput
-          inputClassName="!bg-gray-200 focus:!border-gray-500"
-          name="slug"
-          control={control}
-          label="الرابط"
-        />
       </div>
-      <div className="grid w-full grid-cols-12 grid-rows-6 gap-4 p-6">
+      <div className="grid w-full grid-cols-12 grid-rows-6 gap-4 p-6 transition-all">
         {stories?.pages?.length && stories?.pages?.[0]?.stories?.length ? (
           stories?.pages?.map((page) =>
             page?.stories?.map((story) => (
               <div
                 key={story.id}
                 className={clsx(
-                  "relative col-span-full flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-6 lg:col-span-4",
+                  "relative col-span-full flex h-64 items-center justify-start overflow-scroll rounded-md bg-white shadow-sm transition-all md:col-span-6 lg:col-span-4",
                   story.id === selectedStory?.id &&
                     "!col-span-full !row-span-2 h-full"
                 )}
@@ -168,20 +172,7 @@ export default function Admin() {
                 //   });
                 // }}
               >
-                {story.mainImage ? (
-                  <Image
-                    src={
-                      story.mainImage.includes("http")
-                        ? story.mainImage
-                        : "data:image/png;base64," + story.mainImage
-                    }
-                    alt={story.title as string}
-                    fill
-                    style={{ objectFit: "cover" }}
-                    className="rounded-md"
-                    unoptimized={true}
-                  />
-                ) : null}
+                <StoryImage id={story.id} alt={story.title as string} />
                 {selectedStory?.id !== story.id ? (
                   <div className="absolute bottom-0 left-0 flex w-full items-center justify-center bg-gradient-to-t from-black/50 via-black/50 p-2">
                     <p className="text text-2xl font-bold leading-10 text-white md:text-2xl">
@@ -219,8 +210,9 @@ export default function Admin() {
                       placeholder="الرابط"
                       defaultValue={story.slug}
                     />
-                    <TextInput
+                    <TextAreaInput
                       className="col-span-10"
+                      height="h-36"
                       inputClassName="!bg-gray-200 focus:!border-gray-500"
                       name="content"
                       control={control}
@@ -311,6 +303,16 @@ export default function Admin() {
             لا توجد قصص
           </p>
         )}
+        <div className="col-span-full" ref={buttonInView.ref}>
+          <Button
+            text={hasNextPage ? "حمل المزيد من القصص" : "وصلت للنهاية"}
+            noStyles={hasNextPage ? false : true}
+            loading={isFetchingNextPage}
+            disabled={!hasNextPage}
+            onClick={() => (hasNextPage ? handleFetchNextPage() : null)}
+            className="w-full !bg-white !text-black"
+          />
+        </div>
       </div>
     </>
   );

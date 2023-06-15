@@ -11,8 +11,8 @@ import type {
 import Error from "../Error";
 import clsx from "clsx";
 
-type TextAreaInputProps<T extends FieldValues> = {
-  label: string;
+export type TextAreaInputProps<T extends FieldValues> = {
+  label?: string;
   placeholder: string;
   name: Path<T>;
   rules?: Exclude<
@@ -22,6 +22,7 @@ type TextAreaInputProps<T extends FieldValues> = {
   defaultValue?: unknown;
   control?: Control<T>;
   className?: string;
+  inputClassName?: string;
   height?: string;
 };
 
@@ -32,6 +33,7 @@ export default function TextAreaInput<T extends FieldValues>({
   control = undefined,
   rules = {},
   className = "",
+  inputClassName = "",
   height = "h-10",
 }: TextAreaInputProps<T>) {
   const {
@@ -43,7 +45,7 @@ export default function TextAreaInput<T extends FieldValues>({
     <div
       className={clsx(
         "relative flex w-full flex-col gap-2 focus-within:border-white",
-        className
+        className,
       )}
     >
       <label htmlFor={name} className="block">
@@ -58,10 +60,11 @@ export default function TextAreaInput<T extends FieldValues>({
         autoComplete="off"
         onBlur={onBlur}
         className={clsx(
-          `h-10 w-full rounded-lg border border-gray-500 bg-gray-800 px-2 outline-none focus:border-white ${
+          `h-10 w-full rounded-lg border border-gray-500 bg-gray-800 px-2 pb-4 outline-none focus:border-white ${
             error ? "border-red-500" : ""
           }`,
-          height
+          height,
+          inputClassName,
         )}
       />
 

@@ -15,7 +15,7 @@ export const openaiRouter = createTRPCRouter({
         prompt:
           "cartoonic, colorful and oil pastel painting of " + input.prompt,
         response_format: "b64_json",
-        size: "256x256",
+        size: "512x512",
       });
 
       if (!data?.data?.data?.[0]?.b64_json) {

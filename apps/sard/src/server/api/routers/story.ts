@@ -45,7 +45,7 @@ export const storyRouter = createTRPCRouter({
           title: true,
           slug: true,
           description: true,
-          mainImage: true,
+          hidden: true,
           content: true,
         },
         where: {
@@ -69,9 +69,13 @@ export const storyRouter = createTRPCRouter({
 
       const stories: Story[] = await ctx.prisma.story.findMany(query);
 
-      const storiesFetched = stories.length;
-      const nextCursor: typeof skip | null =
-        storiesFetched > take ? skip + storiesFetched : null;
+      const dataFetched = stories.length;
+      let nextCursor: typeof skip | null = skip;
+      if (dataFetched > take) {
+        nextCursor += dataFetched;
+      } else {
+        nextCursor = null;
+      }
 
       return {
         stories,
@@ -158,6 +162,22 @@ export const storyRouter = createTRPCRouter({
           language: input.language,
           version: input.version,
           hidden: input.hidden ?? undefined,
+        },
+      })
+    ),
+  storyImage: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) =>
+      ctx.prisma.story.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: {
+          mainImage: true,
         },
       })
     ),

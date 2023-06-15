@@ -6,6 +6,8 @@ export { default as MenuButton } from "./components/MenuButton";
 export type { MenuButtonProps } from "./components/MenuButton";
 export { default as TextInput } from "./components/form/TextInput";
 export type { TextInputProps } from "./components/form/TextInput";
+export { default as TextAreaInput } from "./components/form/TextAreaInput";
+export type { TextAreaInputProps } from "./components/form/TextAreaInput";
 export { default as CodeInput } from "./components/form/CodeInput";
 export type { CodeInputProps } from "./components/form/CodeInput";
 export { default as SelectInput } from "./components/form/SelectInput";
