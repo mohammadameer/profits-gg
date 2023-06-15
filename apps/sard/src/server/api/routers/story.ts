@@ -40,6 +40,14 @@ export const storyRouter = createTRPCRouter({
         orderBy: {
           createdAt: "desc",
         },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          description: true,
+          mainImage: true,
+          content: true,
+        },
         where: {
           AND: {
             id: input.id ?? undefined,
@@ -55,6 +63,8 @@ export const storyRouter = createTRPCRouter({
             place: input?.place ?? undefined,
           },
         },
+        take: take + 1, // get an extra item at the end which we'll use as next cursor
+        skip,
       };
 
       const stories: Story[] = await ctx.prisma.story.findMany(query);
