@@ -48,7 +48,6 @@ export default function Admin() {
       id: id as string,
       category: category as string,
       hidden: hidden as boolean,
-      limit: 4,
     },
     {
       enabled: isAdmin,
