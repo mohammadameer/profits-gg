@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import { prisma } from "~/server/db";
 import { Story } from "@prisma/client";
+import StoryImage from "~/components/StoryImage";
 
 type FormValues = {
   category: string;
@@ -111,14 +112,7 @@ const Home = ({ stories }: { stories: Story[] }) => {
                 });
               }}
             >
-              <Image
-                src={"data:image/png;base64," + story.mainImage}
-                alt={story.title as string}
-                fill
-                style={{ objectFit: "cover" }}
-                className="rounded-md"
-                unoptimized={true}
-              />
+              <StoryImage id={story.id} alt={story.title as string} />
               <div className="absolute bottom-0 left-0 flex w-full items-center justify-center bg-gradient-to-t from-black/50 via-black/50 p-2">
                 <p className="text text-2xl font-bold leading-10 text-white md:text-2xl">
                   {story.title}
@@ -161,7 +155,6 @@ export async function getServerSideProps({
       id: true,
       title: true,
       slug: true,
-      mainImage: true,
     },
   });
 
