@@ -11,6 +11,16 @@ import { useMempershipModalOpen } from "~/contexts/membership";
 import { useLocalStorage } from "usehooks-ts";
 import places from "~/utils/places";
 import categories from "~/utils/categories";
+import Compressor from "compressorjs";
+import {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from "next";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { appRouter } from "~/server/api/root";
+import { createInnerTRPCContext } from "~/server/api/trpc";
+import SuperJSON from "superjson";
 
 export default function Story() {
   const router = useRouter();
@@ -25,20 +35,15 @@ export default function Story() {
 
   const [userId, setUserId] = useLocalStorage<string>("userId", "");
 
-  const { data: storyData, refetch: refetchStory } = api.story.get.useQuery(
+  const { data: storyData } = api.story.get.useQuery(
     {
       slug: slugFromRouter as string,
     },
     {
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      retry: false,
       enabled: false,
-      onSuccess: (data) => {
-        setTitle(data?.title as string);
-        setDescription(data?.description as string);
-        setSlug(data?.slug as string);
-        setMainImage(data?.mainImage as string);
-        setContent(data?.content as string);
-        setImagePrompt(data?.imagePrompt as string);
-      },
     }
   );
 
@@ -59,11 +64,15 @@ export default function Story() {
     data: storyCreateData,
   } = api.story.create.useMutation();
 
-  const [title, setTitle] = useState<string>();
-  const [description, setDescription] = useState<string>();
-  const [slug, setSlug] = useState<string>();
-  const [mainImage, setMainImage] = useState<string>();
-  const [content, setContent] = useState<string>();
+  const [title, setTitle] = useState<string>(storyData?.title as string);
+  const [description, setDescription] = useState<string>(
+    storyData?.description as string
+  );
+  const [slug, setSlug] = useState<string>(storyData?.slug as string);
+  const [mainImage, setMainImage] = useState<string>(
+    storyData?.mainImage as string
+  );
+  const [content, setContent] = useState<string>(storyData?.content as string);
   const [imagePrompt, setImagePrompt] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -185,13 +194,6 @@ export default function Story() {
     }
   }, [category, isRecaptchaLoaded, slugFromRouter, isLoading]);
 
-  // get story if slug is set
-  useEffect(() => {
-    if (slugFromRouter && slugFromRouter !== "new") {
-      refetchStory();
-    }
-  }, [slugFromRouter]);
-
   // get image if image prompt is set
   useEffect(() => {
     if (debouncedImagePrompt && !mainImage && !isGettingImage) {
@@ -222,26 +224,69 @@ export default function Story() {
       slug &&
       !isCreatingStory
     ) {
-      createStory(
-        {
-          account: userId,
-          title,
-          description,
-          slug: slug.trim(),
-          mainImage,
-          imagePrompt,
-          content: debouncedContent,
-          category: category as string,
-          wordCount: debouncedContent.split(" ").length,
-          language: "ar",
-          version: 4,
-        },
-        {
-          onSuccess: () => {
-            va.track("created-story");
-          },
+      const handleCreateStory = async () => {
+        function dataURLtoFile(dataurl: string, filename: string) {
+          var arr = dataurl.split(",") as any[],
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[arr.length - 1]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
+          while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+          }
+          return new File([u8arr], filename, { type: mime });
         }
-      );
+
+        const compressedImage = await new Promise<string>((resolve) => {
+          const url = "data:image/png;base64," + mainImage;
+          const imageFile = dataURLtoFile(url, `${Date.now()}.png`);
+
+          new Compressor(imageFile, {
+            strict: true,
+            checkOrientation: true,
+            maxWidth: 0,
+            maxHeight: 0,
+            minWidth: 0,
+            minHeight: 0,
+            width: 256,
+            height: 256,
+            resize: "cover",
+            quality: 0.4,
+            mimeType: "auto",
+            convertTypes: ["image/png"],
+            convertSize: 0,
+            success: (result) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(result);
+              reader.onloadend = () => {
+                const base64data = reader.result;
+                resolve(base64data as string);
+              };
+            },
+          });
+        });
+        createStory(
+          {
+            account: userId,
+            title,
+            description,
+            slug: slug.trim(),
+            mainImage: compressedImage?.replace("data:image/jpeg;base64,", ""),
+            imagePrompt,
+            content: debouncedContent,
+            category: category as string,
+            wordCount: debouncedContent.split(" ").length,
+            language: "ar",
+            version: 4,
+          },
+          {
+            onSuccess: () => {
+              va.track("created-story");
+            },
+          }
+        );
+      };
+      handleCreateStory();
     }
   }, [
     title,
@@ -316,4 +361,33 @@ export default function Story() {
       </div>
     </>
   );
+}
+
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{ slug: string }>
+) {
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: createInnerTRPCContext(),
+    transformer: SuperJSON,
+  });
+
+  const slug = context?.params?.slug as string;
+
+  await helpers?.story?.get?.prefetch({
+    slug,
+  });
+
+  // revalidate every 1 hour
+  context.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=3600, stale-while-revalidate=3600"
+  );
+
+  return {
+    props: {
+      trpcState: helpers?.dehydrate(),
+      slug,
+    },
+  };
 }

@@ -40,14 +40,6 @@ export const storyRouter = createTRPCRouter({
         orderBy: {
           createdAt: "desc",
         },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          description: true,
-          hidden: true,
-          content: true,
-        },
         where: {
           AND: {
             id: input.id ?? undefined,

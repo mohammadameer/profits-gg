@@ -1,22 +1,20 @@
 import Image from "next/image";
 import { api } from "~/utils/api";
 
-export default function StoryImage({ id, alt }: { id: string; alt: string }) {
-  const { data } = api.story.storyImage.useQuery({
-    id,
-  });
-
-  if (!data?.mainImage) return null;
-
+export default function StoryImage({
+  id,
+  src,
+  alt,
+}: {
+  id: string;
+  src: string;
+  alt: string;
+}) {
   return (
     <Image
       id={id}
       key={id}
-      src={
-        data?.mainImage?.includes("http")
-          ? data?.mainImage
-          : "data:image/png;base64," + data?.mainImage
-      }
+      src={src?.includes("http") ? src : "data:image/png;base64," + src}
       alt={alt}
       fill
       style={{ objectFit: "cover" }}

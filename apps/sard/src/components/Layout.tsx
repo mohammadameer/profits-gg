@@ -277,83 +277,66 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         onClose={() => router.push("/")}
         className="!bg-gray-200 shadow-md"
       >
-        <p className="text text-xl font-bold text-gray-900 md:text-2xl">
-          {user ? "انتهت صلاحية باقتك" : "وصلت الحد الأقصى للقصص في اليوم"}
-        </p>
-
-        <p className="text text-xl text-gray-900">
-          يمكنك قراءة القصص التي تم إنشاؤها من قبل أو {user ? "إعادة" : ""}{" "}
-          الإشتراك في عدد لا نهائي من القصص الجديدة
-        </p>
-
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-
-            if (!selectedMembership) return;
-            gtag?.("event", "conversion", {
-              send_to: "AW-10865811504/Z5RhCNPd8KcYELDAnL0o",
-              value: selectedMembership?.discountPrice,
-              currency: "SAR",
-            });
-            window.open(selectedMembership?.url, "_blank");
-          }}
-          className="flex w-full flex-col gap-4"
-        >
-          {memberships.map((membership) => (
-            <div
-              key={membership.id}
-              className={clsx(
-                "flex w-full cursor-pointer select-none flex-col justify-between rounded-md border-4 border-transparent bg-gray-300 p-4 transition-all duration-300 hover:scale-105 active:scale-95",
-                selectedMembership?.id == membership.id &&
-                  "border-4 !border-blue-500 "
-              )}
-              onClick={() => setSelectedMembership(membership)}
-            >
-              <p className="text-xl font-bold">{membership.product}</p>
-              <p className="text-end text-xl">
-                {membership.price ? (
-                  <span className="line-through">
-                    {membership.price.toLocaleString("ar-EG")}
-                  </span>
-                ) : null}{" "}
-                {membership.discount
-                  ? `(خصم ${(membership?.discount).toLocaleString(
-                      "ar-EG"
-                    )}٪) 🔥`
-                  : null}{" "}
-                بـ {(membership?.discountPrice).toLocaleString("ar-EG")} ريال
-              </p>
-            </div>
-          ))}
-
-          <Button
-            text={
-              selectedMembership
-                ? `إدفع ${(selectedMembership?.discountPrice).toLocaleString(
-                    "ar-EG"
-                  )} ريال`
-                : "إختر باقة"
-            }
-            type="submit"
-            className="w-full !bg-blue-500 !text-white"
-            disabled={selectedMembership ? false : true}
-          />
-
-          <p className="text text-center text-gray-900">
-            لديك اشتراك سابق؟{" "}
-            <span
-              className="cursor-pointer text-blue-500 underline"
-              onClick={() => {
-                setIsMempershipModalOpen(false);
-                setIsActivateMembershipModalOpen(true);
-              }}
-            >
-              {" "}
-              تفعيل الإشتراك
-            </span>
+        <div className="flex flex-col gap-4">
+          <p className="text text-xl font-bold text-gray-900 md:text-2xl">
+            {user ? "انتهت صلاحية باقتك" : "وصلت الحد الأقصى للقصص في اليوم"}
           </p>
-        </form>
+
+          <p className="text text-xl text-gray-900">
+            يمكنك قراءة القصص التي تم إنشاؤها من قبل أو {user ? "إعادة" : ""}{" "}
+            الإشتراك في عدد لا نهائي من القصص الجديدة
+          </p>
+
+          <form className="flex w-full flex-col gap-4">
+            {memberships.map((membership) => (
+              <div
+                key={membership.id}
+                className={clsx(
+                  "flex w-full cursor-pointer select-none flex-col justify-between rounded-md border-4 border-transparent bg-gray-300 p-4 transition-all duration-300 hover:scale-105 active:scale-95",
+                  selectedMembership?.id == membership.id &&
+                    "border-4 !border-blue-500 "
+                )}
+                onClick={() => {
+                  gtag?.("event", "conversion", {
+                    send_to: "AW-10865811504/Z5RhCNPd8KcYELDAnL0o",
+                    value: membership.discountPrice,
+                    currency: "SAR",
+                  });
+                  window.open(membership.url, "_blank");
+                }}
+              >
+                <p className="text-xl font-bold">{membership.product}</p>
+                <p className="text-end text-xl">
+                  {membership.price ? (
+                    <span className="line-through">
+                      {membership.price.toLocaleString("ar-EG")}
+                    </span>
+                  ) : null}{" "}
+                  {membership.discount
+                    ? `(خصم ${(membership?.discount).toLocaleString(
+                        "ar-EG"
+                      )}٪) 🔥`
+                    : null}{" "}
+                  بـ {(membership?.discountPrice).toLocaleString("ar-EG")} ريال
+                </p>
+              </div>
+            ))}
+
+            <p className="text text-center text-gray-900">
+              لديك اشتراك سابق؟{" "}
+              <span
+                className="cursor-pointer text-blue-500 underline"
+                onClick={() => {
+                  setIsMempershipModalOpen(false);
+                  setIsActivateMembershipModalOpen(true);
+                }}
+              >
+                {" "}
+                تفعيل الإشتراك
+              </span>
+            </p>
+          </form>
+        </div>
       </Modal>
 
       {/* login Modal */}

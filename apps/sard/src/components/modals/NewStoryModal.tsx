@@ -34,7 +34,8 @@ export default function StoryModal({ open, setOpen }: StoryModalProps) {
                 "border-4 !border-blue-500 "
             )}
             onClick={() => {
-              setSelectedCategory(category);
+              setOpen(false);
+              router.push(`/stories/new?category=${category.value}`);
             }}
           >
             <p className="text-4xl">{category.emoji}</p>
@@ -44,17 +45,6 @@ export default function StoryModal({ open, setOpen }: StoryModalProps) {
           </div>
         ))}
       </div>
-      <Button
-        text={selectedCategory ? "قصة جديدة" : "إختر موضوع"}
-        className="sticky bottom-0 left-0 col-span-full w-full !bg-blue-500 !text-white"
-        onClick={() => {
-          if (selectedCategory) {
-            setOpen(false);
-            router.push(`/stories/new?category=${selectedCategory.value}`);
-          }
-        }}
-        disabled={!selectedCategory}
-      />
     </Modal>
   );
 }

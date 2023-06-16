@@ -4,18 +4,31 @@ import { Button, SelectInput, TextAreaInput, TextInput } from "@profits-gg/ui";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import StoryImage from "~/components/StoryImage";
 import { api } from "~/utils/api";
 import categories, { Category } from "~/utils/categories";
 import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
+import {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from "next";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { appRouter } from "~/server/api/root";
+import { createInnerTRPCContext } from "~/server/api/trpc";
+import SuperJSON from "superjson";
 
 export default function Admin() {
   const router = useRouter();
 
   const { control, watch, handleSubmit, getValues, reset } = useForm();
+
+  const inViewRef = useRef<HTMLDivElement>(null);
+  const inViewConfig = useInViewObserver(inViewRef, {});
+  const inView = inViewConfig?.isIntersecting;
 
   const id = watch("id");
   const category = watch("category");
@@ -50,12 +63,10 @@ export default function Admin() {
       hidden: hidden as boolean,
     },
     {
-      enabled: isAdmin,
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
     }
   );
 
-  console.log("hasNextPage", hasNextPage);
   const { mutate: updateStory } = api.story.update.useMutation();
 
   useEffect(() => {
@@ -73,15 +84,19 @@ export default function Admin() {
     }
   }, [userId, user, isLoading]);
 
+  const updateStoryDetails = async (data: any) => {};
+
   const handleFetchNextPage = () => {
     if (!isFetchingStories && hasNextPage && status === "success") {
       fetchNextPage();
     }
   };
 
-  const buttonInView = useInViewObserver(handleFetchNextPage);
-
-  const updateStoryDetails = async (data: any) => {};
+  useEffect(() => {
+    if (inView) {
+      handleFetchNextPage();
+    }
+  }, [inView]);
 
   return (
     <>
@@ -171,7 +186,11 @@ export default function Admin() {
                 //   });
                 // }}
               >
-                <StoryImage id={story.id} alt={story.title as string} />
+                <StoryImage
+                  id={story.id}
+                  src={story.mainImage as string}
+                  alt={story.title as string}
+                />
                 {selectedStory?.id !== story.id ? (
                   <div className="absolute bottom-0 left-0 flex w-full items-center justify-center bg-gradient-to-t from-black/50 via-black/50 p-2">
                     <p className="text text-2xl font-bold leading-10 text-white md:text-2xl">
@@ -302,17 +321,36 @@ export default function Admin() {
             لا توجد قصص
           </p>
         )}
-        <div className="col-span-full" ref={buttonInView.ref}>
-          <Button
-            text={hasNextPage ? "حمل المزيد من القصص" : "وصلت للنهاية"}
-            noStyles={hasNextPage ? false : true}
-            loading={isFetchingNextPage}
-            disabled={!hasNextPage}
-            onClick={() => (hasNextPage ? handleFetchNextPage() : null)}
-            className="w-full !bg-white !text-black"
-          />
-        </div>
+        <div ref={inViewRef} className="h-20 w-full" />
       </div>
     </>
   );
+}
+
+export async function getServerSideProps({
+  req,
+  res,
+}: {
+  req: NextApiRequest;
+  res: NextApiResponse;
+}) {
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: createInnerTRPCContext(),
+    transformer: SuperJSON,
+  });
+  await helpers?.story?.list?.prefetchInfinite({
+    id: undefined,
+    category: undefined,
+    hidden: undefined,
+  });
+
+  // revalidate every 1 hour
+  res?.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
+
+  return {
+    props: {
+      trpcState: helpers?.dehydrate(),
+    },
+  };
 }

@@ -1,45 +1,50 @@
-import React from "react";
+import type { RefObject } from "react";
+import { useEffect, useState } from "react";
 
-const isInteractionObserverSupported =
-  typeof window !== "undefined" && "IntersectionObserver" in window;
+interface Args extends IntersectionObserverInit {
+  freezeOnceVisible?: boolean;
+}
 
-const useInViewObserver = (onInViewCallback: () => void) => {
-  const [node, setRef] = React.useState<HTMLElement | null>(null);
+export function useInViewObserver(
+  elementRef: RefObject<Element>,
+  {
+    threshold = 0,
+    root = null,
+    rootMargin = "0%",
+    freezeOnceVisible = false,
+  }: Args,
+): IntersectionObserverEntry | undefined {
+  const [entry, setEntry] = useState<IntersectionObserverEntry>();
 
-  const onInViewCallbackRef = React.useRef(onInViewCallback);
-  onInViewCallbackRef.current = onInViewCallback;
+  const frozen = entry?.isIntersecting && freezeOnceVisible;
 
-  React.useEffect(() => {
-    if (!isInteractionObserverSupported) {
-      // Skip interaction check if not supported in browser
-      return;
-    }
-
-    let observer: IntersectionObserver;
-    if (node && node.parentElement) {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry?.isIntersecting) {
-            onInViewCallbackRef.current();
-          }
-        },
-        {
-          root: document.body,
-        },
-      );
-      observer.observe(node);
-    }
-
-    return () => {
-      if (observer) {
-        observer.disconnect();
-      }
-    };
-  }, [node]);
-
-  return {
-    ref: setRef,
+  const updateEntry = ([entry]: IntersectionObserverEntry[]): void => {
+    setEntry(entry);
   };
-};
+
+  useEffect(() => {
+    const node = elementRef?.current; // DOM Ref
+    const hasIOSupport = !!window.IntersectionObserver;
+
+    if (!hasIOSupport || frozen || !node) return;
+
+    const observerParams = { threshold, root, rootMargin };
+    const observer = new IntersectionObserver(updateEntry, observerParams);
+
+    observer.observe(node);
+
+    return () => observer.disconnect();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    elementRef?.current,
+    JSON.stringify(threshold),
+    root,
+    rootMargin,
+    frozen,
+  ]);
+
+  return entry;
+}
 
 export default useInViewObserver;

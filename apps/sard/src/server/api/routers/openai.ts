@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { OpenAIApi, Configuration } from "openai";
+import { OpenAIApi, Configuration, CreateImageRequestSizeEnum } from "openai";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
@@ -8,6 +8,9 @@ export const openaiRouter = createTRPCRouter({
     .input(
       z.object({
         prompt: z.string(),
+        size: z
+          .nativeEnum(CreateImageRequestSizeEnum)
+          .default(CreateImageRequestSizeEnum._256x256),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -15,7 +18,7 @@ export const openaiRouter = createTRPCRouter({
         prompt:
           "cartoonic, colorful and oil pastel painting of " + input.prompt,
         response_format: "b64_json",
-        size: "512x512",
+        size: input.size,
       });
 
       if (!data?.data?.data?.[0]?.b64_json) {

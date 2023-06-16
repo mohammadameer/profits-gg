@@ -35,7 +35,7 @@ type CreateContextOptions = {
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
+export const createInnerTRPCContext = () => {
   return {
     // session: opts.session,
     prisma,
@@ -58,9 +58,10 @@ export const createTRPCContext = async (
   // // Get the session from the server using the getServerSession wrapper function
   // const session = await getServerAuthSession({ req, res });
 
-  return createInnerTRPCContext({
-    // session,
-  });
+  return createInnerTRPCContext();
+  // return createInnerTRPCContext({
+  //   // session,
+  // });
 };
 
 /**
