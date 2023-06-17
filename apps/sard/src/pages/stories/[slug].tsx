@@ -1,4 +1,4 @@
-import { useReCaptcha } from "next-recaptcha-v3";
+import { ReCaptcha, ReCaptchaProvider } from "next-recaptcha-v3";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -26,7 +26,7 @@ export default function Story() {
   const router = useRouter();
   const { slug: slugFromRouter, category, place } = router.query;
 
-  const { executeRecaptcha, loaded: isRecaptchaLoaded } = useReCaptcha();
+  const [token, setToken] = useState<string>();
 
   const createCalledRef = useRef(false);
 
@@ -99,8 +99,6 @@ export default function Story() {
       }
     }
 
-    const token = await executeRecaptcha?.("createStory");
-
     va.track("creating-story");
 
     const response = await fetch("/api/openai/chat", {
@@ -168,14 +166,14 @@ export default function Story() {
     }
 
     setIsLoading(false);
-  }, [executeRecaptcha, category, isLoading]);
+  }, [token, category, isLoading]);
 
   // create story if category is selected or get story if slug is selected
   useEffect(() => {
     if (
       category &&
       slugFromRouter == "new" &&
-      isRecaptchaLoaded &&
+      token &&
       !isLoading &&
       !createCalledRef.current
     ) {
@@ -192,7 +190,7 @@ export default function Story() {
         router.push("/");
       }
     }
-  }, [category, isRecaptchaLoaded, slugFromRouter, isLoading]);
+  }, [category, token, slugFromRouter, isLoading]);
 
   // get image if image prompt is set
   useEffect(() => {
@@ -299,66 +297,72 @@ export default function Story() {
 
   return (
     <>
-      <div className={clsx("flex flex-col gap-8 p-6 py-10  pb-20 md:pt-24")}>
-        {/* className="p-6 py-10 text-6xl font-bold md:pb-14 md:pt-24 md:text-8xl" */}
-        {title ? (
-          <h1 className="text-6xl font-bold md:pb-14 md:text-8xl">
-            عنوان القصة: {title}
-          </h1>
-        ) : (
-          <div className="h-24 w-3/4 animate-pulse rounded-md bg-gray-400" />
-        )}
-        {description ? (
-          <p className="text-xl">وصف القصة: {description}</p>
-        ) : (
-          <div className="h-10 w-2/4 animate-pulse rounded-md bg-gray-400" />
-        )}
-        {slug ? (
-          <p className="text-xl">
-            الموضوع:{" "}
-            {
-              categories?.find(
-                (categoryItem) =>
-                  categoryItem.value === category ||
-                  categoryItem.value === storyData?.categories?.[0]?.name
-              )?.label
-            }
-          </p>
-        ) : (
-          <div className="h-6 w-1/6 animate-pulse rounded-md bg-gray-400" />
-        )}
+      <ReCaptchaProvider
+        reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY}
+        useEnterprise={true}
+      >
+        <ReCaptcha onValidate={setToken} action="page_view" />
+        <div className={clsx("flex flex-col gap-8 p-6 py-10  pb-20 md:pt-24")}>
+          {/* className="p-6 py-10 text-6xl font-bold md:pb-14 md:pt-24 md:text-8xl" */}
+          {title ? (
+            <h1 className="text-6xl font-bold md:pb-14 md:text-8xl">
+              عنوان القصة: {title}
+            </h1>
+          ) : (
+            <div className="h-24 w-3/4 animate-pulse rounded-md bg-gray-400" />
+          )}
+          {description ? (
+            <p className="text-xl">وصف القصة: {description}</p>
+          ) : (
+            <div className="h-10 w-2/4 animate-pulse rounded-md bg-gray-400" />
+          )}
+          {slug ? (
+            <p className="text-xl">
+              الموضوع:{" "}
+              {
+                categories?.find(
+                  (categoryItem) =>
+                    categoryItem.value === category ||
+                    categoryItem.value === storyData?.categories?.[0]?.name
+                )?.label
+              }
+            </p>
+          ) : (
+            <div className="h-6 w-1/6 animate-pulse rounded-md bg-gray-400" />
+          )}
 
-        {mainImage ? (
-          <div className="relative h-[500px] w-full md:w-[500px]">
-            <Image
-              src={"data:image/jpeg;base64," + mainImage}
-              alt={(imagePrompt || storyData?.imagePrompt) as string}
-              width={500}
-              height={500}
-              unoptimized={true}
-            />
-          </div>
-        ) : (
-          <div className="h-96 w-full animate-pulse rounded-md bg-gray-400 md:w-96" />
-        )}
+          {mainImage ? (
+            <div className="relative h-[500px] w-full md:w-[500px]">
+              <Image
+                src={"data:image/jpeg;base64," + mainImage}
+                alt={(imagePrompt || storyData?.imagePrompt) as string}
+                width={500}
+                height={500}
+                unoptimized={true}
+              />
+            </div>
+          ) : (
+            <div className="h-96 w-full animate-pulse rounded-md bg-gray-400 md:w-96" />
+          )}
 
-        {content ? (
-          <div className="flex flex-col gap-4">
-            {content?.split("\n").map((paragraph, index) => (
-              <p key={index} className="text-2xl">
-                {paragraph?.replace(/🍆|🌈|🏳️‍🌈|/gm, "")}
-              </p>
-            ))}
-          </div>
-        ) : (
-          Array.from({ length: 5 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-10 w-full animate-pulse rounded-md bg-gray-400"
-            />
-          ))
-        )}
-      </div>
+          {content ? (
+            <div className="flex flex-col gap-4">
+              {content?.split("\n").map((paragraph, index) => (
+                <p key={index} className="text-2xl">
+                  {paragraph?.replace(/🍆|🌈|🏳️‍🌈|/gm, "")}
+                </p>
+              ))}
+            </div>
+          ) : (
+            Array.from({ length: 5 }).map((_, index) => (
+              <div
+                key={index}
+                className="h-10 w-full animate-pulse rounded-md bg-gray-400"
+              />
+            ))
+          )}
+        </div>
+      </ReCaptchaProvider>
     </>
   );
 }

@@ -45,12 +45,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <MempershipModalOpenProvider>
         <Layout>
           {/* <SessionProvider session={session}> */}
-          <ReCaptchaProvider
-            reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY}
-            useEnterprise={true}
-          >
-            <Component {...pageProps} />
-          </ReCaptchaProvider>
+          <Component {...pageProps} />
           <Analytics />
           {/* </SessionProvider> */}
         </Layout>
