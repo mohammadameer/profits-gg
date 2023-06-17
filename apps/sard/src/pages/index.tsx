@@ -57,7 +57,6 @@ const Home = () => {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       retry: false,
-      enabled: false,
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
     }
   );
@@ -122,6 +121,18 @@ const Home = () => {
               </div>
             ))
           )
+        ) : isLoadingData ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="col-span-full flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-6 lg:col-span-4"
+            >
+              <div className="flex h-full w-full animate-pulse flex-col">
+                <div className="h-3/4 w-full rounded-md bg-gray-200" />
+                <div className="h-1/4 w-full rounded-md bg-gray-200" />
+              </div>
+            </div>
+          ))
         ) : (
           <div className="col-span-full flex h-96 flex-col items-center justify-center gap-8 rounded-md p-6">
             <p className="text text-xl font-bold leading-10 text-gray-900 md:text-2xl">
@@ -147,30 +158,30 @@ const Home = () => {
   );
 };
 
-export async function getServerSideProps({
-  req,
-  res,
-}: {
-  req: NextApiRequest;
-  res: NextApiResponse;
-}) {
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext(),
-    transformer: SuperJSON,
-  });
-  await helpers?.story?.list?.prefetchInfinite({
-    hidden: false,
-  });
+// export async function getServerSideProps({
+//   req,
+//   res,
+// }: {
+//   req: NextApiRequest;
+//   res: NextApiResponse;
+// }) {
+//   const helpers = createServerSideHelpers({
+//     router: appRouter,
+//     ctx: createInnerTRPCContext(),
+//     transformer: SuperJSON,
+//   });
+//   await helpers?.story?.list?.prefetchInfinite({
+//     hidden: false,
+//   });
 
-  // revalidate every 1 hour
-  res?.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
+//   // revalidate every 1 hour
+//   res?.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
 
-  return {
-    props: {
-      trpcState: helpers?.dehydrate(),
-    },
-  };
-}
+//   return {
+//     props: {
+//       trpcState: helpers?.dehydrate(),
+//     },
+//   };
+// }
 
 export default Home;
