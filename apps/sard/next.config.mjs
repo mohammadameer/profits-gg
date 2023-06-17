@@ -14,9 +14,6 @@ const config = {
    *
    * @see https://github.com/vercel/next.js/issues/41980
    */
-  experimental: {
-    nextScriptWorkers: true,
-  },
   transpilePackages: [
     "@profits-gg/ui",
     "@profits-gg/lib",

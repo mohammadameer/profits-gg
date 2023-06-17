@@ -52,7 +52,6 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@builder.io/partytown": "^0.8.0",
     "@types/eslint": "^8.21.3",
     "@types/gtag.js": "^0.0.12",
     "@types/node": "^18.15.5",
