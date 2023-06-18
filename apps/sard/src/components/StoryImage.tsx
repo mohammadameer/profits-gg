@@ -19,7 +19,7 @@ export default function StoryImage({
       fill
       style={{ objectFit: "cover" }}
       className="rounded-md"
-      unoptimized={true}
+      priority
     />
   );
 }

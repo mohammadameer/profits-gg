@@ -192,7 +192,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             📖 سرد
           </p>
           <Button
-            text="قصة جديدة"
+            text="قصة جديدة 🪄"
             onClick={() => {
               router.push("/");
               setNewStoryModalOpen(true);
