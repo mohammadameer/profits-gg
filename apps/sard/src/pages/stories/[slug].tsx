@@ -7,7 +7,6 @@ import va from "@vercel/analytics";
 import Image from "next/image";
 import useDebounce from "@profits-gg/lib/hooks/useDebounce";
 import clsx from "clsx";
-import { useMempershipModalOpen } from "~/contexts/membership";
 import { useLocalStorage } from "usehooks-ts";
 import places from "~/utils/places";
 import categories from "~/utils/categories";
@@ -30,9 +29,6 @@ export default function Story() {
 
   const createCalledRef = useRef(false);
 
-  const { isMempershipModalOpen, setIsMempershipModalOpen } =
-    useMempershipModalOpen();
-
   const [userId, setUserId] = useLocalStorage<string>("userId", "");
 
   const { data: storyData } = api.story.get.useQuery(
@@ -47,12 +43,17 @@ export default function Story() {
     }
   );
 
-  const { data: user } = api.user.get.useQuery(
+  const {
+    data: user,
+    isLoading: isLoadingUser,
+    isFetching: isFetchingUser,
+  } = api.user.get.useQuery(
     {
       id: userId,
     },
     {
       enabled: userId ? true : false,
+      retry: false,
     }
   );
   const { mutate: getImage, isLoading: isGettingImage } =
@@ -94,7 +95,7 @@ export default function Story() {
 
       if (membershipExpiration < new Date()) {
         va.track("create story expired membership");
-        setIsMempershipModalOpen(true);
+        router.push("/memberships");
         return;
       }
     }
@@ -147,7 +148,7 @@ export default function Story() {
             router.push("/");
           }
         } else {
-          setIsMempershipModalOpen(true);
+          router.push("/memberships");
         }
 
         return;
@@ -175,7 +176,8 @@ export default function Story() {
       slugFromRouter == "new" &&
       token &&
       !isLoading &&
-      !createCalledRef.current
+      !createCalledRef.current &&
+      !isFetchingUser
     ) {
       // check if category is valid
       if (categories?.find((categoryItem) => categoryItem.value === category)) {
@@ -190,7 +192,7 @@ export default function Story() {
         router.push("/");
       }
     }
-  }, [category, token, slugFromRouter, isLoading]);
+  }, [category, token, slugFromRouter, isLoading, isFetchingUser]);
 
   // get image if image prompt is set
   useEffect(() => {
@@ -302,7 +304,7 @@ export default function Story() {
         useEnterprise={true}
       >
         <ReCaptcha onValidate={setToken} action="page_view" />
-        <div className={clsx("flex flex-col gap-8 p-6 py-10  pb-20 md:pt-24")}>
+        <div className={clsx("flex flex-col gap-6 p-6 py-10  pb-20 md:pt-24")}>
           {/* className="p-6 py-10 text-6xl font-bold md:pb-14 md:pt-24 md:text-8xl" */}
           {title ? (
             <h1 className="text-6xl font-bold md:pb-14 md:text-8xl">
@@ -332,13 +334,12 @@ export default function Story() {
           )}
 
           {mainImage ? (
-            <div className="relative h-[500px] w-full md:w-[500px]">
+            <div className="relative aspect-square max-h-[500px] w-full md:w-[500px]">
               <Image
                 src={"data:image/jpeg;base64," + mainImage}
                 alt={(imagePrompt || storyData?.imagePrompt) as string}
-                width={500}
-                height={500}
-                unoptimized={true}
+                fill
+                priority
               />
             </div>
           ) : (
@@ -370,27 +371,34 @@ export default function Story() {
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ slug: string }>
 ) {
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext(),
-    transformer: SuperJSON,
-  });
-
   const slug = context?.params?.slug as string;
 
-  await helpers?.story?.get?.prefetch({
-    slug,
-  });
-
-  // revalidate every 1 hour
   context.res.setHeader(
     "Cache-Control",
     "public, s-maxage=3600, stale-while-revalidate=3600"
   );
 
+  if (slug && slug != "new") {
+    const helpers = createServerSideHelpers({
+      router: appRouter,
+      ctx: createInnerTRPCContext(),
+      transformer: SuperJSON,
+    });
+
+    await helpers?.story?.get?.prefetch({
+      slug,
+    });
+
+    return {
+      props: {
+        trpcState: helpers?.dehydrate(),
+        slug,
+      },
+    };
+  }
+
   return {
     props: {
-      trpcState: helpers?.dehydrate(),
       slug,
     },
   };
