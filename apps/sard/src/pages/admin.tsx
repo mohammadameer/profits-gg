@@ -327,30 +327,30 @@ export default function Admin() {
   );
 }
 
-// export async function getServerSideProps({
-//   req,
-//   res,
-// }: {
-//   req: NextApiRequest;
-//   res: NextApiResponse;
-// }) {
-//   const helpers = createServerSideHelpers({
-//     router: appRouter,
-//     ctx: createInnerTRPCContext(),
-//     transformer: SuperJSON,
-//   });
-//   await helpers?.story?.list?.prefetchInfinite({
-//     id: undefined,
-//     category: undefined,
-//     hidden: undefined,
-//   });
+export async function getServerSideProps({
+  req,
+  res,
+}: {
+  req: NextApiRequest;
+  res: NextApiResponse;
+}) {
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: createInnerTRPCContext(),
+    transformer: SuperJSON,
+  });
+  await helpers?.story?.list?.prefetchInfinite({
+    id: undefined,
+    category: undefined,
+    hidden: undefined,
+  });
 
-//   // revalidate every 1 hour
-//   res?.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
+  // revalidate every 1 hour
+  res?.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
 
-//   return {
-//     props: {
-//       trpcState: helpers?.dehydrate(),
-//     },
-//   };
-// }
+  return {
+    props: {
+      trpcState: helpers?.dehydrate(),
+    },
+  };
+}
