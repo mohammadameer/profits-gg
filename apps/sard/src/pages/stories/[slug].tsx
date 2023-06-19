@@ -20,6 +20,7 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import SuperJSON from "superjson";
+import { prisma } from "~/server/db";
 
 export default function Story() {
   const router = useRouter();
@@ -362,44 +363,54 @@ export default function Story() {
               />
             ))
           )}
+
+          {content && !isLoading ? (
+            <div className="my-4 flex w-1/2 flex-col gap-4 border-t border-black pt-6">
+              <p className="text-2xl">انتهت القصة ⭐️</p>
+            </div>
+          ) : null}
         </div>
       </ReCaptchaProvider>
     </>
   );
 }
 
-export async function getServerSideProps(
+export async function getStaticProps(
   context: GetServerSidePropsContext<{ slug: string }>
 ) {
   const slug = context?.params?.slug as string;
 
-  context.res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=3600, stale-while-revalidate=3600"
-  );
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: createInnerTRPCContext(),
+    transformer: SuperJSON,
+  });
 
-  if (slug && slug != "new") {
-    const helpers = createServerSideHelpers({
-      router: appRouter,
-      ctx: createInnerTRPCContext(),
-      transformer: SuperJSON,
-    });
-
-    await helpers?.story?.get?.prefetch({
-      slug,
-    });
-
-    return {
-      props: {
-        trpcState: helpers?.dehydrate(),
-        slug,
-      },
-    };
-  }
+  await helpers?.story?.get?.prefetch({
+    slug,
+  });
 
   return {
     props: {
+      trpcState: helpers?.dehydrate(),
       slug,
     },
   };
 }
+
+export const getStaticPaths = async () => {
+  const stories = await prisma.story.findMany({
+    select: {
+      slug: true,
+    },
+  });
+
+  return {
+    paths: stories.map((story) => ({
+      params: {
+        slug: story.slug,
+      },
+    })),
+    fallback: "blocking",
+  };
+};

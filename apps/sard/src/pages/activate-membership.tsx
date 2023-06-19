@@ -92,35 +92,37 @@ export default function ActivateMembershipModal() {
   };
 
   return (
-    <div className="!bg-gray-200 p-6">
-      <p className="text text-xl font-bold text-gray-900 md:text-2xl">
-        تفعيل الإشتراك
-      </p>
+    <div className="flex justify-center !bg-gray-200 p-6">
+      <div className="flex flex-col gap-4 md:w-2/3 lg:w-1/3">
+        <p className="text text-xl font-bold text-gray-900 md:text-2xl">
+          تفعيل الإشتراك
+        </p>
 
-      <p className="text text-xl text-gray-900">
-        يمكنك تفعيل الإشتراك بإستخدام البريد الإلكتروني أو رقم الجوال الذي تم
-        استخدامه عند الإشتراك
-      </p>
+        <p className="text text-xl text-gray-900">
+          يمكنك تفعيل الإشتراك بإستخدام البريد الإلكتروني أو رقم الجوال الذي تم
+          استخدامه عند الإشتراك
+        </p>
 
-      <form
-        onSubmit={handleSubmit(handleActivateMembership)}
-        className="w-full"
-      >
-        <TextInput
-          label="البريد الإلكتروني أو رقم الجوال"
-          name="emailOrPhoneNumber"
-          control={control}
-          rules={{ required: required }}
+        <form
+          onSubmit={handleSubmit(handleActivateMembership)}
           className="w-full"
-          inputClassName="!bg-gray-200 focus:!border-gray-500"
-        />
-        <Button
-          text="تفعيل الإشتراك"
-          type="submit"
-          loading={isCheckingUser}
-          className="mt-2 w-full !bg-blue-500 !text-white"
-        />
-      </form>
+        >
+          <TextInput
+            label="البريد الإلكتروني أو رقم الجوال"
+            name="emailOrPhoneNumber"
+            control={control}
+            rules={{ required: required }}
+            className="w-full"
+            inputClassName="!bg-gray-200 focus:!border-gray-500"
+          />
+          <Button
+            text="تفعيل الإشتراك"
+            type="submit"
+            loading={isCheckingUser}
+            className="mt-2 w-full !bg-blue-500 !text-white"
+          />
+        </form>
+      </div>
     </div>
   );
 }

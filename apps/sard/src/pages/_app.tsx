@@ -35,7 +35,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: { session, ...pageProps },
 }) => {
   const router = useRouter();
-  console.log("path: ", router.pathname);
+
   useEffect(() => {
     // Track page views
     const handleRouteChange = () => posthog?.capture("$pageview");

@@ -1,13 +1,6 @@
-import { NextApiRequest, NextApiResponse, type NextPage } from "next";
 import { NextSeo } from "next-seo";
-
-import { Button } from "@profits-gg/ui";
-import { useForm } from "react-hook-form";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image";
-import { prisma } from "~/server/db";
-import { Story } from "@prisma/client";
 import StoryImage from "~/components/StoryImage";
 import { api } from "~/utils/api";
 import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
@@ -15,23 +8,6 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import SuperJSON from "superjson";
 import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
-
-type FormValues = {
-  category: string;
-  place: string;
-};
-
-const SelectInputClassNames = {
-  container: () => "rounded-lg bg-gray-200",
-  control: ({ hasValue }: { hasValue: boolean }) =>
-    `rounded-lg px-2 py-1 border-gray-500 border ${
-      hasValue ? "text-gray-900" : "text-gray-400"
-    } outline-none focus:border-white`,
-  valueContainer: () => "bg-gray-200 rounded-r-lg gap-2 ",
-  multiValue: () => "bg-gray-700 rounded-lg",
-  menu: () => "bg-gray-300 rounded-lg p-2 mt-2 z-50",
-  option: () => "hover:bg-gray-400 !cursor-pointer p-2 rounded-lg ",
-};
 
 const Home = () => {
   const router = useRouter();
@@ -147,13 +123,7 @@ const Home = () => {
   );
 };
 
-export async function getServerSideProps({
-  req,
-  res,
-}: {
-  req: NextApiRequest;
-  res: NextApiResponse;
-}) {
+export async function getStaticProps() {
   const helpers = createServerSideHelpers({
     router: appRouter,
     ctx: createInnerTRPCContext(),
@@ -163,13 +133,11 @@ export async function getServerSideProps({
     hidden: false,
   });
 
-  // revalidate every 1 hour
-  res?.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
-
   return {
     props: {
       trpcState: helpers?.dehydrate(),
     },
+    revalidate: 60 * 60, // 1 hour
   };
 }
 

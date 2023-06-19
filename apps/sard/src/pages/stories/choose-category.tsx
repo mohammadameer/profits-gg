@@ -7,8 +7,11 @@ export default function StoryModal() {
   const router = useRouter();
 
   return (
-    <div className="!bg-gray-200 p-6">
-      <div className="mt-4 grid w-full grow grid-cols-12 gap-4 pb-4">
+    <div className="flex flex-col items-center gap-4 !bg-gray-200 p-6">
+      <div className="mt-4 grid grid-cols-12 gap-4 pb-4 md:w-2/3 lg:w-1/3">
+        <p className="col-span-full mb-4 text-4xl font-bold text-gray-900">
+          اختر موضوع قصتك
+        </p>
         {categories.map((category) => (
           <div
             className={clsx(
