@@ -28,6 +28,7 @@ const Home = () => {
   } = api.story.list.useInfiniteQuery(
     {
       hidden: false,
+      limit: 6,
     },
     {
       refetchOnMount: false,
@@ -69,13 +70,13 @@ const Home = () => {
         قصص اطفال تعليمية قصيرة
       </h1>
 
-      <div className="grid grid-cols-12 gap-4 p-6">
+      <div className="relative grid grid-cols-12 gap-4 p-6">
         {stories?.pages?.[0]?.stories?.length ? (
           stories?.pages?.map((page) =>
             page?.stories?.map((story) => (
               <div
                 key={story.id}
-                className="relative col-span-full flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-6 lg:col-span-4"
+                className="relative z-20 col-span-full flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-6 lg:col-span-4"
                 onClick={() => {
                   router.push(`/stories/${story.slug}`);
                   (window as any)?.ttq?.track("ViewContent", {
@@ -117,8 +118,11 @@ const Home = () => {
               </div>
             </div>
           ))}
+        <div
+          ref={inViewRef}
+          className="absolute bottom-0 left-0 h-1/2 w-full "
+        />
       </div>
-      <div ref={inViewRef} className="h-20 w-full" />
     </>
   );
 };
@@ -129,8 +133,10 @@ export async function getStaticProps() {
     ctx: createInnerTRPCContext(),
     transformer: SuperJSON,
   });
+
   await helpers?.story?.list?.prefetchInfinite({
     hidden: false,
+    limit: 6,
   });
 
   return {
