@@ -142,7 +142,6 @@ export default function Story() {
       if (chunkValue.includes("rate limit exceeded")) {
         va.track("rate-limit-exceeded");
         setIsLoading(false);
-        console.log("user refetched", user);
 
         if (user && user?.membershipExpiration) {
           const membershipExpiration = new Date(user?.membershipExpiration);
@@ -199,7 +198,6 @@ export default function Story() {
           !content
         ) {
           refetchUser().then(() => {
-            console.log("user refetched", user);
             handleCreateStory();
           });
           createCalledRef.current = true;
