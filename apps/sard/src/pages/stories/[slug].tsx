@@ -48,13 +48,13 @@ export default function Story() {
     data: user,
     isLoading: isLoadingUser,
     isFetching: isFetchingUser,
+    refetch: refetchUser,
   } = api.user.get.useQuery(
     {
       id: userId,
     },
     {
-      enabled: userId ? true : false,
-      retry: false,
+      enabled: false,
     }
   );
   const { mutate: getImage, isLoading: isGettingImage } =
@@ -66,6 +66,9 @@ export default function Story() {
     data: storyCreateData,
   } = api.story.create.useMutation();
 
+  const [prepation, setPrepation] = useState<string>(
+    storyData?.prepation as string
+  );
   const [title, setTitle] = useState<string>(storyData?.title as string);
   const [description, setDescription] = useState<string>(
     storyData?.description as string
@@ -84,6 +87,7 @@ export default function Story() {
   const handleCreateStory = useCallback(async () => {
     setIsLoading(true);
 
+    setPrepation("");
     setTitle("");
     setDescription("");
     setSlug("");
@@ -138,6 +142,8 @@ export default function Story() {
       if (chunkValue.includes("rate limit exceeded")) {
         va.track("rate-limit-exceeded");
         setIsLoading(false);
+        console.log("user refetched", user);
+
         if (user && user?.membershipExpiration) {
           const membershipExpiration = new Date(user?.membershipExpiration);
 
@@ -157,9 +163,10 @@ export default function Story() {
 
       result += chunkValue;
 
-      const [title, description, slug, imagePrompt, content] =
+      const [prepation, title, description, slug, imagePrompt, content] =
         result.split("#");
 
+      if (prepation) setPrepation(prepation);
       if (title) setTitle(title);
       if (description) setDescription(description);
       if (slug) setSlug(slug);
@@ -168,7 +175,7 @@ export default function Story() {
     }
 
     setIsLoading(false);
-  }, [token, category, isLoading]);
+  }, [token, category, isLoading, user]);
 
   // create story if category is selected or get story if slug is selected
   useEffect(() => {
@@ -183,8 +190,18 @@ export default function Story() {
       // check if category is valid
       if (categories?.find((categoryItem) => categoryItem.value === category)) {
         // check if story is already created
-        if (!title && !description && !slug && !mainImage && !content) {
-          handleCreateStory();
+        if (
+          !prepation &&
+          !title &&
+          !description &&
+          !slug &&
+          !mainImage &&
+          !content
+        ) {
+          refetchUser().then(() => {
+            console.log("user refetched", user);
+            handleCreateStory();
+          });
           createCalledRef.current = true;
         }
       } else {
@@ -212,11 +229,12 @@ export default function Story() {
     }
   }, [debouncedImagePrompt]);
 
-  // if title, description, content and image are set, update the story
+  // if prepation title, description, content and image are set, update the story
   useEffect(() => {
     if (
       !storyCreateData &&
       !storyData &&
+      prepation &&
       title &&
       description &&
       debouncedContent &&
@@ -269,6 +287,7 @@ export default function Story() {
         createStory(
           {
             account: userId,
+            prepation,
             title,
             description,
             slug: slug.trim(),
@@ -290,6 +309,7 @@ export default function Story() {
       handleCreateStory();
     }
   }, [
+    prepation,
     title,
     description,
     debouncedContent,

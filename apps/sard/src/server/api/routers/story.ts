@@ -78,6 +78,7 @@ export const storyRouter = createTRPCRouter({
     .input(
       z.object({
         account: z.string().nullish(),
+        prepation: z.string().nullish(),
         title: z.string(),
         description: z.string(),
         slug: z.string(),
@@ -103,6 +104,7 @@ export const storyRouter = createTRPCRouter({
 
       return ctx.prisma.story.create({
         data: {
+          prepation: input.prepation,
           title: input.title,
           description: input.description,
           slug: input.slug,

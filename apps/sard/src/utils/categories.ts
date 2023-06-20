@@ -74,8 +74,26 @@ export default [
   },
   {
     id: 12,
-    label: "العدالة",
-    emoji: "⚖️",
-    value: "justice",
+    label: "الرحمة",
+    emoji: "🥰",
+    value: "compassion",
+  },
+  {
+    id: 13,
+    label: "العمل الجاد",
+    emoji: "🏃‍♂️",
+    value: "Hard Work",
+  },
+  {
+    id: 14,
+    label: "الكرم",
+    emoji: "🤲",
+    value: "generosity",
+  },
+  {
+    id: 15,
+    value: "theft",
+    label: "السرقة",
+    emoji: "🥷 ",
   },
 ];

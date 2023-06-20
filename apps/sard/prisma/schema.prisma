@@ -31,6 +31,7 @@ model Story {
     id          String     @id @default(cuid())
     account     Account?   @relation(fields: [accountId], references: [id], onDelete: SetNull)
     accountId   String?
+    prepation   String?
     title       String?    @unique
     description String?
     slug        String?    @unique
