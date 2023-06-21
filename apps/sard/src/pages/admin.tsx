@@ -242,6 +242,8 @@ export default function Admin() {
                       text="حفظ"
                       type="submit"
                       onClick={() => {
+                        if (!user) return router.push("/");
+
                         updateStory(
                           {
                             id: story.id,
@@ -251,9 +253,10 @@ export default function Admin() {
                             content: getValues("content"),
                           },
                           {
-                            onSuccess: () => {
+                            onSuccess: async () => {
                               refetchStories();
                               setSelectedStory(null);
+                              await fetch("/api/revalidate");
                             },
                           }
                         );

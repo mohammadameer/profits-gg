@@ -6,6 +6,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { api } from "~/utils/api";
 import memberships from "~/utils/memberships";
 import va from "@vercel/analytics";
+import { useEffect } from "react";
 
 export default function MembershipModal() {
   const router = useRouter();
@@ -33,6 +34,16 @@ export default function MembershipModal() {
       },
     }
   );
+
+  useEffect(() => {
+    if (user?.id && user?.membershipExpiration) {
+      const membershipExpiration = new Date(user?.membershipExpiration);
+
+      if (membershipExpiration > new Date()) {
+        router.push("/");
+      }
+    }
+  }, [user]);
 
   return (
     <div className="flex justify-center !bg-gray-200 p-6">
