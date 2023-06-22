@@ -16,14 +16,15 @@ import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import Script from "next/script";
 
 // Check that PostHog is client-side (used to handle Next.js SSR)
-if (typeof window !== "undefined") {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
-    // Enable debug mode in development
-    // loaded: (posthog) => {
-    //   if (process.env.NODE_ENV === "development") posthog.debug();
-    // },
-  });
-}
+// if (typeof window !== "undefined") {
+//   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
+
+//     // Enable debug mode in development
+//     // loaded: (posthog) => {
+//     //   if (process.env.NODE_ENV === "development") posthog.debug();
+//     // },
+//   });
+// }
 
 const IBM = IBM_Plex_Sans_Arabic({
   weight: ["100", "400", "500", "700"],
