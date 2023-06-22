@@ -11,11 +11,22 @@ export const storyRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) =>
       ctx.prisma.story.findUnique({
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          description: true,
+          content: true,
+          prepation: true,
+          imagePrompt: true,
+          categories: {
+            select: {
+              name: true,
+            },
+          },
+        },
         where: {
           slug: input.slug,
-        },
-        include: {
-          categories: true,
         },
       })
     ),
@@ -37,6 +48,15 @@ export const storyRouter = createTRPCRouter({
       const skip = input.cursor ?? 0;
 
       const query: Prisma.StoryFindManyArgs = {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          description: true,
+          content: true,
+          prepation: true,
+          imagePrompt: true,
+        },
         orderBy: {
           createdAt: "desc",
         },

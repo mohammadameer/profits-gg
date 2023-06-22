@@ -10,11 +10,31 @@ export default function StoryImage({
   src: string;
   alt: string;
 }) {
+  const { data } = api.story.storyImage.useQuery(
+    {
+      id,
+    },
+    {
+      retry: false,
+      enabled: !!id,
+    }
+  );
+
+  const getSrc = () => {
+    if (data?.mainImage?.includes("http")) {
+      return data?.mainImage;
+    }
+
+    return "data:image/png;base64," + data?.mainImage;
+  };
+
+  if (!data?.mainImage && !src) return null;
+
   return (
     <Image
       id={id}
       key={id}
-      src={src?.includes("http") ? src : "data:image/png;base64," + src}
+      src={id ? getSrc() : src}
       alt={alt}
       fill
       style={{ objectFit: "cover" }}

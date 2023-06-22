@@ -25,5 +25,5 @@
     "preserveWatchOutput": true
   },
   "include": ["."],
-  "exclude": ["dist", "build", "node_modules"]
+  "exclude": ["dist", "build", "node_modules", ".next"]
 }

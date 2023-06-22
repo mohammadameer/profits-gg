@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 import { LoginModalContext } from "src/components/Layout";
 import clsx from "clsx";
 import path from "path";
-
+import fullChallets from "./challets";
 export default function GoogleMaps() {
   const { status: sessionStatus } = useSession();
 
@@ -255,6 +255,55 @@ export default function GoogleMaps() {
                       console.log(rectangles);
                       console.log("chalets", chalets);
                     }
+                  }}
+                />
+                <Button
+                  text="طلب رقم الشاليهات"
+                  onClick={async () => {
+                    const filteredChallets = [];
+
+                    const placesApi = new google.maps.places.PlacesService(map as google.maps.Map);
+                    const uniquePlaceIds = new Set();
+
+                    await Promise.all(
+                      fullChallets.map(async (chalet) => {
+                        if (uniquePlaceIds.has(chalet.place_id)) {
+                          return;
+                        }
+                        
+                        uniquePlaceIds.add(chalet.place_id);
+
+                        try {
+                          const challetDetails = await new Promise((resolve) => {
+                            placesApi.getDetails(
+                              {
+                                placeId: chalet.place_id,
+                                fields: ["formatted_phone_number"],
+                              },
+                              (place, status) => {
+                                if (
+                                  status === google.maps.places.PlacesServiceStatus.OK &&
+                                  place
+                                ) {
+                                  resolve(place);
+                                } else {
+                                  resolve(null);
+                                }
+                              }
+                            );
+                          });
+
+                          filteredChallets.push({
+                            ...chalet,
+                            phone: challetDetails?.formatted_phone_number || undefined,
+                          });
+                        } catch (error) {
+                          console.error("An error occurred:", error);
+                        }
+                      })
+                    );
+
+                    console.log("filteredChallets", filteredChallets);
                   }}
                 />
               </div>

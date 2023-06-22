@@ -189,7 +189,7 @@ export default function Admin() {
                 <StoryImage
                   id={story.id}
                   src={story.mainImage as string}
-                  alt={story.title as string}
+                  alt={story.imagePrompt as string}
                 />
                 {selectedStory?.id !== story.id ? (
                   <div className="absolute bottom-0 left-0 flex w-full items-center justify-center bg-gradient-to-t from-black/50 via-black/50 p-2">

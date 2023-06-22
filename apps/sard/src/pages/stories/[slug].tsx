@@ -21,6 +21,7 @@ import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import SuperJSON from "superjson";
 import { prisma } from "~/server/db";
+import StoryImage from "~/components/StoryImage";
 
 export default function Story() {
   const router = useRouter();
@@ -74,9 +75,7 @@ export default function Story() {
     storyData?.description as string
   );
   const [slug, setSlug] = useState<string>(storyData?.slug as string);
-  const [mainImage, setMainImage] = useState<string>(
-    storyData?.mainImage as string
-  );
+  const [mainImage, setMainImage] = useState<string>();
   const [content, setContent] = useState<string>(storyData?.content as string);
   const [imagePrompt, setImagePrompt] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
@@ -352,13 +351,12 @@ export default function Story() {
             <div className="h-6 w-1/6 animate-pulse rounded-md bg-gray-400" />
           )}
 
-          {mainImage ? (
+          {mainImage || storyData?.id ? (
             <div className="relative aspect-square max-h-[500px] w-full md:w-[500px]">
-              <Image
+              <StoryImage
+                id={storyData?.id as string}
                 src={"data:image/jpeg;base64," + mainImage}
                 alt={(imagePrompt || storyData?.imagePrompt) as string}
-                fill
-                priority
               />
             </div>
           ) : (

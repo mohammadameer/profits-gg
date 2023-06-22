@@ -29,5 +29,5 @@
     "src/env/client.mjs",
     "src/env/schema.mjs"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".next"]
 }
