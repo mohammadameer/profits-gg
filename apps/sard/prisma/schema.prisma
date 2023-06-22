@@ -36,6 +36,7 @@ model Story {
     description String?
     slug        String?    @unique
     mainImage   String?
+    smallImage  String?
     place       String?
     imagePrompt String?
     content     String?

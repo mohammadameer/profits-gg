@@ -29,6 +29,9 @@ const Home = () => {
     {
       hidden: false,
       limit: 6,
+      select: {
+        smallImage: true,
+      },
     },
     {
       refetchOnMount: false,
@@ -73,10 +76,10 @@ const Home = () => {
       <div className="relative grid grid-cols-12 gap-4 p-6">
         {stories?.pages?.[0]?.stories?.length ? (
           stories?.pages?.map((page) =>
-            page?.stories?.map((story) => (
+            page?.stories?.map((story, index) => (
               <div
                 key={story.id}
-                className="relative z-20 col-span-full flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-6 lg:col-span-4"
+                className="relative z-20 col-span-6 flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2"
                 onClick={() => {
                   router.push(`/stories/${story.slug}`);
                   (window as any)?.ttq?.track("ViewContent", {
@@ -87,8 +90,9 @@ const Home = () => {
                 }}
               >
                 <StoryImage
+                  index={index}
                   id={story.id}
-                  src={story.mainImage as string}
+                  src={story.smallImage as string}
                   alt={story.title as string}
                 />
                 <div className="absolute bottom-0 left-0 flex w-full items-center justify-center bg-gradient-to-t from-black/50 via-black/50 p-2">
@@ -137,6 +141,9 @@ export async function getStaticProps() {
   await helpers?.story?.list?.prefetchInfinite({
     hidden: false,
     limit: 6,
+    select: {
+      smallImage: true,
+    },
   });
 
   return {

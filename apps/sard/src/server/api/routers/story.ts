@@ -19,6 +19,7 @@ export const storyRouter = createTRPCRouter({
           content: true,
           prepation: true,
           imagePrompt: true,
+          mainImage: true,
           categories: {
             select: {
               name: true,
@@ -41,6 +42,14 @@ export const storyRouter = createTRPCRouter({
         place: z.string().nullish(),
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.number().nullish(), // <-- "cursor" needs to exist, but can be any type
+        select: z
+          .object({
+            mainImage: z.boolean().nullish(),
+            smallImage: z.boolean().nullish(),
+            description: z.boolean().nullish(),
+            content: z.boolean().nullish(),
+          })
+          .optional(),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -52,9 +61,10 @@ export const storyRouter = createTRPCRouter({
           id: true,
           title: true,
           slug: true,
-          description: true,
-          content: true,
-          prepation: true,
+          mainImage: input.select?.mainImage ? true : false,
+          smallImage: input.select?.smallImage ? true : false,
+          description: input.select?.description ? true : false,
+          content: input.select?.content ? true : false,
           imagePrompt: true,
         },
         orderBy: {
@@ -69,9 +79,6 @@ export const storyRouter = createTRPCRouter({
               },
             },
             hidden: input.hidden ?? undefined,
-            mainImage: {
-              not: null,
-            },
             place: input?.place ?? undefined,
           },
         },
@@ -103,6 +110,7 @@ export const storyRouter = createTRPCRouter({
         description: z.string(),
         slug: z.string(),
         mainImage: z.string(),
+        smallImage: z.string(),
         imagePrompt: z.string(),
         content: z.string(),
         category: z.string(),
@@ -129,6 +137,7 @@ export const storyRouter = createTRPCRouter({
           description: input.description,
           slug: input.slug,
           mainImage: input.mainImage,
+          smallImage: input.smallImage,
           imagePrompt: input.imagePrompt,
           content: input.content,
           categories: {
@@ -151,6 +160,7 @@ export const storyRouter = createTRPCRouter({
         description: z.string().nullish(),
         slug: z.string().nullish(),
         mainImage: z.string().nullish(),
+        smallImage: z.string().nullish(),
         imagePrompt: z.string().nullish(),
         content: z.string().nullish(),
         category: z.string().nullish(),
@@ -170,6 +180,7 @@ export const storyRouter = createTRPCRouter({
           description: input.description,
           slug: input.slug,
           mainImage: input.mainImage,
+          smallImage: input.smallImage,
           imagePrompt: input.imagePrompt,
           content: input.content,
           wordCount: input.wordCount,

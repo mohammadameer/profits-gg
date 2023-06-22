@@ -1,8 +1,13 @@
 import { Story } from "@prisma/client";
 import useLocalStorage from "@profits-gg/lib/hooks/useLocalStorage";
-import { Button, SelectInput, TextAreaInput, TextInput } from "@profits-gg/ui";
+import {
+  Button,
+  Modal,
+  SelectInput,
+  TextAreaInput,
+  TextInput,
+} from "@profits-gg/ui";
 import clsx from "clsx";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -11,15 +16,7 @@ import StoryImage from "~/components/StoryImage";
 import { api } from "~/utils/api";
 import categories, { Category } from "~/utils/categories";
 import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
-import {
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-} from "next";
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import { appRouter } from "~/server/api/root";
-import { createInnerTRPCContext } from "~/server/api/trpc";
-import SuperJSON from "superjson";
+import Compressor from "compressorjs";
 
 export default function Admin() {
   const router = useRouter();
@@ -61,6 +58,12 @@ export default function Admin() {
       id: id as string,
       category: category as string,
       hidden: hidden as boolean,
+      select: {
+        mainImage: true,
+        smallImage: true,
+        description: true,
+        content: true,
+      },
     },
     {
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
@@ -100,7 +103,7 @@ export default function Admin() {
 
   return (
     <>
-      <div className="flex gap-2 p-6 ">
+      <div className={clsx("flex gap-2 p-6 ", selectedStory ? "blur-md" : "")}>
         <SelectInput
           className="w-full"
           name="category"
@@ -166,25 +169,37 @@ export default function Admin() {
           label="الرقم"
         />
       </div>
-      <div className="grid w-full grid-cols-12 grid-rows-6 gap-4 p-6 transition-all">
+      <div
+        className={clsx(
+          "grid w-full grid-cols-12 grid-rows-6 gap-4 p-6 transition-all",
+          selectedStory ? "blur-md" : ""
+        )}
+      >
         {stories?.pages?.length && stories?.pages?.[0]?.stories?.length ? (
           stories?.pages?.map((page) =>
             page?.stories?.map((story) => (
               <div
                 key={story.id}
                 className={clsx(
-                  "relative col-span-full flex h-64 items-center justify-start overflow-scroll rounded-md bg-white shadow-sm transition-all md:col-span-6 lg:col-span-4",
-                  story.id === selectedStory?.id &&
-                    "!col-span-full !row-span-2 h-full"
+                  "relative col-span-6 flex h-64 cursor-pointer items-center justify-start overflow-scroll rounded-md bg-white shadow-sm transition-all md:col-span-3 lg:col-span-2"
                 )}
-                // onClick={() => {
-                //   router.push(`/stories/${story.slug}`);
-                //   (window as any)?.ttq?.track("ViewContent", {
-                //     content_id: story.id,
-                //     content_type: "product",
-                //     content_name: story.title,
-                //   });
-                // }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (selectedStory?.id === story.id) {
+                    setSelectedStory(null);
+                  } else {
+                    setSelectedStory(story);
+                    reset({
+                      title: story.title,
+                      description: story.description,
+                      slug: story.slug,
+                      content: story.content,
+                      imagePrompt: story.imagePrompt,
+                      mainImage: story.mainImage,
+                      smallImage: story.smallImage,
+                    });
+                  }
+                }}
               >
                 <StoryImage
                   id={story.id}
@@ -199,93 +214,7 @@ export default function Admin() {
                   </div>
                 ) : null}
 
-                {selectedStory?.id == story.id ? (
-                  <form
-                    onSubmit={handleSubmit(updateStoryDetails)}
-                    className="absolute bottom-0 right-0 grid w-full grid-cols-12 gap-2 p-6"
-                  >
-                    <TextInput
-                      className="col-span-6"
-                      inputClassName="!bg-gray-200 focus:!border-gray-500"
-                      name="title"
-                      control={control}
-                      placeholder="العنوان"
-                      defaultValue={story.title}
-                    />
-                    <TextInput
-                      className="col-span-6"
-                      inputClassName="!bg-gray-200 focus:!border-gray-500"
-                      name="description"
-                      control={control}
-                      placeholder="الوصف"
-                      defaultValue={story.description}
-                    />
-                    <TextInput
-                      className="col-span-6"
-                      inputClassName="!bg-gray-200 focus:!border-gray-500"
-                      name="slug"
-                      control={control}
-                      placeholder="الرابط"
-                      defaultValue={story.slug}
-                    />
-                    <TextAreaInput
-                      className="col-span-10"
-                      height="h-36"
-                      inputClassName="!bg-gray-200 focus:!border-gray-500"
-                      name="content"
-                      control={control}
-                      placeholder="المحتوى"
-                      defaultValue={story.content}
-                    />
-
-                    <Button
-                      text="حفظ"
-                      type="submit"
-                      onClick={() => {
-                        if (!user) return router.push("/");
-
-                        updateStory(
-                          {
-                            id: story.id,
-                            title: getValues("title"),
-                            description: getValues("description"),
-                            slug: getValues("slug"),
-                            content: getValues("content"),
-                          },
-                          {
-                            onSuccess: async () => {
-                              refetchStories();
-                              setSelectedStory(null);
-                              await fetch("/api/revalidate");
-                            },
-                          }
-                        );
-                      }}
-                      className="col-span-4 select-none shadow-md"
-                    />
-                  </form>
-                ) : null}
-
                 <div className="absolute left-2 top-2 flex gap-2">
-                  <Button
-                    text={"تعديل"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (selectedStory?.id === story.id) {
-                        setSelectedStory(null);
-                      } else {
-                        setSelectedStory(story);
-                        reset({
-                          title: story.title,
-                          description: story.description,
-                          slug: story.slug,
-                          mainImage: story.mainImage,
-                          content: story.content,
-                        });
-                      }
-                    }}
-                    className="select-none shadow-md"
-                  />
                   <Button
                     text={story?.hidden ? "إظهار" : "إخفاء"}
                     onClick={(e) => {
@@ -326,6 +255,171 @@ export default function Admin() {
         )}
         <div ref={inViewRef} className="h-20 w-full" />
       </div>
+
+      <Modal
+        open={!!selectedStory}
+        setOpen={() => setSelectedStory(null)}
+        className="!bg-gray-200 xl:!w-[60vw] xl:!max-w-[60vw] "
+      >
+        <form
+          onSubmit={handleSubmit(updateStoryDetails)}
+          className="grid w-full grid-cols-12 gap-2 p-6"
+        >
+          <div className="col-span-full flex flex-col items-start gap-2 xl:flex-row xl:items-end">
+            <div className="relative col-span-full flex h-96 w-full max-w-[100vw] xl:w-96">
+              <StoryImage
+                id={selectedStory?.id as string}
+                src={selectedStory?.mainImage as string}
+                alt={selectedStory?.imagePrompt as string}
+              />
+            </div>
+            <Button
+              text="تحديث"
+              type="submit"
+              onClick={() => {
+                // the logic will need to be add
+              }}
+              className="w-full select-none shadow-md xl:w-52"
+            />
+          </div>
+          <div className="col-span-full flex flex-col items-start gap-2 xl:flex-row xl:items-end">
+            <div className="relative col-span-full flex h-52 w-52">
+              <StoryImage
+                id={selectedStory?.id as string}
+                src={selectedStory?.smallImage as string}
+                alt={selectedStory?.imagePrompt as string}
+              />
+            </div>
+            <Button
+              text="إضافة"
+              type="submit"
+              onClick={async () => {
+                function dataURLtoFile(dataurl: string, filename: string) {
+                  var arr = dataurl.split(",") as any[],
+                    mime = arr[0].match(/:(.*?);/)[1],
+                    bstr = atob(arr[arr.length - 1]),
+                    n = bstr.length,
+                    u8arr = new Uint8Array(n);
+                  while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                  }
+                  return new File([u8arr], filename, { type: mime });
+                }
+
+                const smallCompressedImage = await new Promise<string>(
+                  (resolve) => {
+                    const url =
+                      "data:image/png;base64," + selectedStory?.mainImage;
+                    const imageFile = dataURLtoFile(url, `${Date.now()}.png`);
+
+                    new Compressor(imageFile, {
+                      strict: true,
+                      checkOrientation: true,
+                      maxWidth: 0,
+                      maxHeight: 0,
+                      minWidth: 0,
+                      minHeight: 0,
+                      width: 128,
+                      height: 128,
+                      resize: "cover",
+                      quality: 0.2,
+                      mimeType: "auto",
+                      convertTypes: ["image/png"],
+                      convertSize: 0,
+                      success: (result) => {
+                        const reader = new FileReader();
+                        reader.readAsDataURL(result);
+                        reader.onloadend = () => {
+                          const base64data = reader.result;
+                          resolve(base64data as string);
+                        };
+                      },
+                    });
+                  }
+                );
+
+                updateStory(
+                  {
+                    id: selectedStory?.id as string,
+                    smallImage: smallCompressedImage?.replace(
+                      "data:image/jpeg;base64,",
+                      ""
+                    ),
+                  },
+                  {
+                    onSuccess: () => {
+                      refetchStories({
+                        exact: true,
+                      });
+                      setSelectedStory(null);
+                    },
+                  }
+                );
+              }}
+              className="w-full select-none shadow-md xl:w-52"
+            />
+          </div>
+          <TextInput
+            className="col-span-full"
+            inputClassName="!bg-gray-200 focus:!border-gray-500"
+            name="title"
+            control={control}
+            placeholder="العنوان"
+            defaultValue={selectedStory?.title}
+          />
+          <TextInput
+            className="col-span-full"
+            inputClassName="!bg-gray-200 focus:!border-gray-500"
+            name="description"
+            control={control}
+            placeholder="الوصف"
+            defaultValue={selectedStory?.description}
+          />
+          <TextInput
+            className="col-span-full"
+            inputClassName="!bg-gray-200 focus:!border-gray-500"
+            name="slug"
+            control={control}
+            placeholder="الرابط"
+            defaultValue={selectedStory?.slug}
+          />
+          <TextAreaInput
+            className="col-span-full"
+            height="h-52"
+            inputClassName="!bg-gray-200 focus:!border-gray-500"
+            name="content"
+            control={control}
+            placeholder="المحتوى"
+            defaultValue={selectedStory?.content}
+          />
+
+          <Button
+            text="حفظ"
+            type="submit"
+            onClick={() => {
+              if (!user) return router.push("/");
+
+              updateStory(
+                {
+                  id: selectedStory?.id || "",
+                  title: getValues("title"),
+                  description: getValues("description"),
+                  slug: getValues("slug"),
+                  content: getValues("content"),
+                },
+                {
+                  onSuccess: async () => {
+                    refetchStories();
+                    setSelectedStory(null);
+                    await fetch("/api/revalidate");
+                  },
+                }
+              );
+            }}
+            className="col-span-4 select-none shadow-md"
+          />
+        </form>
+      </Modal>
     </>
   );
 }

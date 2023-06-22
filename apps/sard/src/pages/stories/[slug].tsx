@@ -75,7 +75,9 @@ export default function Story() {
     storyData?.description as string
   );
   const [slug, setSlug] = useState<string>(storyData?.slug as string);
-  const [mainImage, setMainImage] = useState<string>();
+  const [mainImage, setMainImage] = useState<string>(
+    storyData?.mainImage as string
+  );
   const [content, setContent] = useState<string>(storyData?.content as string);
   const [imagePrompt, setImagePrompt] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
@@ -281,6 +283,36 @@ export default function Story() {
             },
           });
         });
+
+        const smallCompressedImage = await new Promise<string>((resolve) => {
+          const url = "data:image/png;base64," + mainImage;
+          const imageFile = dataURLtoFile(url, `${Date.now()}.png`);
+
+          new Compressor(imageFile, {
+            strict: true,
+            checkOrientation: true,
+            maxWidth: 0,
+            maxHeight: 0,
+            minWidth: 0,
+            minHeight: 0,
+            width: 128,
+            height: 128,
+            resize: "cover",
+            quality: 0.2,
+            mimeType: "auto",
+            convertTypes: ["image/png"],
+            convertSize: 0,
+            success: (result) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(result);
+              reader.onloadend = () => {
+                const base64data = reader.result;
+                resolve(base64data as string);
+              };
+            },
+          });
+        });
+
         createStory(
           {
             account: userId,
@@ -289,6 +321,10 @@ export default function Story() {
             description,
             slug: slug.trim(),
             mainImage: compressedImage?.replace("data:image/jpeg;base64,", ""),
+            smallImage: smallCompressedImage?.replace(
+              "data:image/jpeg;base64,",
+              ""
+            ),
             imagePrompt,
             content: debouncedContent,
             category: category as string,
@@ -351,11 +387,11 @@ export default function Story() {
             <div className="h-6 w-1/6 animate-pulse rounded-md bg-gray-400" />
           )}
 
-          {mainImage || storyData?.id ? (
+          {mainImage ? (
             <div className="relative aspect-square max-h-[500px] w-full md:w-[500px]">
               <StoryImage
                 id={storyData?.id as string}
-                src={"data:image/jpeg;base64," + mainImage}
+                src={mainImage}
                 alt={(imagePrompt || storyData?.imagePrompt) as string}
               />
             </div>

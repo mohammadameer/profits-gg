@@ -9,12 +9,14 @@ export default function Test() {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>();
   const [compressedImages, setCompressedImages] = useState<string[]>();
+  const [smallCompressedImages, setSmallCompressedImages] =
+    useState<string[]>();
 
   const { isLoading: isGettingImage, mutateAsync: getImage } =
     api.openai.getImage.useMutation();
 
   function dataURLtoFile(dataurl: string, filename: string) {
-    var arr = dataurl.split(","),
+    var arr = dataurl.split(",") as any[],
       mime = arr[0].match(/:(.*?);/)[1],
       bstr = atob(arr[arr.length - 1]),
       n = bstr.length,
@@ -99,10 +101,58 @@ export default function Test() {
           }}
           className="!bg-white !text-black"
         />
+        <Button
+          text="Compress Small Images"
+          onClick={async () => {
+            setLoading(true);
+            setSmallCompressedImages([]);
+
+            compressedImages?.map(async (image) => {
+              // image is base64 encoded
+              // convert to blob
+              const url = "data:image/png;base64," + image;
+              const imageFile = dataURLtoFile(url, `${Date.now()}.png`);
+
+              const compressedImage = await new Promise<string>((resolve) => {
+                new Compressor(imageFile, {
+                  strict: true,
+                  checkOrientation: true,
+                  maxWidth: 0,
+                  maxHeight: 0,
+                  minWidth: 0,
+                  minHeight: 0,
+                  width: 128,
+                  height: 128,
+                  resize: "cover",
+                  quality: 0.2,
+                  mimeType: "auto",
+                  convertTypes: ["image/png"],
+                  convertSize: 0,
+                  success: (result) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(result);
+                    reader.onloadend = () => {
+                      const base64data = reader.result;
+                      resolve(base64data as string);
+                    };
+                  },
+                });
+              });
+
+              setSmallCompressedImages((prev) => [
+                ...(prev ?? []),
+                compressedImage?.replace("data:image/jpeg;base64,", ""),
+              ]);
+
+              setLoading(false);
+            });
+          }}
+          className="!bg-white !text-black"
+        />
       </div>
       {images ? (
         <div className="flex gap-4">
-          {images.map((image) => {
+          {images?.map((image) => {
             const img = "data:image/png;base64," + image;
             const buffer = Buffer.from(img.substring(img.indexOf(",") + 1));
             const mb = buffer.length / 1e6;
@@ -126,7 +176,7 @@ export default function Test() {
       ) : null}
       {compressedImages ? (
         <div className="flex gap-4">
-          {compressedImages.map((image) => {
+          {compressedImages?.map((image) => {
             const img = "data:image/png;base64," + image;
             const buffer = Buffer.from(img.substring(img.indexOf(",") + 1));
             const mb = buffer.length / 1e6;
@@ -142,6 +192,36 @@ export default function Test() {
                     className="rounded-md"
                     unoptimized={true}
                   />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
+      {smallCompressedImages ? (
+        <div className="flex gap-4">
+          {smallCompressedImages?.map((image) => {
+            const img = "data:image/png;base64," + image;
+            const buffer = Buffer.from(img.substring(img.indexOf(",") + 1));
+            const mb = buffer.length / 1e6;
+            return (
+              <div className="flex flex-col gap-2">
+                <p>{mb} MB</p>
+                <div className="black relative h-52 w-52">
+                  <Image
+                    src={"data:image/png;base64," + image}
+                    alt={"test"}
+                    fill
+                    style={{ objectFit: "cover" }}
+                    className="rounded-md"
+                    unoptimized={true}
+                  />
+
+                  <div className="absolute bottom-0 left-0 flex w-full items-center justify-center bg-gradient-to-t from-black/50 via-black/50 p-2">
+                    <p className="text text-2xl font-bold leading-10 text-white md:text-2xl">
+                      قصة التعاون بين مايا والغابة
+                    </p>
+                  </div>
                 </div>
               </div>
             );
