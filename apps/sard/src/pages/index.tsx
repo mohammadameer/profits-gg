@@ -28,7 +28,7 @@ const Home = () => {
   } = api.story.list.useInfiniteQuery(
     {
       hidden: false,
-      limit: 3,
+      limit: 6,
       select: {
         smallImage: true,
       },
@@ -140,7 +140,7 @@ export async function getStaticProps() {
 
   await helpers?.story?.list?.prefetchInfinite({
     hidden: false,
-    limit: 3,
+    limit: 6,
     select: {
       smallImage: true,
     },
