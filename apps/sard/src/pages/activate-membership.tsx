@@ -122,6 +122,14 @@ export default function ActivateMembershipModal() {
             className="mt-2 w-full !bg-blue-500 !text-white"
           />
         </form>
+
+        <Button
+          text="العودة للصفحة الرئيسية"
+          className="mt-8 w-full"
+          onClick={() => {
+            router.push("/");
+          }}
+        />
       </div>
     </div>
   );

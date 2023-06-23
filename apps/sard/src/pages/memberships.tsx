@@ -1,4 +1,4 @@
-import { Modal } from "@profits-gg/ui";
+import { Button, Modal } from "@profits-gg/ui";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { usePostHog } from "posthog-js/react";
@@ -103,6 +103,14 @@ export default function MembershipModal() {
             </span>
           </p>
         </form>
+
+        <Button
+          text="العودة للصفحة الرئيسية"
+          className="mt-8 w-full"
+          onClick={() => {
+            router.push("/");
+          }}
+        />
       </div>
     </div>
   );
