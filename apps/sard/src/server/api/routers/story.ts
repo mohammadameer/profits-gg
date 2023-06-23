@@ -62,6 +62,7 @@ export const storyRouter = createTRPCRouter({
           id: true,
           title: true,
           slug: true,
+          hidden: true,
           mainImage: input.select?.mainImage ? true : false,
           smallImage: input.select?.smallImage ? true : false,
           description: input.select?.description ? true : false,
