@@ -1,11 +1,11 @@
 import { Html, Head, Main, NextScript } from "next/document";
-import Script from "next/script";
+// import Script from "next/script";
 
 export default function Document() {
   return (
     <Html dir="rtl" lang="ar">
       <Head>
-        <Script
+        {/* <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-10865811504"
           strategy="afterInteractive"
         />
@@ -29,7 +29,7 @@ export default function Document() {
               ttq.page();
             }(window, document, 'ttq');
           `}
-        </Script>
+        </Script> */}
       </Head>
       <body>
         <Main />
