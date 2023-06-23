@@ -55,7 +55,7 @@ export default function StoriesInSameCategory({
     }
   }, [inView]);
 
-  if (stories?.pages?.[0]?.stories?.length === 0) return null;
+  if (!stories?.pages?.[0]?.stories?.length) return null;
 
   return (
     <div className="flex w-full flex-col">

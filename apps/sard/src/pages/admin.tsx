@@ -225,8 +225,9 @@ export default function Admin() {
                           hidden: !story.hidden,
                         },
                         {
-                          onSuccess: () => {
+                          onSuccess: async () => {
                             refetchStories();
+                            await fetch("/api/revalidate");
                           },
                         }
                       );
