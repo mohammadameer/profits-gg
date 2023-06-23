@@ -27,6 +27,14 @@ export default function StoryModal() {
             </p>
           </div>
         ))}
+
+        <Button
+          text="العودة للصفحة الرئيسية"
+          className="col-span-full mt-8"
+          onClick={() => {
+            router.push("/");
+          }}
+        />
       </div>
     </div>
   );
