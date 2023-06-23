@@ -22,6 +22,7 @@ export const storyRouter = createTRPCRouter({
           mainImage: true,
           categories: {
             select: {
+              id: true,
               name: true,
             },
           },
@@ -72,7 +73,9 @@ export const storyRouter = createTRPCRouter({
         },
         where: {
           AND: {
-            id: input.id ?? undefined,
+            id: {
+              not: input.id ?? undefined,
+            },
             categories: {
               some: {
                 name: input.category ?? undefined,

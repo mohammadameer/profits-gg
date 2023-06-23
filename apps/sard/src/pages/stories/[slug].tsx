@@ -22,6 +22,8 @@ import { createInnerTRPCContext } from "~/server/api/trpc";
 import SuperJSON from "superjson";
 import { prisma } from "~/server/db";
 import StoryImage from "~/components/StoryImage";
+import StoriesInSameCategory from "~/components/StoriesInSameCategory";
+import { Story } from "@prisma/client";
 
 export default function Story() {
   const router = useRouter();
@@ -358,7 +360,10 @@ export default function Story() {
         useEnterprise={true}
       >
         <ReCaptcha onValidate={setToken} action="page_view" />
-        <div className={clsx("flex flex-col gap-6 p-6 py-10  pb-20 md:pt-24")}>
+        <div
+          key={storyData?.id}
+          className={clsx("flex flex-col gap-6 p-6 py-10  pb-20 md:pt-24")}
+        >
           {/* className="p-6 py-10 text-6xl font-bold md:pb-14 md:pt-24 md:text-8xl" */}
           {title ? (
             <h1 className="text-6xl font-bold md:pb-14 md:text-8xl">
@@ -421,6 +426,13 @@ export default function Story() {
               <p className="text-2xl">انتهت القصة ⭐️</p>
             </div>
           ) : null}
+
+          {!isLoading && storyData?.id ? (
+            <StoriesInSameCategory
+              storyId={storyData?.id as string}
+              categoryName={storyData?.categories?.[0]?.name as string}
+            />
+          ) : null}
         </div>
       </ReCaptchaProvider>
     </>
@@ -446,6 +458,7 @@ export async function getStaticProps(
     props: {
       trpcState: helpers?.dehydrate(),
       slug,
+      key: slug,
     },
   };
 }

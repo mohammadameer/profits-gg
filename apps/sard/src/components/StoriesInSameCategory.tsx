@@ -1,15 +1,19 @@
-import { NextSeo } from "next-seo";
-import { useEffect, useRef } from "react";
+import { Story } from "@prisma/client";
+import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
 import { useRouter } from "next/router";
+import { Fragment, useEffect, useRef } from "react";
 import StoryImage from "~/components/StoryImage";
 import { api } from "~/utils/api";
-import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import SuperJSON from "superjson";
-import { appRouter } from "~/server/api/root";
-import { createInnerTRPCContext } from "~/server/api/trpc";
 
-const Home = () => {
+export default function StoriesInSameCategory({
+  storyId,
+  categoryName,
+  onStoryClick,
+}: {
+  storyId: string;
+  categoryName: string;
+  onStoryClick?: (story: Story) => void;
+}) {
   const router = useRouter();
 
   const inViewRef = useRef<HTMLDivElement>(null);
@@ -18,26 +22,23 @@ const Home = () => {
 
   const {
     data: stories,
-    isLoading: isLoadingData,
     isFetching,
-    isFetchingNextPage,
-    hasNextPage,
-    status,
-    fetchNextPage,
     refetch: refetchStories,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
   } = api.story.list.useInfiniteQuery(
     {
+      id: storyId,
+      category: categoryName,
+      limit: 3,
       hidden: false,
-      limit: 6,
       select: {
         smallImage: true,
       },
     },
     {
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      retry: false,
-      enabled: false,
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
     }
   );
@@ -55,31 +56,15 @@ const Home = () => {
   }, [inView]);
 
   return (
-    <>
-      <NextSeo
-        title="قصص اطفال تعليمية قصيرة "
-        description="قصص اطفال عربية، جديدة، تعليمية، مؤثرة، قيمة، جميلة قصيرة، و مخصصة لطفلك، لقبل النوم وللتعليم"
-        canonical="https://sard.dev/"
-        openGraph={{
-          url: "https://sard.dev/",
-          title: "قصص اطفال تعليمية قصيرة",
-          description:
-            "قصص اطفال عربية، جديدة، تعليمية، مؤثرة، قيمة، جميلة قصيرة، و مخصصة لطفلك، لقبل النوم وللتعليم",
-          siteName: "سرد",
-        }}
-      />
-
-      <h1 className="md:pt-18 p-6 py-4 pb-4 text-4xl font-bold md:pb-14 md:text-8xl">
-        قصص اطفال تعليمية قصيرة
-      </h1>
-
-      <div className="relative grid grid-cols-12 gap-4 p-6">
+    <div className="flex w-full flex-col">
+      <p className="text-3xl">قصص أخرى في نفس الموضوع</p>
+      <div className="relative flex w-full gap-4 overflow-scroll py-8">
         {stories?.pages?.[0]?.stories?.length ? (
           stories?.pages?.map((page) =>
             page?.stories?.map((story, index) => (
               <div
                 key={story.id}
-                className="relative z-20 col-span-6 flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2"
+                className="relative z-20 flex h-40 min-w-[50%] cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:min-w-[25%] lg:min-w-[16%]"
                 onClick={() => {
                   router.push(`/stories/${story.slug}`);
                   (window as any)?.ttq?.track("ViewContent", {
@@ -103,8 +88,19 @@ const Home = () => {
               </div>
             ))
           )
+        ) : isFetching ? (
+          <Fragment>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="relative col-span-6 flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2"
+              >
+                <div className="h-full w-full animate-pulse bg-gray-200"></div>
+              </div>
+            ))}
+          </Fragment>
         ) : (
-          <div className="col-span-full flex h-96 flex-col items-center justify-center gap-8 rounded-md p-6">
+          <div className="col-span-full flex flex-col items-center justify-center gap-8 rounded-md p-6">
             <p className="text text-xl font-bold leading-10 text-gray-900 md:text-2xl">
               لا توجد قصص حاليا
             </p>
@@ -114,7 +110,7 @@ const Home = () => {
           Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="col-span-6 flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2"
+              className="col-span-full flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-6 lg:col-span-4"
             >
               <div className="flex h-full w-full animate-pulse flex-col">
                 <div className="h-3/4 w-full rounded-md bg-gray-200" />
@@ -124,33 +120,9 @@ const Home = () => {
           ))}
         <div
           ref={inViewRef}
-          className="absolute bottom-0 left-0 h-1/2 w-full "
+          className="h-40  w-1/2 min-w-[50%] md:min-w-[25%] lg:min-w-[16%]"
         />
       </div>
-    </>
+    </div>
   );
-};
-
-export async function getStaticProps() {
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext(),
-    transformer: SuperJSON,
-  });
-
-  await helpers?.story?.list?.prefetchInfinite({
-    hidden: false,
-    limit: 6,
-    select: {
-      smallImage: true,
-    },
-  });
-
-  return {
-    props: {
-      trpcState: helpers?.dehydrate(),
-    },
-  };
 }
-
-export default Home;

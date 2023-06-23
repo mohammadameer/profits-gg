@@ -242,7 +242,7 @@ export default function Admin() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="relative col-span-full flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-6 lg:col-span-4"
+                className="relative col-span-6 flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2"
               >
                 <div className="h-full w-full animate-pulse bg-gray-200"></div>
               </div>
