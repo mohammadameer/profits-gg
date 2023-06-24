@@ -7,6 +7,7 @@ import {
 import cors from "@profits-gg/lib/cors";
 import { ipRateLimit } from "@profits-gg/lib/ip-rate-limit";
 import { prisma } from "~/server/db";
+import names from "~/utils/names";
 
 export const config = {
   runtime: "edge",
@@ -97,6 +98,7 @@ export default async function handler(req: Request) {
           - story should be around a character and be fantastical, with set up, with plot twist, with rising action, with monomyth,  with False start , with Converging ideas , with Sparklines , with dramatic climax, with falling actions, end with resolution
           - the description should be short and contain the main story parts
           - the character can be a person name, an animal, an inanimate
+          - for character name it should be unic and different arabic name don't use ليلى
           - use arabic for the title, slug and the content without translation
           - the content length should be between 200 -  350 word and after every 5 words use a proper emoji 
           - image prompt should use description with min 10 words and should be in english
@@ -105,12 +107,12 @@ export default async function handler(req: Request) {
         },
         {
           role: "user",
-          content: `story for childrens and is about bravery`,
+          content: `story for childrens to learn about bravery and character name is فاطمة`,
         },
         {
           role: "assistant",
           content: `
-          قصة عن الشجاعة
+          قصة عن الشجاعة, اسم الشخصية الرئيسية هي فاطمة
           #
           الفتاة و البحر المجهول
           #
@@ -134,12 +136,12 @@ export default async function handler(req: Request) {
         },
         {
           role: "user",
-          content: `story for childrens and is about cooperation`,
+          content: `story for childrens to learn about cooperation and character name is الرجل العجوز`,
         },
         {
           role: "assistant",
           content: `
-          قصة عن المساعدة
+          قصة عن المساعدة، الشخصيات الرئيسية هما الرجل العجوز و الفأر
           #
           الرجل العجوز و الأوراق المتناثرة
           #
@@ -165,12 +167,12 @@ export default async function handler(req: Request) {
         },
         {
           role: "user",
-          content: `story for childrens and is about curiosity`,
+          content: `story for childrens to learn about curiosity and character name is زينب`,
         },
         {
           role: "assistant",
           content: `
-          قصة عن الفضول
+          قصة عن الفضول، اسم الشخصية الرئيسية هي زينب
           #
           حلم الفضاء
           #
@@ -200,12 +202,12 @@ export default async function handler(req: Request) {
         },
         {
           role: "user",
-          content: `story for childrens and is about self-confidence`,
+          content: `story for childrens to learn about self-confidence and character name is عبد اللطيف`,
         },
         {
           role: "assistant",
           content: `
-          قصة عن الثقة بالنفس
+          قصة عن الثقة بالنفس، اسم الشخصية الرئيسية هي عبد اللطيف
           #
           الفأر الشجاع
           #
@@ -233,12 +235,12 @@ export default async function handler(req: Request) {
         },
         {
           role: "user",
-          content: `story for childrens and is about cooperation`,
+          content: `story for childrens to learn about cooperation and character name is محمد`,
         },
         {
           role: "assistant",
           content: `
-          قصة عن التعاون
+          قصة عن التعاون، اسم الشخصية الرئيسية هي محمد
           #
           محمد والغابة
           #
@@ -264,18 +266,18 @@ export default async function handler(req: Request) {
         },
         {
           role: "user",
-          content: `story for childrens and is about Hard Work`,
+          content: `story for childrens to learn about Hard Work and character name is عمار`,
         },
         {
           role: "assistant",
           content: `
-          قصة عن العمل الجاد
+          قصة عن العمل الجاد، اسم الشخصية الرئيسية هي عمار
           #
-          عمار ولعبة الطائرة
+          ولعبة الطائرة
           #
           فتى يتعلم قيمة العمل الجاد من خلال ممارسة رياضة الطائرة وبذل الجهد لتحقيق أحلامه.
           #
-          عمار-و-لعبة-الطائرة
+          لعبة-الطائرة
           #
           a boy practicing volleyball with determination in a gym
           #
@@ -297,7 +299,9 @@ export default async function handler(req: Request) {
         },
         {
           role: "user",
-          content: `story for childrens and is about ${category}`,
+          content: `story for childrens to learn about ${category} and character name is ${
+            names[Math.floor(Math.random() * names.length)]
+          }`,
         },
       ],
     }),

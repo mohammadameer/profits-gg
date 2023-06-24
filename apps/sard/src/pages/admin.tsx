@@ -70,6 +70,8 @@ export default function Admin() {
     }
   );
 
+  const { mutate: getImage, isLoading: isGettingImage } =
+    api.openai.getImage.useMutation();
   const { mutate: updateStory } = api.story.update.useMutation();
 
   useEffect(() => {
@@ -94,6 +96,18 @@ export default function Admin() {
       fetchNextPage();
     }
   };
+
+  function dataURLtoFile(dataurl: string, filename: string) {
+    var arr = dataurl.split(",") as any[],
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[arr.length - 1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  }
 
   useEffect(() => {
     if (inView) {
@@ -278,7 +292,64 @@ export default function Admin() {
               text="تحديث"
               type="submit"
               onClick={() => {
-                // the logic will need to be add
+                getImage(
+                  {
+                    prompt: selectedStory?.imagePrompt as string,
+                  },
+                  {
+                    onSuccess: async (image) => {
+                      const compressedImage = await new Promise<string>(
+                        (resolve) => {
+                          const url = "data:image/png;base64," + image;
+                          const imageFile = dataURLtoFile(
+                            url,
+                            `${Date.now()}.png`
+                          );
+
+                          new Compressor(imageFile, {
+                            strict: true,
+                            checkOrientation: true,
+                            maxWidth: 0,
+                            maxHeight: 0,
+                            minWidth: 0,
+                            minHeight: 0,
+                            width: 256,
+                            height: 256,
+                            resize: "cover",
+                            quality: 0.4,
+                            mimeType: "auto",
+                            convertTypes: ["image/png"],
+                            convertSize: 0,
+                            success: (result) => {
+                              const reader = new FileReader();
+                              reader.readAsDataURL(result);
+                              reader.onloadend = () => {
+                                const base64data = reader.result;
+                                resolve(base64data as string);
+                              };
+                            },
+                          });
+                        }
+                      );
+
+                      updateStory(
+                        {
+                          id: selectedStory?.id as string,
+                          mainImage: compressedImage?.replace(
+                            "data:image/jpeg;base64,",
+                            ""
+                          ),
+                        },
+                        {
+                          onSuccess: async () => {
+                            refetchStories();
+                            await fetch("/api/revalidate");
+                          },
+                        }
+                      );
+                    },
+                  }
+                );
               }}
               className="w-full select-none shadow-md xl:w-52"
             />
@@ -295,18 +366,6 @@ export default function Admin() {
               text="إضافة"
               type="submit"
               onClick={async () => {
-                function dataURLtoFile(dataurl: string, filename: string) {
-                  var arr = dataurl.split(",") as any[],
-                    mime = arr[0].match(/:(.*?);/)[1],
-                    bstr = atob(arr[arr.length - 1]),
-                    n = bstr.length,
-                    u8arr = new Uint8Array(n);
-                  while (n--) {
-                    u8arr[n] = bstr.charCodeAt(n);
-                  }
-                  return new File([u8arr], filename, { type: mime });
-                }
-
                 const smallCompressedImage = await new Promise<string>(
                   (resolve) => {
                     const url =
