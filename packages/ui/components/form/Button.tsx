@@ -2,6 +2,7 @@ import clsx from "clsx";
 import type { FC } from "react";
 
 export type ButtonProps = {
+  id?: string;
   text: string;
   onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   type?: "button" | "submit" | "reset";
@@ -13,6 +14,7 @@ export type ButtonProps = {
 };
 
 const Button: FC<ButtonProps> = ({
+  id = "",
   text = "",
   onClick = () => null,
   type = "button",
@@ -24,6 +26,7 @@ const Button: FC<ButtonProps> = ({
 }) => {
   return (
     <button
+      id={id}
       onClick={(e) => {
         if (!disabled && !loading) onClick(e);
       }}

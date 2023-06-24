@@ -20,6 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             📖 سرد
           </p>
           <Button
+            id="new-story"
             text="قصة جديدة 🪄"
             onClick={() => {
               router.push("/stories/choose-category");
@@ -31,6 +32,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex justify-end gap-4 p-4">
           <p>تواصل معنا بـ</p>
           <a
+            id="email"
             className="text text-center font-bold text-gray-900"
             href="mailto:mohammad@sard.dev"
           >
@@ -38,6 +40,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </a>
           |
           <a
+            id="whatsapp"
             className="text text-center font-bold text-gray-900"
             href="https://wa.me/message/ENCFJL362JZCA1"
             target="_blank"

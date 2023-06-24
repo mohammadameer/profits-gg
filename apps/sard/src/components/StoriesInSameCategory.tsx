@@ -66,7 +66,7 @@ export default function StoriesInSameCategory({
             page?.stories?.map((story, index) => (
               <div
                 key={story.id}
-                className="relative z-20 flex h-40 min-w-[50%] cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:min-w-[25%] lg:min-w-[16%]"
+                className="story relative z-20 flex h-40 min-w-[50%] cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:min-w-[25%] lg:min-w-[16%]"
                 onClick={() => {
                   router.push(`/stories/${story.slug}`);
                   (window as any)?.ttq?.track("ViewContent", {

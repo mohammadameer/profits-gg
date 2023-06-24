@@ -62,7 +62,7 @@ export default function MembershipModal() {
             <div
               key={membership.id}
               className={clsx(
-                "flex w-full cursor-pointer select-none flex-col justify-between rounded-md border-4 border-transparent bg-gray-300 p-4 transition-all duration-300 hover:scale-105 active:scale-95"
+                "membership flex w-full cursor-pointer select-none flex-col justify-between rounded-md border-4 border-transparent bg-gray-300 p-4 transition-all duration-300 hover:scale-105 active:scale-95"
               )}
               onClick={() => {
                 gtag?.("event", "conversion", {
@@ -93,6 +93,7 @@ export default function MembershipModal() {
           <p className="text text-center text-gray-900">
             لديك اشتراك سابق؟{" "}
             <span
+              id="activate-membership"
               className="cursor-pointer text-blue-500 underline"
               onClick={() => {
                 router.push(`/activate-membership`);

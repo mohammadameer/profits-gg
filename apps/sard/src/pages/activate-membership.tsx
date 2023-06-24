@@ -124,6 +124,7 @@ export default function ActivateMembershipModal() {
         </form>
 
         <Button
+          id="activated-membership"
           text="العودة للصفحة الرئيسية"
           className="mt-8 w-full"
           onClick={() => {

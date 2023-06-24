@@ -15,7 +15,7 @@ export default function StoryModal() {
         {categories.map((category) => (
           <div
             className={clsx(
-              "col-span-6 flex cursor-pointer flex-col rounded-md border-4 border-transparent bg-white p-4 shadow-sm transition-all duration-200 ease-in-out hover:scale-105 active:scale-95"
+              "category col-span-6 flex cursor-pointer flex-col rounded-md border-4 border-transparent bg-white p-4 shadow-sm transition-all duration-200 ease-in-out hover:scale-105 active:scale-95"
             )}
             onClick={() => {
               router.push(`/stories/new?category=${category.value}`);
