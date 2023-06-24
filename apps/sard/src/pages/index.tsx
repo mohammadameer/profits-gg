@@ -82,11 +82,11 @@ const Home = () => {
                 className="story relative z-20 col-span-6 flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2"
                 onClick={() => {
                   router.push(`/stories/${story.slug}`);
-                  (window as any)?.ttq?.track("ViewContent", {
-                    content_id: story.id,
-                    content_type: "product",
-                    content_name: story.title,
-                  });
+                  // (window as any)?.ttq?.track("ViewContent", {
+                  //   content_id: story.id,
+                  //   content_type: "product",
+                  //   content_name: story.title,
+                  // });
                 }}
               >
                 <StoryImage

@@ -69,11 +69,11 @@ export default function StoriesInSameCategory({
                 className="story relative z-20 flex h-40 min-w-[50%] cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:min-w-[25%] lg:min-w-[16%]"
                 onClick={() => {
                   router.push(`/stories/${story.slug}`);
-                  (window as any)?.ttq?.track("ViewContent", {
-                    content_id: story.id,
-                    content_type: "product",
-                    content_name: story.title,
-                  });
+                  // (window as any)?.ttq?.track("ViewContent", {
+                  //   content_id: story.id,
+                  //   content_type: "product",
+                  //   content_name: story.title,
+                  // });
                 }}
               >
                 <StoryImage

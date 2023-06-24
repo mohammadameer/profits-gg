@@ -59,19 +59,21 @@ export default function MembershipModal() {
 
         <form className="flex w-full flex-col gap-4">
           {memberships.map((membership) => (
-            <div
+            <a
               key={membership.id}
               className={clsx(
                 "membership flex w-full cursor-pointer select-none flex-col justify-between rounded-md border-4 border-transparent bg-gray-300 p-4 transition-all duration-300 hover:scale-105 active:scale-95"
               )}
               onClick={() => {
-                gtag?.("event", "conversion", {
-                  send_to: "AW-10865811504/Z5RhCNPd8KcYELDAnL0o",
-                  value: membership.discountPrice,
-                  currency: "SAR",
-                });
-                window.open(membership.url, "_blank");
+                // gtag?.("event", "conversion", {
+                //   send_to: "AW-10865811504/Z5RhCNPd8KcYELDAnL0o",
+                //   value: membership.discountPrice,
+                //   currency: "SAR",
+                // });
               }}
+              href={membership.url}
+              target="_blank"
+              rel="noreferrer noopener"
             >
               <p className="text-xl font-bold">{membership.product}</p>
               <p className="text-end text-xl">
@@ -87,7 +89,7 @@ export default function MembershipModal() {
                   : null}{" "}
                 بـ {(membership?.discountPrice).toLocaleString("ar-EG")} ريال
               </p>
-            </div>
+            </a>
           ))}
 
           <p className="text text-center text-gray-900">
