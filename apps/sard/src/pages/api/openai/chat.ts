@@ -27,12 +27,14 @@ const verifyRecaptcha = async (token: string) => {
 };
 
 export default async function handler(req: Request) {
-  const { category, place, userId, token } = (await req.json()) as {
-    category: string;
-    token: string;
-    place: string;
-    userId: string;
-  };
+  const { category, characterName, place, userId, token } =
+    (await req.json()) as {
+      category: string;
+      characterName: string;
+      token: string;
+      place: string;
+      userId: string;
+    };
 
   const recaptchaResponse = await verifyRecaptcha(token);
 
@@ -85,7 +87,7 @@ export default async function handler(req: Request) {
     body: JSON.stringify({
       model: "gpt-3.5-turbo-16k",
       stream: true,
-      temperature: 1,
+      temperature: 1.08,
       top_p: 1,
       max_tokens: 1100,
       messages: [
@@ -112,7 +114,7 @@ export default async function handler(req: Request) {
         {
           role: "assistant",
           content: `
-          قصة عن الشجاعة, اسم الشخصية الرئيسية هي فاطمة
+          قصة عن الشجاعة, المكان الشاطئ، عناصرها مغامرات، إعصار حلم، اسم الشخصية الرئيسية هي فاطمة
           #
           الفتاة و البحر المجهول
           #
@@ -141,7 +143,7 @@ export default async function handler(req: Request) {
         {
           role: "assistant",
           content: `
-          قصة عن المساعدة، الشخصيات الرئيسية هما الرجل العجوز و الفأر
+          قصة عن المساعدة، المكان المكتب،  عناصرها أوراق متناثرة، مفاجأة، مغامرات، مساعدة، الشخصيات الرئيسية هما الرجل العجوز و الفأر
           #
           الرجل العجوز و الأوراق المتناثرة
           #
@@ -172,7 +174,7 @@ export default async function handler(req: Request) {
         {
           role: "assistant",
           content: `
-          قصة عن الفضول، اسم الشخصية الرئيسية هي زينب
+          قصة عن الفضول، المكان الفضاء،  عناصرها نجوم، مغامرات، فضول، حلم، اسم الشخصية الرئيسية هي زينب
           #
           حلم الفضاء
           #
@@ -207,7 +209,7 @@ export default async function handler(req: Request) {
         {
           role: "assistant",
           content: `
-          قصة عن الثقة بالنفس، اسم الشخصية الرئيسية هي عبد اللطيف
+          قصة عن الثقة بالنفس، المكان المنزل، عناصرها فأر شجاع، ثقة بالنفس، تحدي، اسم الشخصية الرئيسية هي عبد اللطيف
           #
           الفأر الشجاع
           #
@@ -240,7 +242,7 @@ export default async function handler(req: Request) {
         {
           role: "assistant",
           content: `
-          قصة عن التعاون، اسم الشخصية الرئيسية هي محمد
+          قصة عن التعاون، المكان الغابة، عناصرها تعاون، مساعدة، الطبيعة، اسم الشخصية الرئيسية هي محمد
           #
           محمد والغابة
           #
@@ -271,7 +273,7 @@ export default async function handler(req: Request) {
         {
           role: "assistant",
           content: `
-          قصة عن العمل الجاد، اسم الشخصية الرئيسية هي عمار
+          قصة عن العمل الجاد، المكان ملعب كرة الطائرة، عناصرها كرة طائرة، العمل الجاد، الرياضة، الطموح، اسم الشخصية الرئيسية هي عمار
           #
           ولعبة الطائرة
           #
@@ -299,9 +301,7 @@ export default async function handler(req: Request) {
         },
         {
           role: "user",
-          content: `story for childrens to learn about ${category} and character name is ${
-            names[Math.floor(Math.random() * names.length)]
-          }`,
+          content: `story for childrens to learn about ${category} and character name is ${characterName}`,
         },
       ],
     }),

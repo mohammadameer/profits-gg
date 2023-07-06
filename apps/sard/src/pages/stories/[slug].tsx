@@ -24,10 +24,11 @@ import { prisma } from "~/server/db";
 import StoryImage from "~/components/StoryImage";
 import StoriesInSameCategory from "~/components/StoriesInSameCategory";
 import { Story } from "@prisma/client";
+import names from "~/utils/names";
 
 export default function Story() {
   const router = useRouter();
-  const { slug: slugFromRouter, category, place } = router.query;
+  const { slug: slugFromRouter, category, characterName, place } = router.query;
 
   const [token, setToken] = useState<string>();
 
@@ -117,6 +118,7 @@ export default function Story() {
       method: "POST",
       body: JSON.stringify({
         category: category as string,
+        characterName: characterName as string,
         place: place as string,
         userId,
         token,
@@ -177,12 +179,13 @@ export default function Story() {
     }
 
     setIsLoading(false);
-  }, [token, category, isLoading, user]);
+  }, [token, category, characterName, isLoading, user]);
 
   // create story if category is selected or get story if slug is selected
   useEffect(() => {
     if (
       category &&
+      characterName &&
       slugFromRouter == "new" &&
       token &&
       !isLoading &&
@@ -190,7 +193,10 @@ export default function Story() {
       !isFetchingUser
     ) {
       // check if category is valid
-      if (categories?.find((categoryItem) => categoryItem.value === category)) {
+      if (
+        categories?.find((categoryItem) => categoryItem.value === category) &&
+        names?.find((name) => name === (characterName as string))
+      ) {
         // check if story is already created
         if (
           !prepation &&
@@ -207,11 +213,20 @@ export default function Story() {
         }
       } else {
         va.track("invalid params");
-        toast.error("الموضوع غير موجود");
+        toast.error("بيانات غير صحيحة", {
+          icon: "👀",
+        });
         router.push("/");
       }
     }
-  }, [category, token, slugFromRouter, isLoading, isFetchingUser]);
+  }, [
+    category,
+    characterName,
+    token,
+    slugFromRouter,
+    isLoading,
+    isFetchingUser,
+  ]);
 
   // get image if image prompt is set
   useEffect(() => {

@@ -57,12 +57,12 @@ const Home = () => {
   return (
     <>
       <NextSeo
-        title="قصص اطفال تعليمية قصيرة "
+        title="سرد - قصص اطفال تعليمية قصيرة"
         description="قصص اطفال عربية، جديدة، تعليمية، مؤثرة، قيمة، جميلة قصيرة، و مخصصة لطفلك، لقبل النوم وللتعليم"
         canonical="https://sard.dev/"
         openGraph={{
           url: "https://sard.dev/",
-          title: "قصص اطفال تعليمية قصيرة",
+          title: "سرد - قصص اطفال تعليمية قصيرة",
           description:
             "قصص اطفال عربية، جديدة، تعليمية، مؤثرة، قيمة، جميلة قصيرة، و مخصصة لطفلك، لقبل النوم وللتعليم",
           siteName: "سرد",
@@ -79,7 +79,7 @@ const Home = () => {
             page?.stories?.map((story, index) => (
               <div
                 key={story.id}
-                className="story relative z-20 col-span-6 flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2"
+                className="story relative z-20 col-span-6 flex h-40 cursor-pointer select-none items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2"
                 onClick={() => {
                   router.push(`/stories/${story.slug}`);
                   // (window as any)?.ttq?.track("ViewContent", {
