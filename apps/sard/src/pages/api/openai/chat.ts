@@ -104,7 +104,8 @@ export default async function handler(req: Request) {
           - use arabic for the title, slug and the content without translation
           - the content length should be between 200 -  350 word and after every 5 words use a proper emoji 
           - image prompt should use description with min 10 words and should be in english
-          - use simple language
+          - use simple language and simple words for childrens
+          - if possible choose part of category not the whole category
           `,
         },
         {
