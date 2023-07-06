@@ -30,13 +30,12 @@ export default function StoryModal() {
           siteName: "سرد",
         }}
       />
+      <h1 className="md:pt-18 col-span-full p-6 py-4 pt-8 text-4xl font-bold md:text-8xl">
+        قصة خاصة جديدة لطفلك
+      </h1>
       <div className="flex flex-col items-center gap-4 !bg-gray-200 p-6">
         <div className="mt-4 grid grid-cols-12 gap-4 pb-4 md:w-full">
-          <h1 className="md:pt-18 col-span-full p-6 py-4 pb-4 text-4xl font-bold md:pb-14 md:text-8xl">
-            قصة خاصة جديدة لطفلك
-          </h1>
-
-          <p className="col-span-full mb-4 mt-8 text-2xl font-bold text-gray-900 md:mt-0 md:text-4xl">
+          <p className="col-span-full mb-4 text-2xl font-bold text-gray-900 md:mt-0 md:text-4xl">
             اختر إسم شخصية القصة
           </p>
           <SelectInput
