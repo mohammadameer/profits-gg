@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { Button } from "@profits-gg/ui";
 import clsx from "clsx";
+import Link from "next/link";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -13,12 +14,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         )}
       >
         <div className="flex w-full items-center justify-between p-6">
-          <p
+          <Link
+            href="/"
             className="text transform cursor-pointer text-4xl font-bold text-gray-900 duration-300 hover:scale-105 active:scale-95 md:text-5xl"
-            onClick={() => router.push("/")}
           >
             📖 سرد
-          </p>
+          </Link>
           <Button
             id="new-story"
             text="قصة جديدة 🪄"
@@ -29,24 +30,29 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           />
         </div>
         {children}
-        <div className="flex justify-end gap-4 p-4">
-          <p>تواصل معنا بـ</p>
-          <a
-            id="email"
-            className="text text-center font-bold text-gray-900"
-            href="mailto:mohammad@sard.dev"
-          >
-            الإيميل
-          </a>
-          |
-          <a
-            id="whatsapp"
-            className="text text-center font-bold text-gray-900"
-            href="https://wa.me/message/ENCFJL362JZCA1"
-            target="_blank"
-          >
-            الواتساب
-          </a>
+        <div className="flex justify-between gap-4 p-4">
+          <div className="flex gap-4">
+            <Link href="/categories">المواضيع</Link>
+          </div>
+          <div className="flex gap-4">
+            <p>تواصل معنا بـ</p>
+            <a
+              id="email"
+              className="text text-center font-bold text-gray-900"
+              href="mailto:mohammad@sard.dev"
+            >
+              الإيميل
+            </a>
+            |
+            <a
+              id="whatsapp"
+              className="text text-center font-bold text-gray-900"
+              href="https://wa.me/message/ENCFJL362JZCA1"
+              target="_blank"
+            >
+              الواتساب
+            </a>
+          </div>
         </div>
       </div>
     </>

@@ -1,5 +1,6 @@
 import { Story } from "@prisma/client";
 import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useRef } from "react";
 import StoryImage from "~/components/StoryImage";
@@ -64,17 +65,10 @@ export default function StoriesInSameCategory({
         {stories?.pages?.[0]?.stories?.length ? (
           stories?.pages?.map((page) =>
             page?.stories?.map((story, index) => (
-              <div
+              <Link
+                href={`/stories/${story.slug}`}
                 key={story.id}
                 className="story relative z-20 flex h-40 min-w-[50%] cursor-pointer select-none items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:min-w-[25%] lg:min-w-[16%]"
-                onClick={() => {
-                  router.push(`/stories/${story.slug}`);
-                  // (window as any)?.ttq?.track("ViewContent", {
-                  //   content_id: story.id,
-                  //   content_type: "product",
-                  //   content_name: story.title,
-                  // });
-                }}
               >
                 <StoryImage
                   index={index}
@@ -87,7 +81,7 @@ export default function StoriesInSameCategory({
                     {story.title}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))
           )
         ) : isFetching ? (

@@ -12,6 +12,42 @@ export const fields = [
 
 const categories: Category[] = [
   {
+    emoji: "🌟",
+    label: "الاخلاق والفضائل",
+    value: "morals",
+    field: "morals",
+  },
+  {
+    emoji: "✨",
+    label: "الصدق",
+    value: "honesty",
+    field: "morals",
+  },
+  {
+    emoji: "👍",
+    label: "الأمانة",
+    value: "trustworthiness",
+    field: "morals",
+  },
+  {
+    emoji: "👨‍👩‍👦",
+    label: "بر الوالدين",
+    value: "respecting-parents",
+    field: "morals",
+  },
+  {
+    emoji: "🤲",
+    label: "الإيثار",
+    value: "selflessness",
+    field: "morals",
+  },
+  {
+    emoji: "🤝",
+    label: "حسن الظن",
+    value: "good-opinion",
+    field: "morals",
+  },
+  {
     emoji: "🛌",
     label: "النوم في الوقت المناسب",
     value: "sleeping-on-time",
@@ -21,6 +57,12 @@ const categories: Category[] = [
     emoji: "🧼",
     label: "النظافة الشخصية",
     value: "personal-hygiene",
+    field: "morals",
+  },
+  {
+    emoji: "🥰",
+    label: "الرفق",
+    value: "gentleness",
     field: "morals",
   },
   {
@@ -39,6 +81,12 @@ const categories: Category[] = [
     emoji: "😎",
     label: "المسؤولية",
     value: "responsibility",
+    field: "morals",
+  },
+  {
+    emoji: "😮‍💨",
+    label: "الصبر",
+    value: "patience",
     field: "morals",
   },
   {
@@ -63,6 +111,12 @@ const categories: Category[] = [
     emoji: "🫡",
     label: "الإحترام",
     value: "respect",
+    field: "morals",
+  },
+  {
+    label: "الصداقة",
+    emoji: "🤝",
+    value: "friendship",
     field: "morals",
   },
   {

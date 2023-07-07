@@ -8,6 +8,7 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import SuperJSON from "superjson";
 import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
+import Link from "next/link";
 
 const Home = () => {
   const router = useRouter();
@@ -77,7 +78,8 @@ const Home = () => {
         {stories?.pages?.[0]?.stories?.length ? (
           stories?.pages?.map((page) =>
             page?.stories?.map((story, index) => (
-              <div
+              <Link
+                href={`/stories/${story.slug}`}
                 key={story.id}
                 className="story relative z-20 col-span-6 flex h-40 cursor-pointer select-none items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2"
                 onClick={() => {
@@ -100,7 +102,7 @@ const Home = () => {
                     {story.title}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))
           )
         ) : (
