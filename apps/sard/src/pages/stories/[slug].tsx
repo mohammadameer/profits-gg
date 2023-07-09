@@ -34,7 +34,7 @@ export default function Story() {
 
   const createCalledRef = useRef(false);
 
-  const [userId, setUserId] = useLocalStorage<string>("userId", "");
+  const [userId] = useLocalStorage<string>("userId", "");
 
   const { data: storyData } = api.story.get.useQuery(
     {
@@ -98,16 +98,6 @@ export default function Story() {
     setMainImage("");
     setContent("");
     setImagePrompt("");
-
-    if (user && user?.membershipExpiration) {
-      const membershipExpiration = new Date(user?.membershipExpiration);
-
-      if (membershipExpiration < new Date()) {
-        va.track("create story expired membership");
-        router.push("/memberships");
-        return;
-      }
-    }
 
     va.track("creating-story");
 
@@ -189,8 +179,7 @@ export default function Story() {
       slugFromRouter == "new" &&
       token &&
       !isLoading &&
-      !createCalledRef.current &&
-      !isFetchingUser
+      !createCalledRef.current
     ) {
       // check if category is valid
       if (
@@ -206,9 +195,7 @@ export default function Story() {
           !mainImage &&
           !content
         ) {
-          refetchUser().then(() => {
-            handleCreateStory();
-          });
+          handleCreateStory();
           createCalledRef.current = true;
         }
       } else {
@@ -219,14 +206,7 @@ export default function Story() {
         router.push("/");
       }
     }
-  }, [
-    category,
-    characterName,
-    token,
-    slugFromRouter,
-    isLoading,
-    isFetchingUser,
-  ]);
+  }, [category, characterName, token, slugFromRouter, isLoading]);
 
   // get image if image prompt is set
   useEffect(() => {

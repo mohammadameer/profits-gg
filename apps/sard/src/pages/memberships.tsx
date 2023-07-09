@@ -49,11 +49,13 @@ export default function MembershipModal() {
     <div className="flex justify-center !bg-gray-200 p-6">
       <div className="flex flex-col gap-4 md:w-2/3 lg:w-1/3">
         <p className="text text-xl font-bold text-gray-900 md:text-2xl">
-          {user ? "انتهت صلاحية باقتك" : "وصلت الحد الأقصى للقصص في اليوم"}
+          {user
+            ? "انتهت صلاحية باقتك"
+            : "وصلت الحد الأقصى للقصص الجديدة في اليوم تعال بكرة"}
         </p>
 
         <p className="text text-xl text-gray-900">
-          يمكنك قراءة القصص التي تم إنشاؤها من قبل أو {user ? "إعادة" : ""}{" "}
+          بإمكانك قراءة القصص التي تم إنشاؤها من قبل أو {user ? "إعادة" : ""}{" "}
           الإشتراك في عدد لا نهائي من القصص الجديدة
         </p>
 

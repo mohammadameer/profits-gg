@@ -1,4 +1,3 @@
-import { Story } from "@prisma/client";
 import useLocalStorage from "@profits-gg/lib/hooks/useLocalStorage";
 import {
   Button,
@@ -17,6 +16,7 @@ import { api } from "~/utils/api";
 import categories, { Category } from "~/utils/categories";
 import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
 import Compressor from "compressorjs";
+import { Story } from "@prisma/client";
 
 export default function Admin() {
   const router = useRouter();
@@ -204,9 +204,9 @@ export default function Admin() {
                   } else {
                     setSelectedStory(story);
                     reset({
-                      title: story.title,
+                      title: story.title?.trim(),
                       description: story.description,
-                      slug: story.slug,
+                      slug: story.slug?.trim(),
                       content: story.content,
                       imagePrompt: story.imagePrompt,
                       mainImage: story.mainImage,
@@ -240,7 +240,7 @@ export default function Admin() {
                         },
                         {
                           onSuccess: async () => {
-                            refetchStories();
+                            refetchStories({ exact: true });
                             await fetch("/api/revalidate");
                           },
                         }
@@ -342,7 +342,7 @@ export default function Admin() {
                         },
                         {
                           onSuccess: async () => {
-                            refetchStories();
+                            refetchStories({ exact: true });
                             await fetch("/api/revalidate");
                           },
                         }
@@ -462,14 +462,14 @@ export default function Admin() {
               updateStory(
                 {
                   id: selectedStory?.id || "",
-                  title: getValues("title"),
+                  title: getValues("title").trim(),
                   description: getValues("description"),
-                  slug: getValues("slug"),
+                  slug: getValues("slug").trim().replace(/\s+/g, "-"),
                   content: getValues("content"),
                 },
                 {
                   onSuccess: async () => {
-                    refetchStories();
+                    refetchStories({ exact: true });
                     setSelectedStory(null);
                     await fetch("/api/revalidate");
                   },
