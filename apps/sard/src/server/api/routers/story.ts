@@ -8,9 +8,11 @@ export const storyRouter = createTRPCRouter({
       z.object({
         id: z.string().optional(),
         slug: z.string().optional(),
-        select: z.object({
-          smallImage: z.boolean().nullish(),
-        }),
+        select: z
+          .object({
+            smallImage: z.boolean().nullish(),
+          })
+          .optional(),
       })
     )
     .query(async ({ ctx, input }) =>
