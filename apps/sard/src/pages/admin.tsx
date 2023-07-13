@@ -70,9 +70,27 @@ export default function Admin() {
     }
   );
 
+  const {
+    data: story,
+    isLoading: isGettingStory,
+    refetch: refetchStory,
+  } = api.story.get.useQuery(
+    {
+      id: selectedStory?.id as string,
+      select: {
+        smallImage: true,
+      },
+    },
+    {
+      enabled: !!selectedStory?.id,
+      initialData: selectedStory,
+    }
+  );
+
   const { mutate: getImage, isLoading: isGettingImage } =
     api.openai.getImage.useMutation();
-  const { mutate: updateStory } = api.story.update.useMutation();
+  const { mutate: updateStory, isLoading: isUpdatingStory } =
+    api.story.update.useMutation();
 
   useEffect(() => {
     if (!userId && isLoading) {
@@ -281,16 +299,23 @@ export default function Admin() {
           className="grid w-full grid-cols-12 gap-2 p-6"
         >
           <div className="col-span-full flex flex-col items-start gap-2 xl:flex-row xl:items-end">
-            <div className="relative col-span-full flex h-96 w-full max-w-[100vw] xl:w-96">
+            <div
+              className={clsx(
+                "relative col-span-full flex h-96 w-full max-w-[100vw] xl:w-96",
+                isGettingImage && "animate-pulse"
+              )}
+            >
               <StoryImage
-                id={selectedStory?.id as string}
-                src={selectedStory?.mainImage as string}
-                alt={selectedStory?.imagePrompt as string}
+                id={story?.id as string}
+                src={story?.mainImage as string}
+                alt={story?.imagePrompt as string}
               />
             </div>
             <Button
               text="تحديث"
               type="submit"
+              loading={isGettingImage}
+              disabled={isGettingImage}
               onClick={() => {
                 getImage(
                   {
@@ -343,6 +368,7 @@ export default function Admin() {
                         {
                           onSuccess: async () => {
                             refetchStories({ exact: true });
+                            refetchStory({ exact: true });
                             await fetch("/api/revalidate");
                           },
                         }
@@ -355,21 +381,27 @@ export default function Admin() {
             />
           </div>
           <div className="col-span-full flex flex-col items-start gap-2 xl:flex-row xl:items-end">
-            <div className="relative col-span-full flex h-52 w-52">
+            <div
+              className={clsx(
+                "relative col-span-full flex h-52 w-52",
+                isUpdatingStory && "animate-pulse"
+              )}
+            >
               <StoryImage
-                id={selectedStory?.id as string}
-                src={selectedStory?.smallImage as string}
-                alt={selectedStory?.imagePrompt as string}
+                id={story?.id as string}
+                src={story?.smallImage as string}
+                alt={story?.imagePrompt as string}
               />
             </div>
             <Button
               text="إضافة"
               type="submit"
+              loading={isUpdatingStory}
+              disabled={isUpdatingStory}
               onClick={async () => {
                 const smallCompressedImage = await new Promise<string>(
                   (resolve) => {
-                    const url =
-                      "data:image/png;base64," + selectedStory?.mainImage;
+                    const url = "data:image/png;base64," + story?.mainImage;
                     const imageFile = dataURLtoFile(url, `${Date.now()}.png`);
 
                     new Compressor(imageFile, {
@@ -400,7 +432,7 @@ export default function Admin() {
 
                 updateStory(
                   {
-                    id: selectedStory?.id as string,
+                    id: story?.id as string,
                     smallImage: smallCompressedImage?.replace(
                       "data:image/jpeg;base64,",
                       ""
@@ -411,7 +443,7 @@ export default function Admin() {
                       refetchStories({
                         exact: true,
                       });
-                      setSelectedStory(null);
+                      refetchStory();
                     },
                   }
                 );

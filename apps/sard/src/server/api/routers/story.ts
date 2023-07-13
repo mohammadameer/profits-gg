@@ -6,7 +6,11 @@ export const storyRouter = createTRPCRouter({
   get: publicProcedure
     .input(
       z.object({
-        slug: z.string(),
+        id: z.string().optional(),
+        slug: z.string().optional(),
+        select: z.object({
+          smallImage: z.boolean().nullish(),
+        }),
       })
     )
     .query(async ({ ctx, input }) =>
@@ -20,6 +24,7 @@ export const storyRouter = createTRPCRouter({
           prepation: true,
           imagePrompt: true,
           mainImage: true,
+          smallImage: input.select?.smallImage ? true : false,
           categories: {
             select: {
               id: true,
@@ -28,6 +33,7 @@ export const storyRouter = createTRPCRouter({
           },
         },
         where: {
+          id: input.id,
           slug: input.slug,
         },
       })
