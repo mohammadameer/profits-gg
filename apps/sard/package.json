@@ -38,7 +38,7 @@
     "next": "^13.4.1",
     "next-auth": "^4.21.0",
     "next-recaptcha-v3": "^1.1.5",
-    "next-seo": "^6.0.0",
+    "next-seo": "^6.1.0",
     "openai": "^3.2.1",
     "posthog-js": "^1.63.2",
     "prettier-plugin-tailwindcss": "^0.2.6",

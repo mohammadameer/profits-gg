@@ -25,6 +25,7 @@ import StoryImage from "~/components/StoryImage";
 import StoriesInSameCategory from "~/components/StoriesInSameCategory";
 import { Story } from "@prisma/client";
 import names from "~/utils/names";
+import { NextSeo } from "next-seo";
 
 export default function Story() {
   const router = useRouter();
@@ -350,6 +351,17 @@ export default function Story() {
 
   return (
     <>
+      <NextSeo
+        title={`سرد - قصة ${title}`}
+        description={description}
+        canonical={"https://sard.dev/stories/" + slug}
+        openGraph={{
+          url: "https://sard.dev/stories/" + slug,
+          title: `سرد - قصة ${title}`,
+          description: description,
+          siteName: "سرد",
+        }}
+      />
       <ReCaptchaProvider
         reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY}
         useEnterprise={true}

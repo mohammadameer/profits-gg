@@ -9,9 +9,9 @@ export default function Categories() {
       <NextSeo
         title="سرد - مواضيع القصص في الموقع"
         description="جميع مواضيع القصص في موقع سرد"
-        canonical="https://sard.dev/"
+        canonical="https://sard.dev/categories"
         openGraph={{
-          url: "https://sard.dev/",
+          url: "https://sard.dev/categories",
           title: "سرد - مواضيع القصص في الموقع",
           description: "جميع مواضيع القصص في موقع سرد",
           siteName: "سرد",

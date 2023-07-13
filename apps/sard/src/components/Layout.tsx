@@ -30,9 +30,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           />
         </div>
         {children}
-        <div className="flex justify-between gap-4 p-4">
+        <div className="flex flex-col items-center justify-between gap-8 p-4 lg:flex-row">
           <div className="flex gap-4">
-            <Link href="/categories">المواضيع</Link>
+            <Link href="/">الصفحة الرئيسية</Link>
+            <Link href="/categories">مواضيع قصص</Link>
           </div>
           <div className="flex gap-4">
             <p>تواصل معنا بـ</p>

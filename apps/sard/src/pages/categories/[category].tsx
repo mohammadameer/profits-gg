@@ -26,9 +26,9 @@ export default function Category({ category }: { category: string }) {
       <NextSeo
         title={`سرد - قصص عن ${categoryObj?.label}`}
         description={`أفضل قصص عن ${categoryObj?.label}`}
-        canonical="https://sard.dev/"
+        canonical={"https://sard.dev/categories/" + category}
         openGraph={{
-          url: "https://sard.dev/",
+          url: "https://sard.dev/categories/" + category,
           title: `سرد - قصص عن ${categoryObj?.label}`,
           description: `أفضل قصص عن ${categoryObj?.label}`,
           siteName: "سرد",
