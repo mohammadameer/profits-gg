@@ -12,6 +12,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         className={clsx(
           "flex min-h-screen flex-col bg-gray-200 transition-all duration-300"
         )}
+        style={{
+          backgroundColor: "#e5e7eb",
+        }}
+        id="sard_page"
       >
         <div className="flex w-full items-center justify-between p-6">
           <Link
@@ -20,20 +24,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           >
             📖 سرد
           </Link>
-          <Button
-            id="new-story"
-            text="قصة جديدة 🪄"
-            onClick={() => {
-              router.push("/stories/choose-category");
-            }}
-            className=" !bg-blue-500 !text-white"
-          />
+          <Link
+            href="/stories/choose-category"
+            className="text h-auto rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-all duration-200 ease-in-out hover:scale-105 active:scale-95"
+          >
+            قصة جديدة 🪄
+          </Link>
         </div>
         {children}
         <div className="flex flex-col items-center justify-between gap-8 p-4 lg:flex-row">
           <div className="flex gap-4">
-            <Link href="/">الصفحة الرئيسية</Link>
-            <Link href="/categories">مواضيع قصص</Link>
+            <Link href="/">الصفحة الرئيسية للموقع</Link>
+            <Link href="/blog">المدونة</Link>
           </div>
           <div className="flex gap-4">
             <p>تواصل معنا بـ</p>

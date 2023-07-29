@@ -70,7 +70,7 @@ const Home = () => {
         }}
       />
 
-      <h1 className="md:pt-18 p-6 py-4 pb-4 text-4xl font-bold md:pb-14 md:text-8xl">
+      <h1 className="md:pt-18 p-6 py-4 pb-4 text-6xl font-bold md:pb-14">
         قصص اطفال تعليمية قصيرة
       </h1>
 

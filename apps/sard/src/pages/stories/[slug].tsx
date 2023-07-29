@@ -4,18 +4,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import va from "@vercel/analytics";
-import Image from "next/image";
 import useDebounce from "@profits-gg/lib/hooks/useDebounce";
 import clsx from "clsx";
 import { useLocalStorage } from "usehooks-ts";
 import places from "~/utils/places";
 import categories from "~/utils/categories";
 import Compressor from "compressorjs";
-import {
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-} from "next";
+import { GetServerSidePropsContext } from "next";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
@@ -26,6 +21,9 @@ import StoriesInSameCategory from "~/components/StoriesInSameCategory";
 import { Story } from "@prisma/client";
 import names from "~/utils/names";
 import { NextSeo } from "next-seo";
+import { Button } from "@profits-gg/ui";
+import PdfDownloader from "~/components/PDFDownloader";
+import Link from "next/link";
 
 export default function Story() {
   const router = useRouter();
@@ -369,24 +367,21 @@ export default function Story() {
         <ReCaptcha onValidate={setToken} action="page_view" />
         <div
           key={storyData?.id}
-          className={clsx("flex flex-col gap-6 p-6 py-10  pb-20 md:pt-24")}
+          className={clsx("flex flex-col gap-6 p-6 py-10  pb-20 md:pt-12")}
         >
-          {/* className="p-6 py-10 text-6xl font-bold md:pb-14 md:pt-24 md:text-8xl" */}
           {title ? (
-            <h1 className="text-6xl font-bold md:pb-14 md:text-8xl">
-              عنوان القصة: {title}
-            </h1>
+            <h1 className="pb-8 text-6xl font-bold md:pb-14 ">قصة {title}</h1>
           ) : (
             <div className="h-24 w-3/4 animate-pulse rounded-md bg-gray-400" />
           )}
           {description ? (
-            <p className="text-xl">وصف القصة: {description}</p>
+            <p className="text-xl">{description}</p>
           ) : (
             <div className="h-10 w-2/4 animate-pulse rounded-md bg-gray-400" />
           )}
           {slug ? (
             <p className="text-xl">
-              الموضوع:{" "}
+              عن{" "}
               {
                 categories?.find(
                   (categoryItem) =>
@@ -399,8 +394,19 @@ export default function Story() {
             <div className="h-6 w-1/6 animate-pulse rounded-md bg-gray-400" />
           )}
 
+          <div>
+            <PdfDownloader
+              text="تحميل القصة كـ PDF 📂"
+              downloadFileName={title as string}
+              rootElementId="sard_page"
+            />
+          </div>
+
           {mainImage ? (
-            <div className="relative aspect-square max-h-[500px] w-full md:w-[500px]">
+            <div
+              className="relative aspect-square max-h-[500px] w-full md:w-[500px]"
+              id="page-break-after"
+            >
               <StoryImage
                 id={storyData?.id as string}
                 src={mainImage}
@@ -412,9 +418,12 @@ export default function Story() {
           )}
 
           {content ? (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 break-words">
               {content?.split("\n").map((paragraph, index) => (
-                <p key={index} className="text-2xl">
+                <p
+                  key={index}
+                  className="break-inside-avoid break-words text-2xl"
+                >
                   {paragraph?.replace(/🍆|🌈|🏳️‍🌈|/gm, "")}
                 </p>
               ))}
@@ -429,7 +438,10 @@ export default function Story() {
           )}
 
           {content && !isLoading ? (
-            <div className="my-4 flex w-1/2 flex-col gap-4 border-t border-black pt-6">
+            <div
+              className="my-4 flex w-1/2 flex-col gap-4 border-t border-black pt-6"
+              id="page-break-after"
+            >
               <p className="text-2xl">انتهت القصة ⭐️</p>
             </div>
           ) : null}
@@ -440,6 +452,8 @@ export default function Story() {
               categoryName={storyData?.categories?.[0]?.name as string}
             />
           ) : null}
+
+          
         </div>
       </ReCaptchaProvider>
     </>

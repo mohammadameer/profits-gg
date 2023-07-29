@@ -11,6 +11,7 @@ export type ButtonProps = {
   className?: string;
   styles?: React.CSSProperties;
   noStyles?: boolean;
+  printHidden?: boolean;
 };
 
 const Button: FC<ButtonProps> = ({
@@ -23,7 +24,11 @@ const Button: FC<ButtonProps> = ({
   className = "",
   styles = {},
   noStyles = false,
+  printHidden = false,
 }) => {
+  const hiddenProperties = printHidden
+    ? { "data-html2canvas-ignore": true }
+    : {};
   return (
     <button
       id={id}
@@ -39,6 +44,8 @@ const Button: FC<ButtonProps> = ({
         disabled && "cursor-not-allowed opacity-80",
         className,
       )}
+      // if printHidden is true, the button will not be printed
+      {...hiddenProperties}
     >
       {loading ? "🪄" : text}
     </button>
