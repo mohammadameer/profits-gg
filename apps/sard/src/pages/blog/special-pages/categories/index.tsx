@@ -27,7 +27,7 @@ export default function Categories() {
             className={clsx(
               "category col-span-6 flex cursor-pointer select-none flex-col rounded-md border-4 border-transparent bg-white p-4 shadow-sm transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 md:col-span-3"
             )}
-            href={`/categories/${category.value}`}
+            href={`/blog/special-pages/categories/${category.value}`}
           >
             <p className="text-4xl">{category.emoji}</p>
             <p className="text text-xl font-bold text-gray-900">
