@@ -46,15 +46,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             >
               الإيميل
             </a>
-            |
-            <a
-              id="whatsapp"
-              className="text text-center font-bold text-gray-900"
-              href="https://wa.me/message/ENCFJL362JZCA1"
-              target="_blank"
-            >
-              الواتساب
-            </a>
           </div>
         </div>
       </div>

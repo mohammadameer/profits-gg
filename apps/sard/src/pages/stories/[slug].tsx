@@ -394,13 +394,17 @@ export default function Story() {
             <div className="h-6 w-1/6 animate-pulse rounded-md bg-gray-400" />
           )}
 
-          <div>
-            <PdfDownloader
-              text="تحميل القصة كـ PDF 📂"
-              downloadFileName={title as string}
-              rootElementId="sard_page"
-            />
-          </div>
+          {!isLoading && storyData?.id ? (
+            <div>
+              <PdfDownloader
+                text="تحميل القصة كـ PDF 📂"
+                downloadFileName={title as string}
+                rootElementId="sard_page"
+              />
+            </div>
+          ) : (
+            <div className="h-14" />
+          )}
 
           {mainImage ? (
             <div
@@ -452,8 +456,6 @@ export default function Story() {
               categoryName={storyData?.categories?.[0]?.name as string}
             />
           ) : null}
-
-          
         </div>
       </ReCaptchaProvider>
     </>
