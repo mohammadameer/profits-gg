@@ -41,7 +41,7 @@
     "next-recaptcha-v3": "^1.1.5",
     "next-seo": "^6.1.0",
     "openai": "^3.2.1",
-    "posthog-js": "^1.63.2",
+    "posthog-js": "^1.75.3",
     "prettier-plugin-tailwindcss": "^0.2.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
