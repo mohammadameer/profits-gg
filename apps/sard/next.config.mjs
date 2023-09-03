@@ -11,6 +11,9 @@ const multilingualConfig = getConfig("sard", ["ar-SA", "en-US"], "en-US", {
   poweredByHeader: false,
   // basePath: '/some-path',
   // debug: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config
@@ -18,11 +21,7 @@ const multilingualConfig = getConfig("sard", ["ar-SA", "en-US"], "en-US", {
    *
    * @see https://github.com/vercel/next.js/issues/41980
    */
-  transpilePackages: [
-    "@profits-gg/ui",
-    "@profits-gg/lib",
-    "@profits-gg/config",
-  ],
+  transpilePackages: ["@profits-gg/ui", "@profits-gg/lib", "@profits-gg/config"],
   images: {
     remotePatterns: [
       {

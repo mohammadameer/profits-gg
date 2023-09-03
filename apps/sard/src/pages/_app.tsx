@@ -47,8 +47,6 @@ const MyApp: AppType<{ session: Session | null; localizedRouteParameters: Locali
     };
   }, []);
 
-  console.log("pageProps", pageProps);
-
   useActualLocale(); // next-multilingual config
   return (
     <>
