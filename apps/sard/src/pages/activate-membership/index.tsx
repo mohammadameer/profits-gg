@@ -6,8 +6,9 @@ import va from "@vercel/analytics";
 import { api } from "~/utils/api";
 import { useLocalStorage } from "usehooks-ts";
 import { usePostHog } from "posthog-js/react";
-import { useRouter } from "next/router";
+import { useRouter } from "next-multilingual/router";
 import { required } from "@profits-gg/lib/utils/formRules";
+import { useMessages } from "next-multilingual/messages";
 
 type FormValues = {
   emailOrPhoneNumber: string;
@@ -16,21 +17,19 @@ type FormValues = {
 export default function ActivateMembershipModal() {
   const router = useRouter();
 
+  const messages = useMessages();
+
   const { control, handleSubmit } = useForm<FormValues>();
 
   const posthog = usePostHog();
 
   const [userId, setUserId] = useLocalStorage<string>("userId", "");
 
-  const [isActivateMembershipModalOpen, setIsActivateMembershipModalOpen] =
-    useState<boolean>(false);
+  const [isActivateMembershipModalOpen, setIsActivateMembershipModalOpen] = useState<boolean>(false);
 
-  const { mutate: checkUser, isLoading: isCheckingUser } =
-    api.user.checkUser.useMutation();
+  const { mutate: checkUser, isLoading: isCheckingUser } = api.user.checkUser.useMutation();
 
-  const handleActivateMembership = async ({
-    emailOrPhoneNumber,
-  }: FormValues) => {
+  const handleActivateMembership = async ({ emailOrPhoneNumber }: FormValues) => {
     va.track("Activate Membership Clicked");
     if (!emailOrPhoneNumber) return;
     if (isCheckingUser) return;
@@ -38,7 +37,7 @@ export default function ActivateMembershipModal() {
     if (!emailOrPhoneNumber.includes("@")) {
       if (emailOrPhoneNumber.length != 10) {
         va.track("Activate Membership Number Error");
-        toast.error("رقم الجوال يجب أن لا يقل عن ٩ أرقام");
+        toast.error(messages.format("phoneNumber9"));
         return;
       }
     }
@@ -61,13 +60,13 @@ export default function ActivateMembershipModal() {
             if (data?.membershipExpiration) {
               if (new Date(data?.membershipExpiration) > new Date()) {
                 va.track("Activate Membership Success");
-                toast.success("تم تفعيل الإشتراك بنجاح");
+                toast.success(messages.format("success"));
                 setIsActivateMembershipModalOpen(false);
                 router.push("/");
                 return;
               } else {
                 va.track("Activate Membership Expired");
-                toast.error("انتهت صلاحية الإشتراك");
+                toast.error(messages.format("error"));
                 setIsActivateMembershipModalOpen(false);
                 router.push("/memberships");
                 return;
@@ -75,17 +74,13 @@ export default function ActivateMembershipModal() {
             }
           } else {
             va.track("Activate Membership User Not Found");
-            toast.error(
-              "لم يتم العثور على حساب مرتبط بهذا البريد الإلكتروني أو رقم الجوال"
-            );
+            toast.error(messages.format("error"));
             return;
           }
         },
         onError: () => {
           va.track("Activate Membership Email Or Phone Number Not Found");
-          toast.error(
-            "لم يتم العثور على حساب مرتبط بهذا البريد الإلكتروني أو رقم الجوال"
-          );
+          toast.error(messages.format("error"));
         },
       }
     );
@@ -94,21 +89,13 @@ export default function ActivateMembershipModal() {
   return (
     <div className="flex justify-center !bg-gray-200 p-6">
       <div className="flex flex-col gap-4 md:w-2/3 lg:w-1/3">
-        <p className="text text-xl font-bold text-gray-900 md:text-2xl">
-          تفعيل الإشتراك
-        </p>
+        <p className="text text-xl font-bold text-gray-900 md:text-2xl">{messages.format("title")}</p>
 
-        <p className="text text-xl text-gray-900">
-          يمكنك تفعيل الإشتراك بإستخدام البريد الإلكتروني أو رقم الجوال الذي تم
-          استخدامه عند الإشتراك
-        </p>
+        <p className="text text-xl text-gray-900">{messages.format("description")}</p>
 
-        <form
-          onSubmit={handleSubmit(handleActivateMembership)}
-          className="w-full"
-        >
+        <form onSubmit={handleSubmit(handleActivateMembership)} className="w-full">
           <TextInput
-            label="البريد الإلكتروني أو رقم الجوال"
+            label={messages.format("emailOrMobile")}
             name="emailOrPhoneNumber"
             control={control}
             rules={{ required: required }}
@@ -116,7 +103,7 @@ export default function ActivateMembershipModal() {
             inputClassName="!bg-gray-200 focus:!border-gray-500"
           />
           <Button
-            text="تفعيل الإشتراك"
+            text={messages.format("activate")}
             type="submit"
             loading={isCheckingUser}
             className="mt-2 w-full !bg-blue-500 !text-white"
@@ -125,7 +112,7 @@ export default function ActivateMembershipModal() {
 
         <Button
           id="activated-membership"
-          text="العودة للصفحة الرئيسية"
+          text={messages.format("mainPage")}
           className="mt-8 w-full"
           onClick={() => {
             router.push("/");

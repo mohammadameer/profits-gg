@@ -1,6 +1,6 @@
 import { NextSeo } from "next-seo";
 import { useEffect, useRef } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next-multilingual/router";
 import StoryImage from "~/components/StoryImage";
 import { api } from "~/utils/api";
 import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
@@ -8,12 +8,21 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import SuperJSON from "superjson";
 import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
-import Link from "next/link";
+import Link from "next-multilingual/link";
 
-const Home = () => {
+import type { GetServerSideProps, NextPage } from "next";
+import { ResolvedLocaleServerSideProps, resolveLocale, useResolvedLocale } from "next-multilingual";
+import { useMessages } from "next-multilingual/messages";
+import Head from "next-multilingual/head";
+
+const Home: NextPage<ResolvedLocaleServerSideProps> = ({ resolvedLocale }) => {
+  useResolvedLocale(resolvedLocale);
+
   const router = useRouter();
+  const messages = useMessages();
 
   const inViewRef = useRef<HTMLDivElement>(null);
+
   const inViewConfig = useInViewObserver(inViewRef, {});
   const inView = inViewConfig?.isIntersecting;
 
@@ -57,102 +66,35 @@ const Home = () => {
 
   return (
     <>
-      <NextSeo
-        title="سرد - قصص اطفال تعليمية قصيرة"
-        description="قصص اطفال عربية، جديدة، تعليمية، مؤثرة، قيمة، جميلة قصيرة، و مخصصة لطفلك، لقبل النوم وللتعليم"
-        canonical="https://sard.dev/"
-        openGraph={{
-          url: "https://sard.dev/",
-          title: "سرد - قصص اطفال تعليمية قصيرة",
-          description:
-            "قصص اطفال عربية، جديدة، تعليمية، مؤثرة، قيمة، جميلة قصيرة، و مخصصة لطفلك، لقبل النوم وللتعليم",
-          siteName: "سرد",
-        }}
-      />
-
-      <h1 className="md:pt-18 p-6 py-4 pb-4 text-6xl font-bold md:pb-14">
-        قصص اطفال تعليمية قصيرة
-      </h1>
+      <Head>
+        <title>{messages.format("title")}</title>
+        <meta name="description" content={messages.format("description")} />
+        <meta property="og:title" content={messages.format("title")} />
+        <meta property="og:description" content={messages.format("description")} />
+      </Head>
+      <h1 className="md:pt-18 p-6 py-4 pb-4 text-6xl font-bold md:pb-14">{messages.format("title")}</h1>
 
       <div className="relative grid grid-cols-12 gap-4 p-6">
-        {stories?.pages?.[0]?.stories?.length ? (
-          stories?.pages?.map((page) =>
-            page?.stories?.map((story, index) => (
-              <Link
-                href={`/stories/${story.slug}`}
-                key={story.id}
-                className="story relative z-20 col-span-6 flex h-40 cursor-pointer select-none items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2"
-                onClick={() => {
-                  router.push(`/stories/${story.slug}`);
-                  // (window as any)?.ttq?.track("ViewContent", {
-                  //   content_id: story.id,
-                  //   content_type: "product",
-                  //   content_name: story.title,
-                  // });
-                }}
-              >
-                <StoryImage
-                  index={index}
-                  id={story.id}
-                  src={story.smallImage as string}
-                  alt={story.title as string}
-                />
-                <div className="absolute bottom-0 left-0 flex w-full items-center justify-center bg-gradient-to-t from-black/50 via-black/50 p-2">
-                  <p className="text text-2xl font-bold leading-10 text-white md:text-2xl">
-                    {story.title}
-                  </p>
-                </div>
-              </Link>
-            ))
-          )
-        ) : (
-          <div className="col-span-full flex h-96 flex-col items-center justify-center gap-8 rounded-md p-6">
-            <p className="text text-xl font-bold leading-10 text-gray-900 md:text-2xl">
-              لا توجد قصص حاليا
-            </p>
-          </div>
-        )}
-        {isFetchingNextPage &&
-          Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="col-span-6 flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2"
-            >
-              <div className="flex h-full w-full animate-pulse flex-col">
-                <div className="h-3/4 w-full rounded-md bg-gray-200" />
-                <div className="h-1/4 w-full rounded-md bg-gray-200" />
-              </div>
-            </div>
-          ))}
-        <div
-          ref={inViewRef}
-          className="absolute bottom-0 left-0 h-1/2 w-full "
-        />
+        <Link
+          href="/short-learning-stories-for-childrens"
+          className="col-span-full row-span-1 flex flex-col gap-2 rounded-md bg-white p-4 shadow-md md:col-span-4">
+          <p>📃</p>
+          <p>{messages.format("childrenStories")}</p>
+        </Link>
       </div>
     </>
   );
 };
 
-export async function getStaticProps() {
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext(),
-    transformer: SuperJSON,
-  });
-
-  await helpers?.story?.list?.prefetchInfinite({
-    hidden: false,
-    limit: 6,
-    select: {
-      smallImage: true,
-    },
-  });
-
+export const getServerSideProps: GetServerSideProps<ResolvedLocaleServerSideProps> = async (
+  context
+  // eslint-disable-next-line @typescript-eslint/require-await
+) => {
   return {
     props: {
-      trpcState: helpers?.dehydrate(),
+      resolvedLocale: resolveLocale(context),
     },
   };
-}
+};
 
 export default Home;

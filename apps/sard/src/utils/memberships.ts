@@ -16,7 +16,7 @@ export const expirationByAmount: { [key: string]: number } = {
 export default [
   {
     id: 1,
-    product: "ليوم واحد",
+    product: "oneDay",
     url: process.env.NEXT_PUBLIC_STRIPE_ONE_DAY_PAYMENT_LINK as string,
     price: null,
     discount: null,
@@ -24,7 +24,7 @@ export default [
   },
   {
     id: 2,
-    product: "لشهر واحد",
+    product: "oneMonth",
     url: process.env.NEXT_PUBLIC_STRIPE_ONE_MONTH_PAYMENT_LINK as string,
     price: 90,
     discount: 60,
@@ -32,7 +32,7 @@ export default [
   },
   {
     id: 3,
-    product: "لسنة واحدة",
+    product: "oneYear",
     url: process.env.NEXT_PUBLIC_STRIPE_ONE_YEAR_PAYMENT_LINK as string,
     price: 1068,
     discount: 80,

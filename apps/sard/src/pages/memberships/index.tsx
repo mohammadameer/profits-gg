@@ -1,15 +1,18 @@
 import { Button, Modal } from "@profits-gg/ui";
 import clsx from "clsx";
-import { useRouter } from "next/router";
+import { useRouter } from "next-multilingual/router";
 import { usePostHog } from "posthog-js/react";
 import { useLocalStorage } from "usehooks-ts";
 import { api } from "~/utils/api";
 import memberships from "~/utils/memberships";
 import va from "@vercel/analytics";
 import { useEffect } from "react";
+import { useMessages } from "next-multilingual/messages";
 
 export default function MembershipModal() {
   const router = useRouter();
+
+  const messages = useMessages();
 
   const posthog = usePostHog();
 
@@ -49,14 +52,12 @@ export default function MembershipModal() {
     <div className="flex justify-center !bg-gray-200 p-6">
       <div className="flex flex-col gap-4 md:w-2/3 lg:w-1/3">
         <p className="text text-xl font-bold text-gray-900 md:text-2xl">
-          {user
-            ? "انتهت صلاحية باقتك"
-            : "وصلت الحد الأقصى للقصص الجديدة في اليوم تعال بكرة"}
+          {user ? messages.format("ended") : messages.format("reachedMaxToday")}
         </p>
 
         <p className="text text-xl text-gray-900">
-          بإمكانك قراءة القصص التي تم إنشاؤها من قبل أو {user ? "إعادة" : ""}{" "}
-          الإشتراك في عدد لا نهائي من القصص الجديدة
+          {messages.format("description1")} {user ? messages.format("retry") : ""}{" "}
+          {messages.format("description2")}
         </p>
 
         <form className="flex w-full flex-col gap-4">
@@ -75,42 +76,41 @@ export default function MembershipModal() {
               }}
               href={membership.url}
               target="_blank"
-              rel="noreferrer noopener"
-            >
-              <p className="text-xl font-bold">{membership.product}</p>
+              rel="noreferrer noopener">
+              <p className="text-xl font-bold">{messages.format(membership.product)}</p>
               <p className="text-end text-xl">
                 {membership.price ? (
                   <span className="line-through">
-                    {membership.price.toLocaleString("ar-EG")}
+                    {membership.price.toLocaleString(router.locale)} {messages.format("sar")}
                   </span>
                 ) : null}{" "}
                 {membership.discount
-                  ? `(خصم ${(membership?.discount).toLocaleString(
-                      "ar-EG"
+                  ? `(${messages.format("discount")} ${(membership?.discount).toLocaleString(
+                      router.locale
                     )}٪) 🔥`
                   : null}{" "}
-                بـ {(membership?.discountPrice).toLocaleString("ar-EG")} ريال
+                {messages.format("for")} {(membership?.discountPrice).toLocaleString(router.locale)}{" "}
+                {messages.format("sar")}
               </p>
             </a>
           ))}
 
           <p className="text text-center text-gray-900">
-            لديك اشتراك سابق؟{" "}
+            {messages.format("alreadySubscribed")}{" "}
             <span
               id="activate-membership"
               className="cursor-pointer text-blue-500 underline"
               onClick={() => {
                 router.push(`/activate-membership`);
-              }}
-            >
+              }}>
               {" "}
-              تفعيل الإشتراك
+              {messages.format("activate")}{" "}
             </span>
           </p>
         </form>
 
         <Button
-          text="العودة للصفحة الرئيسية"
+          text={messages.format("mainPage")}
           className="mt-8 w-full"
           onClick={() => {
             router.push("/");

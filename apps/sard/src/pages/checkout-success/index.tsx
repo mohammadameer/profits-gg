@@ -1,22 +1,24 @@
 import { Button, Modal } from "@profits-gg/ui";
-import { useRouter } from "next/router";
+import { useRouter } from "next-multilingual/router";
 import { usePostHog } from "posthog-js/react";
 import { useEffect, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { api } from "~/utils/api";
 import memberships, { expirationByAmount } from "~/utils/memberships";
 import va from "@vercel/analytics";
+import { useMessages } from "next-multilingual/messages";
 
 export default function CheckoutSuccessModal() {
   const router = useRouter();
   const { checkout_session_id } = router.query;
 
+  const messages = useMessages();
+
   const posthog = usePostHog();
 
   const [userId, setUserId] = useLocalStorage<string>("userId", "");
 
-  const [checkoutSessionSuccess, setCheckoutSessionSuccess] =
-    useState<boolean>(false);
+  const [checkoutSessionSuccess, setCheckoutSessionSuccess] = useState<boolean>(false);
 
   const { data: checkoutSession } = api.stripe.getCheckoutSession.useQuery(
     {
@@ -43,9 +45,7 @@ export default function CheckoutSuccessModal() {
     },
     {
       enabled:
-        (checkoutSession?.customer_details?.email &&
-          checkoutSession?.customer_details?.phone) ||
-        userId
+        (checkoutSession?.customer_details?.email && checkoutSession?.customer_details?.phone) || userId
           ? true
           : false,
       onSuccess: (data) => {
@@ -63,8 +63,7 @@ export default function CheckoutSuccessModal() {
   );
 
   const membership = memberships.find(
-    (membership) =>
-      membership.discountPrice * 100 == checkoutSession?.amount_total
+    (membership) => membership.discountPrice * 100 == checkoutSession?.amount_total
   );
 
   const expirationSeconds = membership?.discountPrice
@@ -83,33 +82,27 @@ export default function CheckoutSuccessModal() {
 
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 !bg-gray-200">
-      <p className="text text-xl font-bold text-gray-900 md:text-2xl">
-        تم الإشتراك بنجاح 🥳
+      <p className="text text-xl font-bold text-gray-900 md:text-2xl">{messages?.format("title")}</p>
+
+      <p className="text text-xl text-gray-900">
+        {messages.format("youSubscribedTo")} <span className="font-bold">{membership?.product}</span>
       </p>
 
       <p className="text text-xl text-gray-900">
-        أنت مشترك الآن في باقة{" "}
-        <span className="font-bold">{membership?.product}</span>
-      </p>
-
-      <p className="text text-xl text-gray-900">
-        تنتهي صلاحية الباقة في{" "}
-        {membership?.discountPrice != undefined &&
-        expirationSeconds != undefined ? (
+        {messages.format("endIn")}{" "}
+        {membership?.discountPrice != undefined && expirationSeconds != undefined ? (
           <span className="font-bold">
             {new Date(
-              new Date((checkoutSession?.created as number) * 1000).getTime() +
-                expirationSeconds * 1000
-            ).toLocaleString("ar-EG", {
+              new Date((checkoutSession?.created as number) * 1000).getTime() + expirationSeconds * 1000
+            ).toLocaleString(router.locale, {
               hour: "numeric",
               minute: "numeric",
               hour12: true,
             })}{" "}
             -{" "}
             {new Date(
-              new Date((checkoutSession?.created as number) * 1000).getTime() +
-                expirationSeconds * 1000
-            ).toLocaleString("ar-EG", {
+              new Date((checkoutSession?.created as number) * 1000).getTime() + expirationSeconds * 1000
+            ).toLocaleString(router.locale, {
               weekday: "long",
               year: "numeric",
               month: "long",
@@ -120,7 +113,7 @@ export default function CheckoutSuccessModal() {
       </p>
 
       <Button
-        text="العودة للصفحة الرئيسية"
+        text={messages.format("mainPage")}
         onClick={() => {
           router.push("/");
         }}

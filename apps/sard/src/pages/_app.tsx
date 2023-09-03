@@ -10,9 +10,11 @@ import "~/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import Layout from "~/components/Layout";
 import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next-multilingual/router";
 
-import { IBM_Plex_Sans_Arabic } from "next/font/google";
+import { useActualLocale } from "next-multilingual";
+
+// import { IBM_Plex_Sans_Arabic } from "next/font/google";
 
 // Check that PostHog is client-side (used to handle Next.js SSR)
 if (typeof window !== "undefined") {
@@ -24,10 +26,10 @@ if (typeof window !== "undefined") {
   });
 }
 
-const IBM = IBM_Plex_Sans_Arabic({
-  weight: ["100", "400", "500", "700"],
-  subsets: ["arabic"],
-});
+// const IBM = IBM_Plex_Sans_Arabic({
+//   weight: ["100", "400", "500", "700"],
+//   subsets: ["arabic"],
+// });
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -44,10 +46,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
       router.events.off("routeChangeComplete", handleRouteChange);
     };
   }, []);
+
+  console.log("pageProps", pageProps);
+
+  useActualLocale(); // next-multilingual config
   return (
     <>
       <PostHogProvider client={posthog}>
-        <Layout>
+        
+        <Layout {...pageProps}>
           {/* <SessionProvider session={session}> */}
           <Component {...pageProps} />
           <Analytics />

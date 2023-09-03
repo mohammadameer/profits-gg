@@ -1,150 +1,246 @@
-export type Category = {
+export type StaticCategory = {
   emoji: string;
   label: string;
   value: string | null;
   field: string;
 };
 
+export type Category = {
+  emoji: string;
+  label: {
+    "ar-sa": string;
+    "en-us": string;
+  };
+  value: string | null;
+  field: string;
+};
+
+export type StaticField = {
+  value: string;
+  label: string;
+};
+
 export const fields = [
-  { value: "morals", label: "القيم" },
-  { value: "things", label: "الأشياء" },
+  {
+    value: "morals",
+    label: {
+      "ar-sa": "القيم",
+      "en-us": "Morals",
+    },
+  },
+  {
+    value: "things",
+    label: {
+      "ar-sa": "الأشياء",
+      "en-us": "Things",
+    },
+  },
 ];
 
 const categories: Category[] = [
   {
     emoji: "🌟",
-    label: "الاخلاق والفضائل",
+    label: {
+      "ar-sa": "الاخلاق والفضائل",
+      "en-us": "Ethics and Virtues",
+    },
     value: "morals",
     field: "morals",
   },
   {
     emoji: "✨",
-    label: "الصدق",
+    label: {
+      "ar-sa": "الصدق",
+      "en-us": "Honesty",
+    },
     value: "honesty",
     field: "morals",
   },
   {
     emoji: "👍",
-    label: "الأمانة",
+    label: {
+      "ar-sa": "الأمانة",
+      "en-us": "Trustworthiness",
+    },
     value: "trustworthiness",
     field: "morals",
   },
   {
     emoji: "👨‍👩‍👦",
-    label: "بر الوالدين",
+    label: {
+      "ar-sa": "بر الوالدين",
+      "en-us": "Kindness to Parents",
+    },
     value: "respecting-parents",
     field: "morals",
   },
   {
     emoji: "🤲",
-    label: "الإيثار",
+    label: {
+      "ar-sa": "الإيثار",
+      "en-us": "Altruism",
+    },
     value: "selflessness",
     field: "morals",
   },
   {
     emoji: "🤝",
-    label: "حسن الظن",
+    label: {
+      "ar-sa": "حسن الظن",
+      "en-us": "Positive Assumption (thinking well of others)",
+    },
     value: "good-opinion",
     field: "morals",
   },
   {
     emoji: "🛌",
-    label: "النوم في الوقت المناسب",
+    label: {
+      "ar-sa": "النوم في الوقت المناسب",
+      "en-us": "Proper Sleep",
+    },
     value: "sleeping-on-time",
     field: "morals",
   },
   {
     emoji: "🧼",
-    label: "النظافة الشخصية",
+    label: {
+      "ar-sa": "النظافة الشخصية",
+      "en-us": "Personal Hygiene",
+    },
     value: "personal-hygiene",
     field: "morals",
   },
   {
     emoji: "🥰",
-    label: "الرفق",
+    label: {
+      "ar-sa": "الرفق",
+      "en-us": "Gentleness",
+    },
     value: "gentleness",
     field: "morals",
   },
   {
     emoji: "🫤",
-    label: "التنمر",
+    label: {
+      "ar-sa": "التنمر",
+      "en-us": "Bullying",
+    },
     value: "bullying",
     field: "morals",
   },
   {
     emoji: "💪",
-    label: "الثقة في النفس",
+    label: {
+      "ar-sa": "الثقة في النفس",
+      "en-us": "Self-Confidence",
+    },
     value: "self-confidence",
     field: "morals",
   },
   {
     emoji: "😎",
-    label: "المسؤولية",
+    label: {
+      "ar-sa": "المسؤولية",
+      "en-us": "Responsibility",
+    },
     value: "responsibility",
     field: "morals",
   },
   {
     emoji: "😮‍💨",
-    label: "الصبر",
+    label: {
+      "ar-sa": "الصبر",
+      "en-us": "Patience",
+    },
     value: "patience",
     field: "morals",
   },
   {
     emoji: "🤝",
-    label: "التعاون",
+    label: {
+      "ar-sa": "التعاون",
+      "en-us": "Cooperation",
+    },
     value: "cooperation",
     field: "morals",
   },
   {
     emoji: "🤥",
-    label: "الكذب",
+    label: {
+      "ar-sa": "الكذب",
+      "en-us": "Lying",
+    },
     value: "lying",
     field: "morals",
   },
   {
     emoji: "🤔",
-    label: "الفضول",
+    label: {
+      "ar-sa": "الفضول",
+      "en-us": "Curiosity",
+    },
     value: "curiosity",
     field: "morals",
   },
   {
     emoji: "🫡",
-    label: "الإحترام",
+    label: {
+      "ar-sa": "الإحترام",
+      "en-us": "Respect",
+    },
     value: "respect",
     field: "morals",
   },
   {
-    label: "الصداقة",
+    label: {
+      "ar-sa": "الصداقة",
+      "en-us": "Friendship",
+    },
     emoji: "🤝",
     value: "friendship",
     field: "morals",
   },
   {
-    label: "المثابرة",
+    label: {
+      "ar-sa": "المثابرة",
+      "en-us": "Perseverance",
+    },
     emoji: "🏋️‍♂️",
     value: "perseverance",
     field: "morals",
   },
   {
-    label: "الشجاعة",
+    label: {
+      "ar-sa": "الشجاعة",
+      "en-us": "Courage",
+    },
     emoji: "🦸‍♂️",
     value: "bravery",
     field: "morals",
   },
   {
-    label: "الرحمة",
+    label: {
+      "ar-sa": "الرحمة",
+      "en-us": "Mercy",
+    },
     emoji: "🥰",
     value: "compassion",
     field: "morals",
   },
   {
-    label: "العمل الجاد",
+    label: {
+      "ar-sa": "العمل الجاد",
+      "en-us": "Hard Work",
+    },
     emoji: "🏃‍♂️",
     value: "Hard Work",
     field: "morals",
   },
   {
-    label: "الكرم",
+    label: {
+      "ar-sa": "الكرم",
+      "en-us": "Generosity",
+    },
     emoji: "🤲",
     value: "generosity",
     field: "morals",
@@ -152,198 +248,288 @@ const categories: Category[] = [
   {
     value: "theft",
     field: "morals",
-    label: "السرقة",
+    label: {
+      "ar-sa": "السرقة",
+      "en-us": "Theft",
+    },
     emoji: "🥷 ",
   },
   {
     value: "numbers",
-    label: "الأرقام",
+    label: {
+      "ar-sa": "الأرقام",
+      "en-us": "Numbers",
+    },
     emoji: "🔢",
     field: "things",
   },
   {
     value: "colors",
-    label: "الألوان",
+    label: {
+      "ar-sa": "الألوان",
+      "en-us": "Colors",
+    },
     emoji: "🎨",
     field: "things",
   },
   {
     value: "shapes",
-    label: "الأشكال",
+    label: {
+      "ar-sa": "الأشكال",
+      "en-us": "Shapes",
+    },
     emoji: "🔺",
     field: "things",
   },
   {
     value: "letters",
-    label: "الحروف",
+    label: {
+      "ar-sa": "الحروف",
+      "en-us": "Letters",
+    },
     emoji: "🔠",
     field: "things",
   },
   {
     value: "animals",
-    label: "الحيوانات",
+    label: {
+      "ar-sa": "الحيوانات",
+      "en-us": "Animals",
+    },
     emoji: "🐣",
     field: "things",
   },
   {
     value: "plants",
-    label: "النباتات",
+    label: {
+      "ar-sa": "النباتات",
+      "en-us": "Plants",
+    },
     emoji: "🌱",
     field: "things",
   },
   {
     value: "fruits",
-    label: "الفواكه",
+    label: {
+      "ar-sa": "الفواكه",
+      "en-us": "Fruits",
+    },
     emoji: "🍎",
     field: "things",
   },
   {
     value: "vegetables",
-    label: "الخضروات",
+    label: {
+      "ar-sa": "الخضروات",
+      "en-us": "Vegetables",
+    },
     emoji: "🥕",
     field: "things",
   },
   {
     value: "food",
-    label: "الطعام",
+    label: {
+      "ar-sa": "الطعام",
+      "en-us": "Food",
+    },
     emoji: "🥙",
     field: "things",
   },
   {
     value: "drinks",
-    label: "المشروبات",
+    label: {
+      "ar-sa": "المشروبات",
+      "en-us": "Drinks",
+    },
     emoji: "🧃",
     field: "things",
   },
   {
     value: "clothes",
-    label: "الملابس",
+    label: {
+      "ar-sa": "الملابس",
+      "en-us": "Clothing",
+    },
     emoji: "👕",
     field: "things",
   },
   {
     value: "weather",
-    label: "الطقس",
+    label: {
+      "ar-sa": "الطقس",
+      "en-us": "Weather",
+    },
     emoji: "🌤",
     field: "things",
   },
   {
     value: "seasons",
-    label: "الفصول",
+    label: {
+      "ar-sa": "الفصول",
+      "en-us": "Seasons",
+    },
     emoji: "🍂",
     field: "things",
   },
   {
     value: "transportation",
-    label: "وسائل المواصلات",
+    label: {
+      "ar-sa": "وسائل المواصلات",
+      "en-us": "Means of Transportation",
+    },
     emoji: "🚗",
     field: "things",
   },
   {
     value: "jobs",
-    label: "الوظائف",
+    label: {
+      "ar-sa": "الوظائف",
+      "en-us": "Occupations/Jobs",
+    },
     emoji: "👨‍🏭",
     field: "things",
   },
   {
     value: "places",
-    label: "الأماكن",
+    label: {
+      "ar-sa": "الأماكن",
+      "en-us": "Places",
+    },
     emoji: "🏠",
     field: "things",
   },
   {
     value: "family",
-    label: "العائلة",
+    label: {
+      "ar-sa": "العائلة",
+      "en-us": "Family",
+    },
     emoji: "👨‍👩‍👧‍👦",
     field: "things",
   },
   {
     value: "feelings",
-    label: "المشاعر",
+    label: {
+      "ar-sa": "المشاعر",
+      "en-us": "Emotions",
+    },
     emoji: "🤗",
     field: "things",
   },
   {
     value: "hobbies",
-    label: "الهوايات",
+    label: {
+      "ar-sa": "الهوايات",
+      "en-us": "Hobbies",
+    },
     emoji: "🎮",
     field: "things",
   },
   {
     value: "sports",
-    label: "الرياضة",
+    label: {
+      "ar-sa": "الرياضة",
+      "en-us": "Sports",
+    },
     emoji: "🏀",
     field: "things",
   },
   {
     value: "games",
-    label: "الألعاب",
+    label: {
+      "ar-sa": "الألعاب",
+      "en-us": "Games",
+    },
     emoji: "🎲",
     field: "things",
   },
   {
-    value: "toys",
-    label: "الألعاب",
-    emoji: "🧸",
-    field: "things",
-  },
-  {
     value: "tools",
-    label: "الأدوات",
+    label: {
+      "ar-sa": "الأدوات",
+      "en-us": "Tools",
+    },
     emoji: "🔧",
     field: "things",
   },
   {
     value: "furniture",
-    label: "الأثاث",
+    label: {
+      "ar-sa": "الأثاث",
+      "en-us": "Furniture",
+    },
     emoji: "🛋",
     field: "things",
   },
   {
     value: "buildings",
-    label: "المباني",
+    label: {
+      "ar-sa": "المباني",
+      "en-us": "Buildings",
+    },
     emoji: "🏢",
     field: "things",
   },
   {
     value: "countries",
-    label: "الدول",
+    label: {
+      "ar-sa": "الدول",
+      "en-us": "Countries",
+    },
     emoji: "🌍",
     field: "things",
   },
   {
     value: "cities",
-    label: "المدن",
+    label: {
+      "ar-sa": "المدن",
+      "en-us": "Cities",
+    },
     emoji: "🏙",
     field: "things",
   },
   {
     value: "continents",
-    label: "القارات",
+    label: {
+      "ar-sa": "القارات",
+      "en-us": "Continents",
+    },
     emoji: "🌎",
     field: "things",
   },
   {
     value: "planets",
-    label: "الكواكب",
+    label: {
+      "ar-sa": "الكواكب",
+      "en-us": "Planets",
+    },
     emoji: "🪐",
     field: "things",
   },
   {
     value: "space",
-    label: "الفضاء",
+    label: {
+      "ar-sa": "الفضاء",
+      "en-us": "Space",
+    },
     emoji: "🚀",
     field: "things",
   },
   {
     value: "time",
-    label: "الوقت",
+    label: {
+      "ar-sa": "الوقت",
+      "en-us": "Time",
+    },
     emoji: "⏰",
     field: "things",
   },
   {
     value: "money",
-    label: "المال",
+    label: {
+      "ar-sa": "المال",
+      "en-us": "Money",
+    },
     emoji: "💵",
     field: "things",
   },

@@ -4,9 +4,13 @@
  */
 await import("./src/env.mjs");
 
-/** @type {import("next").NextConfig} */
-const config = {
+import { getConfig } from "next-multilingual/config";
+
+const multilingualConfig = getConfig("sard", ["ar-SA", "en-US"], "en-US", {
   reactStrictMode: true,
+  poweredByHeader: false,
+  // basePath: '/some-path',
+  // debug: true,
 
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config
@@ -28,10 +32,10 @@ const config = {
       },
     ],
   },
-  i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
-  },
-};
+});
+
+export const i18n = multilingualConfig.i18n;
+
+export const config = multilingualConfig;
 
 export default config;

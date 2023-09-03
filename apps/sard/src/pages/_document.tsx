@@ -1,10 +1,18 @@
-import { Html, Head, Main, NextScript } from "next/document";
+import { Html, Head, Main, NextScript, DocumentProps } from "next/document";
+import { getHtmlLang } from "next-multilingual";
+
 // import Script from "next/script";
 
-export default function Document() {
+const Document: React.FC<DocumentProps> = (documentProps) => {
   return (
-    <Html dir="rtl" lang="ar">
+    <Html
+      lang={getHtmlLang(documentProps)}
+      dir={getHtmlLang(documentProps)?.includes("ar") ? "rtl" : "ltr"}
+      translate="no"
+      className="notranslate"
+    >
       <Head>
+        <meta name="google" content="notranslate" />
         {/* <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-10865811504"
           strategy="afterInteractive"
@@ -37,4 +45,6 @@ export default function Document() {
       </body>
     </Html>
   );
-}
+};
+
+export default Document;

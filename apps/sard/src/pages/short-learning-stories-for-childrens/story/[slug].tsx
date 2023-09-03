@@ -1,5 +1,5 @@
 import { ReCaptcha, ReCaptchaProvider } from "next-recaptcha-v3";
-import { useRouter } from "next/router";
+import { getLocalizedRouteParameters, useRouter } from "next-multilingual/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
@@ -18,16 +18,21 @@ import SuperJSON from "superjson";
 import { prisma } from "~/server/db";
 import StoryImage from "~/components/StoryImage";
 import StoriesInSameCategory from "~/components/StoriesInSameCategory";
-import { Story } from "@prisma/client";
-import names from "~/utils/names";
 import { NextSeo } from "next-seo";
 import { Button } from "@profits-gg/ui";
 import PdfDownloader from "~/components/PDFDownloader";
-import Link from "next/link";
+import Link from "next-multilingual/link";
+import { useMessages } from "next-multilingual/messages";
+import arSANames from "~/utils/ar-SA.names";
+import enUSNames from "~/utils/en-US.names";
+import { getStaticPropsLocales } from "next-multilingual";
+import Head from "next-multilingual/head";
 
-export default function Story() {
+export default function Story({ names }: { names: string[] }) {
   const router = useRouter();
   const { slug: slugFromRouter, category, characterName, place } = router.query;
+
+  const messages = useMessages();
 
   const [token, setToken] = useState<string>();
 
@@ -60,8 +65,7 @@ export default function Story() {
       enabled: false,
     }
   );
-  const { mutate: getImage, isLoading: isGettingImage } =
-    api.openai.getImage.useMutation();
+  const { mutate: getImage, isLoading: isGettingImage } = api.openai.getImage.useMutation();
 
   const {
     mutate: createStory,
@@ -69,17 +73,11 @@ export default function Story() {
     data: storyCreateData,
   } = api.story.create.useMutation();
 
-  const [prepation, setPrepation] = useState<string>(
-    storyData?.prepation as string
-  );
+  const [prepation, setPrepation] = useState<string>(storyData?.prepation as string);
   const [title, setTitle] = useState<string>(storyData?.title as string);
-  const [description, setDescription] = useState<string>(
-    storyData?.description as string
-  );
+  const [description, setDescription] = useState<string>(storyData?.description as string);
   const [slug, setSlug] = useState<string>(storyData?.slug as string);
-  const [mainImage, setMainImage] = useState<string>(
-    storyData?.mainImage as string
-  );
+  const [mainImage, setMainImage] = useState<string>(storyData?.mainImage as string);
   const [content, setContent] = useState<string>(storyData?.content as string);
   const [imagePrompt, setImagePrompt] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
@@ -106,6 +104,7 @@ export default function Story() {
       },
       method: "POST",
       body: JSON.stringify({
+        language: router.locale,
         category: category as string,
         characterName: characterName as string,
         place: place as string,
@@ -156,8 +155,7 @@ export default function Story() {
 
       result += chunkValue;
 
-      const [prepation, title, description, slug, imagePrompt, content] =
-        result.split("#");
+      const [prepation, title, description, slug, imagePrompt, content] = result.split("#");
 
       if (prepation) setPrepation(prepation);
       if (title) setTitle(title);
@@ -186,14 +184,7 @@ export default function Story() {
         names?.find((name) => name === (characterName as string))
       ) {
         // check if story is already created
-        if (
-          !prepation &&
-          !title &&
-          !description &&
-          !slug &&
-          !mainImage &&
-          !content
-        ) {
+        if (!prepation && !title && !description && !slug && !mainImage && !content) {
           handleCreateStory();
           createCalledRef.current = true;
         }
@@ -317,15 +308,12 @@ export default function Story() {
             description,
             slug: slug.trim(),
             mainImage: compressedImage?.replace("data:image/jpeg;base64,", ""),
-            smallImage: smallCompressedImage?.replace(
-              "data:image/jpeg;base64,",
-              ""
-            ),
+            smallImage: smallCompressedImage?.replace("data:image/jpeg;base64,", ""),
             imagePrompt,
             content: debouncedContent,
             category: category as string,
             wordCount: debouncedContent.split(" ").length,
-            language: "ar",
+            language: router.locale,
             version: 4,
           },
           {
@@ -337,40 +325,26 @@ export default function Story() {
       };
       handleCreateStory();
     }
-  }, [
-    prepation,
-    title,
-    description,
-    debouncedContent,
-    imagePrompt,
-    mainImage,
-    isCreatingStory,
-  ]);
+  }, [prepation, title, description, debouncedContent, imagePrompt, mainImage, isCreatingStory]);
 
   return (
     <>
-      <NextSeo
-        title={`سرد - قصة ${title}`}
-        description={description}
-        canonical={"https://sard.dev/stories/" + slug}
-        openGraph={{
-          url: "https://sard.dev/stories/" + slug,
-          title: `سرد - قصة ${title}`,
-          description: description,
-          siteName: "سرد",
-        }}
-      />
-      <ReCaptchaProvider
-        reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY}
-        useEnterprise={true}
-      >
+      <Head>
+        <title>
+          {messages.format("story")} {title}
+        </title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={messages.format("story") + " " + title} />
+        <meta property="og:description" content={description} />
+      </Head>
+
+      <ReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY} useEnterprise={true}>
         <ReCaptcha onValidate={setToken} action="page_view" />
-        <div
-          key={storyData?.id}
-          className={clsx("flex flex-col gap-6 p-6 py-10  pb-20 md:pt-12")}
-        >
+        <div key={storyData?.id} className={clsx("flex flex-col gap-6 p-6 py-10  pb-20 md:pt-12")}>
           {title ? (
-            <h1 className="pb-8 text-6xl font-bold md:pb-14 ">قصة {title}</h1>
+            <h1 className="pb-8 text-6xl font-bold md:pb-14 ">
+              {messages.format("story")} {title}
+            </h1>
           ) : (
             <div className="h-24 w-3/4 animate-pulse rounded-md bg-gray-400" />
           )}
@@ -381,13 +355,12 @@ export default function Story() {
           )}
           {slug ? (
             <p className="text-xl">
-              عن{" "}
+              {messages.format("about")}{" "}
               {
                 categories?.find(
                   (categoryItem) =>
-                    categoryItem.value === category ||
-                    categoryItem.value === storyData?.categories?.[0]?.name
-                )?.label
+                    categoryItem.value === category || categoryItem.value === storyData?.categories?.[0]?.name
+                )?.label[router.locale]
               }
             </p>
           ) : (
@@ -397,7 +370,7 @@ export default function Story() {
           {!isLoading && storyData?.id ? (
             <div>
               <PdfDownloader
-                text="تحميل القصة كـ PDF 📂"
+                text={messages.format("downloadStoryAsPDF")}
                 downloadFileName={title as string}
                 rootElementId="sard_page"
               />
@@ -407,10 +380,7 @@ export default function Story() {
           )}
 
           {mainImage ? (
-            <div
-              className="relative aspect-square max-h-[500px] w-full md:w-[500px]"
-              id="page-break-after"
-            >
+            <div className="relative aspect-square max-h-[500px] w-full md:w-[500px]" id="page-break-after">
               <StoryImage
                 id={storyData?.id as string}
                 src={mainImage}
@@ -424,29 +394,20 @@ export default function Story() {
           {content ? (
             <div className="flex flex-col gap-4 break-words">
               {content?.split("\n").map((paragraph, index) => (
-                <p
-                  key={index}
-                  className="break-inside-avoid break-words text-2xl"
-                >
+                <p key={index} className="break-inside-avoid break-words text-2xl">
                   {paragraph?.replace(/🍆|🌈|🏳️‍🌈|/gm, "")}
                 </p>
               ))}
             </div>
           ) : (
             Array.from({ length: 5 }).map((_, index) => (
-              <div
-                key={index}
-                className="h-10 w-full animate-pulse rounded-md bg-gray-400"
-              />
+              <div key={index} className="h-10 w-full animate-pulse rounded-md bg-gray-400" />
             ))
           )}
 
           {content && !isLoading ? (
-            <div
-              className="my-4 flex w-1/2 flex-col gap-4 border-t border-black pt-6"
-              id="page-break-after"
-            >
-              <p className="text-2xl">انتهت القصة ⭐️</p>
+            <div className="my-4 flex w-1/2 flex-col gap-4 border-t border-black pt-6" id="page-break-after">
+              <p className="text-2xl">{messages.format("storyEnded")}</p>
             </div>
           ) : null}
 
@@ -462,10 +423,18 @@ export default function Story() {
   );
 }
 
-export async function getStaticProps(
-  context: GetServerSidePropsContext<{ slug: string }>
-) {
+export async function getStaticProps(context: GetServerSidePropsContext<{ slug: string }>) {
   const slug = context?.params?.slug as string;
+
+  const { locale } = getStaticPropsLocales(context);
+
+  const localizedRouteParameters = getLocalizedRouteParameters(
+    context,
+    {
+      slug,
+    },
+    import.meta.url
+  );
 
   const helpers = createServerSideHelpers({
     router: appRouter,
@@ -477,10 +446,17 @@ export async function getStaticProps(
     slug,
   });
 
+  const allNames = {
+    "ar-sa": arSANames,
+    "en-us": enUSNames,
+  };
+
   return {
     props: {
       trpcState: helpers?.dehydrate(),
       slug,
+      localizedRouteParameters,
+      names: allNames[locale as keyof typeof allNames],
       key: slug,
     },
   };
