@@ -333,9 +333,15 @@ export default function Story({ names }: { names: string[] }) {
         <title>
           {messages.format("story")} {title}
         </title>
-        <meta name="description" content={description} />
+        <meta
+          name="description"
+          content={`${messages.format("story")} ${messages.format("about")} ${title}, ${description}`}
+        />
         <meta property="og:title" content={messages.format("story") + " " + title} />
-        <meta property="og:description" content={description} />
+        <meta
+          property="og:description"
+          content={`${messages.format("story")} ${messages.format("about")} ${title}, ${description}`}
+        />
       </Head>
 
       <ReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY} useEnterprise={true}>
