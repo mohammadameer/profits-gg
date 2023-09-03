@@ -9,7 +9,8 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "build": "npm run db:push && next build"
+    "build": "npm run db:push && next build",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@mdx-js/loader": "^2.3.0",
@@ -37,10 +38,11 @@
     "eventsource-parser": "^1.0.0",
     "html2pdf.js": "0.10.1",
     "next": "^13.4.12",
-    "next-multilingual": "^5.0.14",
     "next-auth": "^4.21.0",
+    "next-multilingual": "^5.0.14",
     "next-recaptcha-v3": "^1.1.5",
     "next-seo": "^6.1.0",
+    "next-sitemap": "^4.2.2",
     "openai": "^3.2.1",
     "posthog-js": "^1.75.3",
     "prettier-plugin-tailwindcss": "^0.5.3",

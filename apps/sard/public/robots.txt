@@ -1,4 +1,9 @@
+# *
 User-agent: *
 Allow: /
 
-Sitemap: https://sard.dev/sitemap.xml
+# Host
+Host: https://www.sard.dev/ar-sa
+
+# Sitemaps
+Sitemap: https://www.sard.dev/ar-sa/sitemap.xml
