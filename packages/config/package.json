@@ -10,7 +10,7 @@
   "dependencies": {
     "autoprefixer": "^10.4.14",
     "eslint-config-turbo": "^0.0.7",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "^5.0.0",
     "prettier-plugin-tailwindcss": "^0.5.3"
   }
 }

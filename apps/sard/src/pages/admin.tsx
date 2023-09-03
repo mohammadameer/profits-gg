@@ -171,7 +171,9 @@ export default function Admin() {
               label: "الكل",
               value: null,
             },
+            // @ts-ignore
             ...(categories?.map((category) => ({
+              // @ts-ignore
               label: category.label[router.locale],
               value: category.value,
             })) as Category[]),

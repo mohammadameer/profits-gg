@@ -10,7 +10,7 @@ import "~/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import Layout from "~/components/Layout";
 import { useEffect } from "react";
-import { useRouter } from "next-multilingual/router";
+import { LocalizedRouteParameters, useRouter } from "next-multilingual/router";
 
 import { useActualLocale } from "next-multilingual";
 
@@ -31,7 +31,7 @@ if (typeof window !== "undefined") {
 //   subsets: ["arabic"],
 // });
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const MyApp: AppType<{ session: Session | null; localizedRouteParameters: LocalizedRouteParameters }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
@@ -53,7 +53,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <>
       <PostHogProvider client={posthog}>
-        
         <Layout {...pageProps}>
           {/* <SessionProvider session={session}> */}
           <Component {...pageProps} />

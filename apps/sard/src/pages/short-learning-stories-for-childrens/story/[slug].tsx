@@ -8,7 +8,7 @@ import useDebounce from "@profits-gg/lib/hooks/useDebounce";
 import clsx from "clsx";
 import { useLocalStorage } from "usehooks-ts";
 import places from "~/utils/places";
-import categories from "~/utils/categories";
+import categories, { StaticCategory } from "~/utils/categories";
 import Compressor from "compressorjs";
 import { GetServerSidePropsContext } from "next";
 import { createServerSideHelpers } from "@trpc/react-query/server";
@@ -363,6 +363,7 @@ export default function Story({ names }: { names: string[] }) {
             <p className="text-xl">
               {messages.format("about")}{" "}
               {
+                // @ts-ignore
                 categories?.find(
                   (categoryItem) =>
                     categoryItem.value === category || categoryItem.value === storyData?.categories?.[0]?.name
