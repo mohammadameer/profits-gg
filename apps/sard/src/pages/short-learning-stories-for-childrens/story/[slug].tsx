@@ -10,7 +10,7 @@ import { useLocalStorage } from "usehooks-ts";
 import places from "~/utils/places";
 import categories, { StaticCategory } from "~/utils/categories";
 import Compressor from "compressorjs";
-import { GetServerSidePropsContext } from "next";
+import { type GetStaticPaths, type GetServerSidePropsContext } from "next";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
@@ -25,8 +25,9 @@ import Link from "next-multilingual/link";
 import { useMessages } from "next-multilingual/messages";
 import arSANames from "~/utils/ar-SA.names";
 import enUSNames from "~/utils/en-US.names";
-import { getStaticPropsLocales } from "next-multilingual";
+import { getStaticPathsLocales, getStaticPropsLocales } from "next-multilingual";
 import Head from "next-multilingual/head";
+import { slugify } from "next-multilingual/messages";
 
 export default function Story({ names }: { names: string[] }) {
   const router = useRouter();
@@ -204,11 +205,11 @@ export default function Story({ names }: { names: string[] }) {
       va.track("getting-image");
       getImage(
         {
-          prompt: debouncedImagePrompt as string,
+          prompt: debouncedImagePrompt,
         },
         {
           onSuccess: (data) => {
-            setMainImage(data as string);
+            setMainImage(data);
           },
         }
       );
@@ -231,7 +232,7 @@ export default function Story({ names }: { names: string[] }) {
     ) {
       const handleCreateStory = async () => {
         function dataURLtoFile(dataurl: string, filename: string) {
-          var arr = dataurl.split(",") as any[],
+          let arr = dataurl.split(",") as any[],
             mime = arr[0].match(/:(.*?);/)[1],
             bstr = atob(arr[arr.length - 1]),
             n = bstr.length,
@@ -378,7 +379,7 @@ export default function Story({ names }: { names: string[] }) {
             <div>
               <PdfDownloader
                 text={messages.format("downloadStoryAsPDF")}
-                downloadFileName={title as string}
+                downloadFileName={title}
                 rootElementId="sard_page"
               />
             </div>
@@ -420,7 +421,7 @@ export default function Story({ names }: { names: string[] }) {
 
           {!isLoading && storyData?.id ? (
             <StoriesInSameCategory
-              storyId={storyData?.id as string}
+              storyId={storyData?.id}
               categoryName={storyData?.categories?.[0]?.name as string}
             />
           ) : null}
@@ -431,7 +432,7 @@ export default function Story({ names }: { names: string[] }) {
 }
 
 export async function getStaticProps(context: GetServerSidePropsContext<{ slug: string }>) {
-  const slug = context?.params?.slug as string;
+  const slug = decodeURIComponent(context?.params?.slug as string);
 
   const { locale } = getStaticPropsLocales(context);
 
@@ -469,19 +470,46 @@ export async function getStaticProps(context: GetServerSidePropsContext<{ slug: 
   };
 }
 
-export const getStaticPaths = async () => {
-  const stories = await prisma.story.findMany({
-    select: {
-      slug: true,
-    },
-  });
+export const getStaticPaths: GetStaticPaths = async (context) => {
+  const { locales } = getStaticPathsLocales(context);
+
+  const storiesPaths: { params: { slug: string }; locale: string }[] = [];
+
+  await Promise.all(
+    locales?.map(async (locale) => {
+      await prisma.story
+        .findMany({
+          where: {
+            language: locale,
+            hidden: false,
+          },
+          select: {
+            slug: true,
+          },
+        })
+        .then((data) => {
+          data.forEach((story) => {
+            storiesPaths.push({
+              params: {
+                slug: story.slug as string,
+              },
+              locale,
+            });
+            storiesPaths.push({
+              params: {
+                slug: encodeURIComponent(story.slug as string),
+              },
+              locale,
+            });
+          });
+        });
+
+      return locale;
+    })
+  );
 
   return {
-    paths: stories.map((story) => ({
-      params: {
-        slug: story.slug,
-      },
-    })),
+    paths: storiesPaths,
     fallback: "blocking",
   };
 };

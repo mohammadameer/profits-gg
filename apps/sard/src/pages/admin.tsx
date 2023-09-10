@@ -7,10 +7,10 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import StoryImage from "~/components/StoryImage";
 import { api } from "~/utils/api";
-import categories, { Category } from "~/utils/categories";
+import categories, { type Category } from "~/utils/categories";
 import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
 import Compressor from "compressorjs";
-import { Story } from "@prisma/client";
+import { type Story } from "@prisma/client";
 
 export default function Admin() {
   const router = useRouter();
@@ -110,7 +110,7 @@ export default function Admin() {
   };
 
   function dataURLtoFile(dataurl: string, filename: string) {
-    var arr = dataurl.split(",") as any[],
+    let arr = dataurl.split(",") as any[],
       mime = arr[0].match(/:(.*?);/)[1],
       bstr = atob(arr[arr.length - 1]),
       n = bstr.length,
@@ -302,7 +302,7 @@ export default function Admin() {
               <div
                 key={i}
                 className="relative col-span-6 flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2">
-                <div className="h-full w-full animate-pulse bg-gray-200"></div>
+                <div className="h-full w-full animate-pulse bg-gray-200" />
               </div>
             ))}
           </Fragment>

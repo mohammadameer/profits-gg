@@ -56,7 +56,8 @@
     "../../prettier.config.cjs",
     "../types/next-auth.d.ts",
     "../types/*.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "generate-sitemap.js"
   ],
   "exclude": ["node_modules", ".next"]
 }

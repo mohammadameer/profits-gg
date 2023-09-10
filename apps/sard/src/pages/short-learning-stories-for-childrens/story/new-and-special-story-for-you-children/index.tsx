@@ -1,12 +1,12 @@
-import { Button, Modal, SelectInput } from "@profits-gg/ui";
+import { Button, SelectInput } from "@profits-gg/ui";
 import clsx from "clsx";
-import { NextSeo } from "next-seo";
 import { useRouter } from "next-multilingual/router";
 import { useForm } from "react-hook-form";
-import categories, { StaticCategory, StaticField, fields } from "~/utils/categories";
+import categories, { fields } from "~/utils/categories";
+import type { StaticCategory, StaticField } from "~/utils/categories";
 import arSANames from "~/utils/ar-SA.names";
 import enUSNames from "~/utils/en-US.names";
-import { GetStaticProps } from "next";
+import { type GetStaticProps } from "next";
 import { getStaticPropsLocales } from "next-multilingual";
 import { useMessages } from "next-multilingual/messages";
 import Head from "next-multilingual/head";

@@ -1,5 +1,5 @@
 import { createServerSideHelpers } from "@trpc/react-query/server";
-import { GetServerSidePropsContext } from "next";
+import { type GetServerSidePropsContext } from "next";
 import { NextSeo } from "next-seo";
 import Link from "next-multilingual/link";
 import SuperJSON from "superjson";
@@ -7,7 +7,7 @@ import StoryImage from "~/components/StoryImage";
 import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import { api } from "~/utils/api";
-import categories, { StaticCategory } from "~/utils/categories";
+import categories, { type StaticCategory } from "~/utils/categories";
 import { getLocalizedRouteParameters, useRouter } from "next-multilingual/router";
 import { getStaticPropsLocales } from "next-multilingual";
 import { useMessages } from "next-multilingual/messages";

@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://www.sard.dev/ar-sa
+Host: https://www.sard.dev
 
 # Sitemaps
-Sitemap: https://www.sard.dev/ar-sa/sitemap.xml
+Sitemap: https://www.sard.dev/sitemap.xml

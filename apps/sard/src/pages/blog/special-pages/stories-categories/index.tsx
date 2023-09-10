@@ -1,11 +1,11 @@
 import clsx from "clsx";
 import { NextSeo } from "next-seo";
 import Link from "next-multilingual/link";
-import categories, { Category, StaticCategory } from "~/utils/categories";
+import categories, { Category, type StaticCategory } from "~/utils/categories";
 import { useMessages } from "next-multilingual/messages";
 import { useRouter } from "next-multilingual/router";
 import { getStaticPropsLocales } from "next-multilingual";
-import { GetStaticProps } from "next";
+import { type GetStaticProps } from "next";
 import Head from "next-multilingual/head";
 
 export default function Categories({ categories }: { categories: StaticCategory[] }) {
@@ -28,7 +28,7 @@ export default function Categories({ categories }: { categories: StaticCategory[
             className={clsx(
               "category col-span-6 flex cursor-pointer select-none flex-col rounded-md border-4 border-transparent bg-white p-4 shadow-sm transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 md:col-span-3"
             )}
-            href={`/blog/special-pages/stories-categories/${category.label}`}>
+            href={`/blog/special-pages/stories-categories/${encodeURIComponent(category.label)}`}>
             <p className="text-4xl">{category.emoji}</p>
             <p className="text text-xl font-bold text-gray-900">
               {messages.format("storyAbout")} {category.label}
