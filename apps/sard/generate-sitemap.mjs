@@ -86,7 +86,7 @@ function generate() {
     </urlset>
     `;
 
-    formatted = prettier.format(sitemap, {
+    const formatted = prettier.format(sitemap, {
       parser: "html",
     });
 
