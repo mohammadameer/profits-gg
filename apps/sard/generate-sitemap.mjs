@@ -86,7 +86,11 @@ function generate() {
     </urlset>
     `;
 
-    writeFileSync(`public/sitemap-${lang}.xml`, sitemap);
+    formatted = prettier.format(sitemap, {
+      parser: "html",
+    });
+
+    writeFileSync(`public/sitemap-${lang}.xml`, formatted);
   });
 }
 
