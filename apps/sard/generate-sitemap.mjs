@@ -31,7 +31,6 @@ function generate() {
         const html = fs.readFileSync(page, "utf8");
         const $ = cheerio.load(html);
         const canonicalLink = $('link[rel="canonical"]').attr("href");
-        console.log("page", page);
 
         urls.push(canonicalLink);
         if (page.endsWith("short-learning-stories-for-childrens/story.html")) {
@@ -86,7 +85,7 @@ function generate() {
     </urlset>
     `;
 
-    const formatted = prettier.format(sitemap, {
+    const formatted = await prettier.format(sitemap, {
       parser: "html",
     });
 
