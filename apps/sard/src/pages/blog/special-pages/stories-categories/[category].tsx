@@ -51,7 +51,7 @@ export default function Category({ category }: { category: StaticCategory }) {
             (page) =>
               page?.stories?.map((story, index) => (
                 <Link
-                  href={`/stories/${story.slug}`}
+                  href={`/short-learning-stories-for-childrens/story/${story.slug}`}
                   key={story.id}
                   className="story relative z-20 col-span-6 flex h-40 cursor-pointer select-none items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2">
                   <StoryImage
