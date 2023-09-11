@@ -7,6 +7,7 @@ import { api } from "~/utils/api";
 import memberships, { expirationByAmount } from "~/utils/memberships";
 import va from "@vercel/analytics";
 import { useMessages } from "next-multilingual/messages";
+import Head from "next-multilingual/head";
 
 export default function CheckoutSuccessModal() {
   const router = useRouter();
@@ -50,8 +51,8 @@ export default function CheckoutSuccessModal() {
           : false,
       onSuccess: (data) => {
         if (data?.id) {
-          setUserId(data?.id as string);
-          posthog?.identify(data?.id as string, {
+          setUserId(data?.id);
+          posthog?.identify(data?.id, {
             name: data?.name,
             email: data?.email,
             phoneNumber: data?.phoneNumber,
@@ -72,8 +73,8 @@ export default function CheckoutSuccessModal() {
 
   useEffect(() => {
     if (!user) return;
-    setUserId(user?.id as string);
-    posthog?.identify(user?.id as string, {
+    setUserId(user?.id);
+    posthog?.identify(user?.id, {
       name: user?.name,
       email: user?.email,
       phoneNumber: user?.phoneNumber,
@@ -81,44 +82,52 @@ export default function CheckoutSuccessModal() {
   }, [user]);
 
   return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 !bg-gray-200">
-      <p className="text text-xl font-bold text-gray-900 md:text-2xl">{messages?.format("title")}</p>
+    <>
+      <Head>
+        <title>{messages.format("title")}</title>
+        <meta name="description" content={messages.format("description")} />
+        <meta property="og:title" content={messages.format("title")} />
+        <meta property="og:description" content={messages.format("description")} />
+      </Head>
+      <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 !bg-gray-200">
+        <p className="text text-xl font-bold text-gray-900 md:text-2xl">{messages?.format("title")}</p>
 
-      <p className="text text-xl text-gray-900">
-        {messages.format("youSubscribedTo")} <span className="font-bold">{membership?.product}</span>
-      </p>
+        <p className="text text-xl text-gray-900">
+          {messages.format("youSubscribedTo")} <span className="font-bold">{membership?.product}</span>
+        </p>
 
-      <p className="text text-xl text-gray-900">
-        {messages.format("endIn")}{" "}
-        {membership?.discountPrice != undefined && expirationSeconds != undefined ? (
-          <span className="font-bold">
-            {new Date(
-              new Date((checkoutSession?.created as number) * 1000).getTime() + expirationSeconds * 1000
-            ).toLocaleString(router.locale, {
-              hour: "numeric",
-              minute: "numeric",
-              hour12: true,
-            })}{" "}
-            -{" "}
-            {new Date(
-              new Date((checkoutSession?.created as number) * 1000).getTime() + expirationSeconds * 1000
-            ).toLocaleString(router.locale, {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </span>
-        ) : null}
-      </p>
+        <p className="text text-xl text-gray-900">
+          {messages.format("endIn")}{" "}
+          {membership?.discountPrice != undefined && expirationSeconds != undefined ? (
+            <span className="font-bold">
+              {new Date(
+                new Date((checkoutSession?.created as number) * 1000).getTime() + expirationSeconds * 1000
+              ).toLocaleString(router.locale, {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })}{" "}
+              -{" "}
+              {new Date(
+                new Date((checkoutSession?.created as number) * 1000).getTime() + expirationSeconds * 1000
+              ).toLocaleString(router.locale, {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
+          ) : null}
+        </p>
 
-      <Button
-        text={messages.format("mainPage")}
-        onClick={() => {
-          router.push("/");
-        }}
-        className="mt-4"
-      />
-    </div>
+        <Button
+          text={messages.format("mainPage")}
+          onClick={() => {
+            router.push("/");
+          }}
+          className="mt-4"
+        />
+      </div>
+    </>
   );
 }

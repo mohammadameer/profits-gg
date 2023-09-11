@@ -384,7 +384,7 @@ const categories: Category[] = [
     value: "jobs",
     label: {
       "ar-sa": "الوظائف",
-      "en-us": "Occupations/Jobs",
+      "en-us": "Jobs",
     },
     emoji: "👨‍🏭",
     field: "things",

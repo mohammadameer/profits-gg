@@ -8,8 +8,9 @@ import memberships from "~/utils/memberships";
 import va from "@vercel/analytics";
 import { useEffect } from "react";
 import { useMessages } from "next-multilingual/messages";
+import Head from "next-multilingual/head";
 
-export default function MembershipModal() {
+export default function Memberships() {
   const router = useRouter();
 
   const messages = useMessages();
@@ -26,8 +27,8 @@ export default function MembershipModal() {
       enabled: userId ? true : false,
       onSuccess: (data) => {
         if (data?.id) {
-          setUserId(data?.id as string);
-          posthog?.identify(data?.id as string, {
+          setUserId(data?.id);
+          posthog?.identify(data?.id, {
             name: data?.name,
             email: data?.email,
             phoneNumber: data?.phoneNumber,
@@ -49,74 +50,85 @@ export default function MembershipModal() {
   }, [user]);
 
   return (
-    <div className="flex justify-center !bg-gray-200 p-6">
-      <div className="flex flex-col gap-4 md:w-2/3 lg:w-1/3">
-        <p className="text text-xl font-bold text-gray-900 md:text-2xl">
-          {user ? messages.format("ended") : messages.format("reachedMaxToday")}
-        </p>
-
-        <p className="text text-xl text-gray-900">
-          {messages.format("description1")} {user ? messages.format("retry") : ""}{" "}
-          {messages.format("description2")}
-        </p>
-
-        <form className="flex w-full flex-col gap-4">
-          {memberships.map((membership) => (
-            <a
-              key={membership.id}
-              className={clsx(
-                "membership flex w-full cursor-pointer select-none flex-col justify-between rounded-md border-4 border-transparent bg-gray-300 p-4 transition-all duration-300 hover:scale-105 active:scale-95"
-              )}
-              onClick={() => {
-                // gtag?.("event", "conversion", {
-                //   send_to: "AW-10865811504/Z5RhCNPd8KcYELDAnL0o",
-                //   value: membership.discountPrice,
-                //   currency: "SAR",
-                // });
-              }}
-              href={membership.url}
-              target="_blank"
-              rel="noreferrer noopener">
-              <p className="text-xl font-bold">{messages.format(membership.product)}</p>
-              <p className="text-end text-xl">
-                {membership.price ? (
-                  <span className="line-through">
-                    {membership.price.toLocaleString(router.locale)} {messages.format("sar")}
-                  </span>
-                ) : null}{" "}
-                {membership.discount
-                  ? `(${messages.format("discount")} ${(membership?.discount).toLocaleString(
-                      router.locale
-                    )}٪) 🔥`
-                  : null}{" "}
-                {messages.format("for")} {(membership?.discountPrice).toLocaleString(router.locale)}{" "}
-                {messages.format("sar")}
-              </p>
-            </a>
-          ))}
-
-          <p className="text text-center text-gray-900">
-            {messages.format("alreadySubscribed")}{" "}
-            <span
-              id="activate-membership"
-              className="cursor-pointer text-blue-500 underline"
-              onClick={() => {
-                router.push(`/activate-membership`);
-              }}>
-              {" "}
-              {messages.format("activate")}{" "}
-            </span>
-          </p>
-        </form>
-
-        <Button
-          text={messages.format("mainPage")}
-          className="mt-8 w-full"
-          onClick={() => {
-            router.push("/");
-          }}
+    <>
+      <Head>
+        <title>{messages.format("title")}</title>
+        <meta name="description" content={messages.format("description")} />
+        <meta property="og:title" content={messages.format("title")} />
+        <meta
+          property="og:description"
+          content={`${messages.format("story")} ${messages.format("description")}`}
         />
+      </Head>
+      <div className="flex justify-center !bg-gray-200 p-6">
+        <div className="flex flex-col gap-4 md:w-2/3 lg:w-1/3">
+          <p className="text text-xl font-bold text-gray-900 md:text-2xl">
+            {user ? messages.format("ended") : messages.format("reachedMaxToday")}
+          </p>
+
+          <p className="text text-xl text-gray-900">
+            {messages.format("description1")} {user ? messages.format("retry") : ""}{" "}
+            {messages.format("description2")}
+          </p>
+
+          <form className="flex w-full flex-col gap-4">
+            {memberships.map((membership) => (
+              <a
+                key={membership.id}
+                className={clsx(
+                  "membership flex w-full cursor-pointer select-none flex-col justify-between rounded-md border-4 border-transparent bg-gray-300 p-4 transition-all duration-300 hover:scale-105 active:scale-95"
+                )}
+                onClick={() => {
+                  // gtag?.("event", "conversion", {
+                  //   send_to: "AW-10865811504/Z5RhCNPd8KcYELDAnL0o",
+                  //   value: membership.discountPrice,
+                  //   currency: "SAR",
+                  // });
+                }}
+                href={membership.url}
+                target="_blank"
+                rel="noreferrer noopener">
+                <p className="text-xl font-bold">{messages.format(membership.product)}</p>
+                <p className="text-end text-xl">
+                  {membership.price ? (
+                    <span className="line-through">
+                      {membership.price.toLocaleString(router.locale)} {messages.format("sar")}
+                    </span>
+                  ) : null}{" "}
+                  {membership.discount
+                    ? `(${messages.format("discount")} ${(membership?.discount).toLocaleString(
+                        router.locale
+                      )}٪) 🔥`
+                    : null}{" "}
+                  {messages.format("for")} {(membership?.discountPrice).toLocaleString(router.locale)}{" "}
+                  {messages.format("sar")}
+                </p>
+              </a>
+            ))}
+
+            <p className="text text-center text-gray-900">
+              {messages.format("alreadySubscribed")}{" "}
+              <span
+                id="activate-membership"
+                className="cursor-pointer text-blue-500 underline"
+                onClick={() => {
+                  router.push(`/activate-membership`);
+                }}>
+                {" "}
+                {messages.format("activate")}{" "}
+              </span>
+            </p>
+          </form>
+
+          <Button
+            text={messages.format("mainPage")}
+            className="mt-8 w-full"
+            onClick={() => {
+              router.push("/");
+            }}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
