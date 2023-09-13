@@ -52,7 +52,6 @@ export default function SEO({
       <meta name="twitter:creator" content="maats_s" />
 
       <meta name="author" content="Sard" />
-      <meta name="date" content={date} />
     </Head>
   );
 }
