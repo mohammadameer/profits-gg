@@ -17,7 +17,6 @@ export default function SEO({
   image,
   url,
   keywords,
-  date,
   published_time,
   modified_time,
 }: SeoProps) {
