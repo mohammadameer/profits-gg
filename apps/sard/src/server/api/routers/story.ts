@@ -1,4 +1,4 @@
-import { Prisma, Story } from "@prisma/client";
+import { type Prisma, type Story } from "@prisma/client";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
@@ -33,6 +33,8 @@ export const storyRouter = createTRPCRouter({
               name: true,
             },
           },
+          createdAt: true,
+          updatedAt: true,
         },
         where: {
           id: input.id,

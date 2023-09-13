@@ -1,5 +1,9 @@
 import { ReCaptcha, ReCaptchaProvider } from "next-recaptcha-v3";
-import { getLocalizedRouteParameters, useRouter } from "next-multilingual/router";
+import {
+  type LocalizedRouteParameters,
+  getLocalizedRouteParameters,
+  useRouter,
+} from "next-multilingual/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
@@ -7,8 +11,7 @@ import va from "@vercel/analytics";
 import useDebounce from "@profits-gg/lib/hooks/useDebounce";
 import clsx from "clsx";
 import { useLocalStorage } from "usehooks-ts";
-import places from "~/utils/places";
-import categories, { StaticCategory } from "~/utils/categories";
+import categories from "~/utils/categories";
 import Compressor from "compressorjs";
 import { type GetStaticPaths, type GetServerSidePropsContext } from "next";
 import { createServerSideHelpers } from "@trpc/react-query/server";
@@ -18,21 +21,26 @@ import SuperJSON from "superjson";
 import { prisma } from "~/server/db";
 import StoryImage from "~/components/StoryImage";
 import StoriesInSameCategory from "~/components/StoriesInSameCategory";
-import { NextSeo } from "next-seo";
-import { Button } from "@profits-gg/ui";
 import PdfDownloader from "~/components/PDFDownloader";
-import Link from "next-multilingual/link";
 import { useMessages } from "next-multilingual/messages";
 import arSANames from "~/utils/ar-SA.names";
 import enUSNames from "~/utils/en-US.names";
 import { getStaticPathsLocales, getStaticPropsLocales } from "next-multilingual";
 import Head from "next-multilingual/head";
-import { slugify } from "next-multilingual/messages";
+import SEO from "~/components/SEO";
+import { useGetLocalizedUrl } from "next-multilingual/url";
 
-export default function Story({ names }: { names: string[] }) {
+export default function Story({
+  names,
+  localizedRouteParameters,
+}: {
+  names: string[];
+  localizedRouteParameters: LocalizedRouteParameters;
+}) {
   const router = useRouter();
   const { slug: slugFromRouter, category, characterName, place } = router.query;
 
+  const { getLocalizedUrl } = useGetLocalizedUrl();
   const messages = useMessages();
 
   const [token, setToken] = useState<string>();
@@ -330,20 +338,20 @@ export default function Story({ names }: { names: string[] }) {
 
   return (
     <>
-      <Head>
-        <title>
-          {messages.format("story")} {title}
-        </title>
-        <meta
-          name="description"
-          content={`${messages.format("story")} ${messages.format("about")} ${title}, ${description}`}
-        />
-        <meta property="og:title" content={messages.format("story") + " " + title} />
-        <meta
-          property="og:description"
-          content={`${messages.format("story")} ${messages.format("about")} ${title}, ${description}`}
-        />
-      </Head>
+      <SEO
+        title={`${messages.format("story")} ${title}`}
+        description={`${messages.format("story")} ${messages.format("about")} ${title}, ${description}`}
+        image={`https://www.sard.dev/images/${storyData?.slug as string}.jpg`}
+        url={getLocalizedUrl(
+          `/short-learning-stories-for-childrens/story/${encodeURIComponent(storyData?.slug as string)}`,
+          router.locale,
+          localizedRouteParameters,
+          true
+        )}
+        keywords={[messages.format("story"), title, description]}
+        published_time={storyData?.createdAt?.toISOString()}
+        modified_time={storyData?.updatedAt?.toISOString()}
+      />
 
       <ReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY} useEnterprise={true}>
         <ReCaptcha onValidate={setToken} action="page_view" />

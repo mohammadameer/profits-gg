@@ -40,12 +40,21 @@ function generate() {
               hidden: false,
             },
             select: {
+              id: true,
               slug: true,
+              smallImage: true,
             },
           });
 
           stories.forEach((story) => {
             urls.push(`${canonicalLink}/${encodeURIComponent(story.slug)}`);
+            // transform small image base64 to file and save it in public folder
+            if (story.smallImage) {
+              const imagePath = `public/images/${story.slug}.jpg`;
+              fs.writeFileSync(imagePath, story.smallImage, {
+                encoding: "base64",
+              });
+            }
           });
         }
 
