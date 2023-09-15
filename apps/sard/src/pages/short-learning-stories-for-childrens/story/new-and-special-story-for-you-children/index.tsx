@@ -9,7 +9,8 @@ import enUSNames from "~/utils/en-US.names";
 import { type GetStaticProps } from "next";
 import { getStaticPropsLocales } from "next-multilingual";
 import { useMessages } from "next-multilingual/messages";
-import Head from "next-multilingual/head";
+import { useGetLocalizedUrl } from "next-multilingual/url";
+import SEO from "~/components/SEO";
 
 export default function NewStory({
   names,
@@ -21,6 +22,8 @@ export default function NewStory({
   fields: StaticField[];
 }) {
   const router = useRouter();
+
+  const { getLocalizedUrl } = useGetLocalizedUrl();
 
   const messages = useMessages();
 
@@ -34,12 +37,17 @@ export default function NewStory({
 
   return (
     <>
-      <Head>
-        <title>{messages.format("title")}</title>
-        <meta name="description" content={messages.format("description")} />
-        <meta property="og:title" content={messages.format("title")} />
-        <meta property="og:description" content={messages.format("description")} />
-      </Head>
+      <SEO
+        title={messages.format("title")}
+        description={messages.format("description")}
+        url={getLocalizedUrl(
+          `/short-learning-stories-for-childrens/story/new-and-special-story-for-your-children`,
+          router.locale,
+          undefined,
+          true
+        )}
+        keywords={[messages.format("title"), messages.format("description")]}
+      />
 
       <h1 className="md:pt-18 col-span-full p-6 py-4 pt-8 text-4xl font-bold md:text-8xl">
         {messages.format("title")}

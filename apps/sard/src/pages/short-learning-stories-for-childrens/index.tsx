@@ -1,4 +1,3 @@
-import { NextSeo } from "next-seo";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next-multilingual/router";
 import StoryImage from "~/components/StoryImage";
@@ -10,18 +9,15 @@ import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import Link from "next-multilingual/link";
 
-import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
-import {
-  ResolvedLocaleServerSideProps,
-  getStaticPropsLocales,
-  resolveLocale,
-  useResolvedLocale,
-} from "next-multilingual";
+import type { GetStaticProps, NextPage } from "next";
+import { getStaticPropsLocales } from "next-multilingual";
 import { useMessages } from "next-multilingual/messages";
-import Head from "next-multilingual/head";
+import SEO from "~/components/SEO";
+import { useGetLocalizedUrl } from "next-multilingual/url";
 
 const ChildrenStories: NextPage<{ locale: string }> = ({ locale }) => {
   const router = useRouter();
+  const { getLocalizedUrl } = useGetLocalizedUrl();
 
   const messages = useMessages();
 
@@ -70,12 +66,12 @@ const ChildrenStories: NextPage<{ locale: string }> = ({ locale }) => {
 
   return (
     <>
-      <Head>
-        <title>{messages.format("title")}</title>
-        <meta name="description" content={messages.format("description")} />
-        <meta property="og:title" content={messages.format("title")} />
-        <meta property="og:description" content={messages.format("description")} />
-      </Head>
+      <SEO
+        title={messages.format("title")}
+        description={messages.format("description")}
+        url={getLocalizedUrl(`/short-learning-stories-for-childrens`, router.locale, undefined, true)}
+        keywords={[messages.format("title"), messages.format("description")]}
+      />
 
       <h1 className="md:pt-18 p-6 py-4 pb-4 text-6xl font-bold md:pb-14">{messages.format("title")}</h1>
 

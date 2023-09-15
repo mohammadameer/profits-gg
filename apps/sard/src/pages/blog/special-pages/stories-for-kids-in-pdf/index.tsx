@@ -1,19 +1,22 @@
-import { NextSeo } from "next-seo";
 import Link from "next-multilingual/link";
 import { useMessages } from "next-multilingual/messages";
-import Head from "next-multilingual/head";
+import SEO from "~/components/SEO";
+import { useGetLocalizedUrl } from "next-multilingual/url";
+import { useRouter } from "next-multilingual/router";
 
 export default function PdfKidsStories() {
+  const router = useRouter();
+  const { getLocalizedUrl } = useGetLocalizedUrl();
+
   const messages = useMessages();
   return (
     <>
-      <Head>
-        <title>{messages.format("title")}</title>
-        <meta name="description" content={messages.format("description")} />
-        <meta property="og:title" content={messages.format("title")} />
-        <meta property="og:description" content={messages.format("description")} />
-      </Head>
-
+      <SEO
+        title={messages.format("title")}
+        description={messages.format("description")}
+        url={getLocalizedUrl(`/blog/special-pages/stories-for-kids-in-pdf`, router.locale, undefined, true)}
+        keywords={[messages.format("title"), messages.format("description")]}
+      />
       <h1 className="md:pt-18 p-6 py-4 pb-4 text-6xl font-bold md:pb-6">{messages.format("title")}</h1>
 
       <p className="p-6 py-4 pb-4 text-xl md:pb-14">{messages.format("description")}</p>

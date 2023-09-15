@@ -26,7 +26,6 @@ import { useMessages } from "next-multilingual/messages";
 import arSANames from "~/utils/ar-SA.names";
 import enUSNames from "~/utils/en-US.names";
 import { getStaticPathsLocales, getStaticPropsLocales } from "next-multilingual";
-import Head from "next-multilingual/head";
 import SEO from "~/components/SEO";
 import { useGetLocalizedUrl } from "next-multilingual/url";
 

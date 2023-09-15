@@ -1,6 +1,5 @@
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { type GetServerSidePropsContext } from "next";
-import { NextSeo } from "next-seo";
 import Link from "next-multilingual/link";
 import SuperJSON from "superjson";
 import StoryImage from "~/components/StoryImage";
@@ -8,13 +7,26 @@ import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import { api } from "~/utils/api";
 import categories, { type StaticCategory } from "~/utils/categories";
-import { getLocalizedRouteParameters, useRouter } from "next-multilingual/router";
+import {
+  type LocalizedRouteParameters,
+  getLocalizedRouteParameters,
+  useRouter,
+} from "next-multilingual/router";
 import { getStaticPropsLocales } from "next-multilingual";
 import { useMessages } from "next-multilingual/messages";
-import Head from "next-multilingual/head";
+import SEO from "~/components/SEO";
+import { useGetLocalizedUrl } from "next-multilingual/url";
 
-export default function Category({ category }: { category: StaticCategory }) {
+export default function Category({
+  category,
+  localizedRouteParameters,
+}: {
+  category: StaticCategory;
+  localizedRouteParameters: LocalizedRouteParameters;
+}) {
   const router = useRouter();
+
+  const { getLocalizedUrl } = useGetLocalizedUrl();
 
   const messages = useMessages();
 
@@ -30,17 +42,17 @@ export default function Category({ category }: { category: StaticCategory }) {
 
   return (
     <>
-      <Head>
-        <title>
-          {messages.format("storyAbout")} {category?.label}
-        </title>
-        <meta name="description" content={messages.format("bestStoriesAbout") + " " + category?.label} />
-        <meta property="og:title" content={messages.format("storyAbout") + " " + category?.label} />
-        <meta
-          property="og:description"
-          content={messages.format("bestStoriesAbout") + " " + category?.label}
-        />
-      </Head>
+      <SEO
+        title={messages.format("storyAbout") + " " + category?.label}
+        description={messages.format("bestStoriesAbout") + " " + category?.label}
+        url={getLocalizedUrl(
+          `/blog/special-pages/stories-categories/${encodeURIComponent(category.label)}`,
+          router.locale,
+          localizedRouteParameters,
+          true
+        )}
+        keywords={[messages.format("storyAbout") + " " + category?.label]}
+      />
 
       <h1 className="p-6 text-4xl font-bold">
         {messages.format("storyAbout")} {category?.label}

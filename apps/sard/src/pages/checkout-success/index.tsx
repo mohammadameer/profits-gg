@@ -1,4 +1,4 @@
-import { Button, Modal } from "@profits-gg/ui";
+import { Button } from "@profits-gg/ui";
 import { useRouter } from "next-multilingual/router";
 import { usePostHog } from "posthog-js/react";
 import { useEffect, useState } from "react";
@@ -7,11 +7,14 @@ import { api } from "~/utils/api";
 import memberships, { expirationByAmount } from "~/utils/memberships";
 import va from "@vercel/analytics";
 import { useMessages } from "next-multilingual/messages";
-import Head from "next-multilingual/head";
+import SEO from "~/components/SEO";
+import { useGetLocalizedUrl } from "next-multilingual/url";
 
 export default function CheckoutSuccessModal() {
   const router = useRouter();
   const { checkout_session_id } = router.query;
+
+  const { getLocalizedUrl } = useGetLocalizedUrl();
 
   const messages = useMessages();
 
@@ -83,12 +86,12 @@ export default function CheckoutSuccessModal() {
 
   return (
     <>
-      <Head>
-        <title>{messages.format("title")}</title>
-        <meta name="description" content={messages.format("description")} />
-        <meta property="og:title" content={messages.format("title")} />
-        <meta property="og:description" content={messages.format("description")} />
-      </Head>
+      <SEO
+        title={messages.format("title")}
+        description={messages.format("description")}
+        url={getLocalizedUrl(`/checkout-success`, router.locale, undefined, true)}
+        keywords={[messages.format("title"), messages.format("description")]}
+      />
       <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 !bg-gray-200">
         <p className="text text-xl font-bold text-gray-900 md:text-2xl">{messages?.format("title")}</p>
 

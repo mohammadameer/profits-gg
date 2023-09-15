@@ -1,4 +1,4 @@
-import { Button, Modal } from "@profits-gg/ui";
+import { Button } from "@profits-gg/ui";
 import clsx from "clsx";
 import { useRouter } from "next-multilingual/router";
 import { usePostHog } from "posthog-js/react";
@@ -8,10 +8,13 @@ import memberships from "~/utils/memberships";
 import va from "@vercel/analytics";
 import { useEffect } from "react";
 import { useMessages } from "next-multilingual/messages";
-import Head from "next-multilingual/head";
+import { useGetLocalizedUrl } from "next-multilingual/url";
+import SEO from "~/components/SEO";
 
 export default function Memberships() {
   const router = useRouter();
+
+  const { getLocalizedUrl } = useGetLocalizedUrl();
 
   const messages = useMessages();
 
@@ -51,15 +54,12 @@ export default function Memberships() {
 
   return (
     <>
-      <Head>
-        <title>{messages.format("title")}</title>
-        <meta name="description" content={messages.format("description")} />
-        <meta property="og:title" content={messages.format("title")} />
-        <meta
-          property="og:description"
-          content={`${messages.format("story")} ${messages.format("description")}`}
-        />
-      </Head>
+      <SEO
+        title={messages.format("title")}
+        description={messages.format("description")}
+        url={getLocalizedUrl(`/memberships`, router.locale, undefined, true)}
+        keywords={[messages.format("title"), messages.format("description")]}
+      />
       <div className="flex justify-center !bg-gray-200 p-6">
         <div className="flex flex-col gap-4 md:w-2/3 lg:w-1/3">
           <p className="text text-xl font-bold text-gray-900 md:text-2xl">

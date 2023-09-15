@@ -1,19 +1,21 @@
-import Head from "next-multilingual/head";
 import { useMessages } from "next-multilingual/messages";
+import { useRouter } from "next-multilingual/router";
+import { useGetLocalizedUrl } from "next-multilingual/url";
+import SEO from "~/components/SEO";
 
 export default function StoryMainPage() {
+  const router = useRouter();
+  const { getLocalizedUrl } = useGetLocalizedUrl();
+
   const messages = useMessages();
   return (
     <>
-      <Head>
-        <title>{messages.format("title")}</title>
-        <meta name="description" content={messages.format("description")} />
-        <meta property="og:title" content={messages.format("title")} />
-        <meta
-          property="og:description"
-          content={`${messages.format("story")} ${messages.format("description")}`}
-        />
-      </Head>
+      <SEO
+        title={messages.format("title")}
+        description={messages.format("description")}
+        url={getLocalizedUrl(`/short-learning-stories-for-childrens/story`, router.locale, undefined, true)}
+        keywords={[messages.format("title"), messages.format("description")]}
+      />
       <div />
     </>
   );

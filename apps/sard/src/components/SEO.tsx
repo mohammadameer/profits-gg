@@ -30,8 +30,12 @@ export default function SEO({
       <meta name="twitter:url" content={url} />
       <meta property="og:url" content={url} />
 
-      <meta name="twitter:image" content={image} />
-      <meta property="og:image" content={image} />
+      {image ? (
+        <>
+          <meta name="twitter:image" content={image} />
+          <meta property="og:image" content={image} />
+        </>
+      ) : null}
 
       <meta name="twitter:title" content={title} />
       <meta property="og:title" content={title} />

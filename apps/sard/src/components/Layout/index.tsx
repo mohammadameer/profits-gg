@@ -2,11 +2,15 @@ import clsx from "clsx";
 import Link from "next-multilingual/link";
 
 import { normalizeLocale, setCookieLocale } from "next-multilingual";
-import { LocalizedRouteParameters, getLocalizedRouteParameters, useRouter } from "next-multilingual/router";
-import { KeyValueObject, slugify, useMessages } from "next-multilingual/messages";
+import {
+  type LocalizedRouteParameters,
+  getLocalizedRouteParameters,
+  useRouter,
+} from "next-multilingual/router";
+import { type KeyValueObject, slugify, useMessages } from "next-multilingual/messages";
 import { getLanguageSwitcherUrl } from "next-multilingual/url";
 import Head from "next-multilingual/head";
-import { GetStaticProps } from "next";
+import { type GetStaticProps } from "next";
 
 type DynamicRoutesIdTestsProps = {
   localizedRouteParameters: LocalizedRouteParameters;
@@ -60,7 +64,7 @@ export default function Layout({
             📖 {messages.format("logoText")}
           </Link>
           <Link
-            href="/short-learning-stories-for-childrens/story/new-and-special-story-for-you-children"
+            href="/short-learning-stories-for-childrens/story/new-and-special-story-for-your-children"
             className="text h-auto rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-all duration-200 ease-in-out hover:scale-105 active:scale-95">
             {messages.format("newStory")} 🪄
           </Link>

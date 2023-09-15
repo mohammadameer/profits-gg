@@ -1,19 +1,23 @@
-import { NextSeo } from "next-seo";
 import Link from "next-multilingual/link";
 import { useMessages } from "next-multilingual/messages";
-import Head from "next-multilingual/head";
+import SEO from "~/components/SEO";
+import { useGetLocalizedUrl } from "next-multilingual/url";
+import { useRouter } from "next-multilingual/router";
 
 export default function SpecialPages() {
+  const router = useRouter();
   const messages = useMessages();
+
+  const { getLocalizedUrl } = useGetLocalizedUrl();
 
   return (
     <>
-      <Head>
-        <title>{messages.format("title")}</title>
-        <meta name="description" content={messages.format("description")} />
-        <meta property="og:title" content={messages.format("title")} />
-        <meta property="og:description" content={messages.format("description")} />
-      </Head>
+      <SEO
+        title={messages.format("title")}
+        description={messages.format("description")}
+        url={getLocalizedUrl(`/special-pages`, router.locale, undefined, true)}
+        keywords={[messages.format("title"), messages.format("description")]}
+      />
 
       <h1 className="md:pt-18 p-6 py-4 pb-4 text-6xl font-bold md:pb-14">{messages.format("title")}</h1>
 
