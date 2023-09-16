@@ -71,11 +71,6 @@ export default function Layout({
             📖 {messages.format("logoText")}
           </Link>
           <Button text="English/عربي" onClick={() => setIsChooseLanguageOpen(true)} />
-          {/* <Link
-            href="/short-learning-stories-for-childrens/story/new-and-special-story-for-your-children"
-            className="text h-auto rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-all duration-200 ease-in-out hover:scale-105 active:scale-95">
-            {messages.format("newStory")} 🪄
-          </Link> */}
         </div>
         {children}
         <div className="flex flex-col items-center justify-between gap-8 p-4 lg:flex-row">

@@ -41,7 +41,7 @@ export default function NewStory({
         title={messages.format("title")}
         description={messages.format("description")}
         url={getLocalizedUrl(
-          `/short-learning-stories-for-childrens/story/new-and-special-story-for-your-children`,
+          `/short-learning-stories-for-childrens/new-and-special-story-for-your-children`,
           router.locale,
           undefined,
           true

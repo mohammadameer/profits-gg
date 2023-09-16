@@ -83,6 +83,11 @@ export default function Category({
             <p className="text text-xl font-bold leading-10 text-gray-900 md:text-2xl">
               {messages.format("noStories")}
             </p>
+            <Link
+              href="/short-learning-stories-for-childrens/new-and-special-story-for-your-children"
+              className="text h-auto rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-all duration-200 ease-in-out hover:scale-105 active:scale-95">
+              {messages.format("newStory")} 🪄
+            </Link>
           </div>
         )}
       </div>
