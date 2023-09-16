@@ -28,6 +28,7 @@ import enUSNames from "~/utils/en-US.names";
 import { getStaticPathsLocales, getStaticPropsLocales } from "next-multilingual";
 import SEO from "~/components/SEO";
 import { useGetLocalizedUrl } from "next-multilingual/url";
+import Link from "next-multilingual/link";
 
 export default function Story({
   names,
@@ -424,6 +425,14 @@ export default function Story({
             <div className="my-4 flex w-1/2 flex-col gap-4 border-t border-black pt-6" id="page-break-after">
               <p className="text-2xl">{messages.format("storyEnded")}</p>
             </div>
+          ) : null}
+
+          {!isLoading && storyData?.id ? (
+            <Link
+              href="/short-learning-stories-for-childrens/story/new-and-special-story-for-your-children"
+              className="text h-auto rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 lg:w-1/3">
+              {messages.format("newStory")} 🪄
+            </Link>
           ) : null}
 
           {!isLoading && storyData?.id ? (
