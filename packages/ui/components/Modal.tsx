@@ -16,7 +16,7 @@ const Modal: FC<ModalProps> = ({ children, open, setOpen, onClose, className, bo
       className={clsx(
         "fixed left-0 top-0 z-40 flex h-[-webkit-fill-available] min-h-[-webkit-fill-available] w-full flex-col items-start xl:items-center",
         open ? "opacity-100" : "pointer-events-none opacity-0",
-        bottomModal ? "justify-end" : "justify-center"
+        bottomModal ? "justify-end xl:justify-center" : "justify-center"
       )}
       onClick={() => {
         setOpen(false);
