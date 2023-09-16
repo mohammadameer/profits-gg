@@ -11,14 +11,16 @@ import { type KeyValueObject, slugify, useMessages } from "next-multilingual/mes
 import { getLanguageSwitcherUrl } from "next-multilingual/url";
 import Head from "next-multilingual/head";
 import { type GetStaticProps } from "next";
+import { Button, Modal } from "@profits-gg/ui";
+import { useState } from "react";
 
 type DynamicRoutesIdTestsProps = {
   localizedRouteParameters: LocalizedRouteParameters;
 };
 
 const localeString = {
-  "ar-sa": "سرد بالعربي",
-  "en-us": "Sard in English",
+  "ar-sa": "العربية",
+  "en-us": "English",
 };
 
 export default function Layout({
@@ -30,6 +32,8 @@ export default function Layout({
 }) {
   const router = useRouter();
   const { locale: currentLocale, locales } = router;
+
+  const [isChooseLanguageOpen, setIsChooseLanguageOpen] = useState(false);
 
   const href = getLanguageSwitcherUrl(router);
   const messages = useMessages();
@@ -52,7 +56,10 @@ export default function Layout({
         {messages.format("keywords") && <meta name="keywords" content={messages.format("keywords")} />}
       </Head>
       <div
-        className={clsx("flex min-h-screen flex-col bg-gray-200 transition-all duration-300")}
+        className={clsx(
+          "flex min-h-screen flex-col bg-gray-200 transition-all duration-300",
+          isChooseLanguageOpen ? "blur-sm" : ""
+        )}
         style={{
           backgroundColor: "#e5e7eb",
         }}
@@ -63,41 +70,18 @@ export default function Layout({
             className="text transform cursor-pointer text-4xl font-bold text-gray-900 duration-300 hover:scale-105 active:scale-95 md:text-5xl">
             📖 {messages.format("logoText")}
           </Link>
-          <Link
+          <Button text="English/عربي" onClick={() => setIsChooseLanguageOpen(true)} />
+          {/* <Link
             href="/short-learning-stories-for-childrens/story/new-and-special-story-for-your-children"
             className="text h-auto rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-all duration-200 ease-in-out hover:scale-105 active:scale-95">
             {messages.format("newStory")} 🪄
-          </Link>
+          </Link> */}
         </div>
         {children}
         <div className="flex flex-col items-center justify-between gap-8 p-4 lg:flex-row">
           <div className="flex gap-4">
             <Link href="/">{messages.format("mainPage")}</Link>
             <Link href="/blog">{messages.format("blog")}</Link>
-          </div>
-          <div className="flex gap-4">
-            {locales
-              ?.filter((locale) => locale !== currentLocale)
-              .map((locale) => {
-                const normalizedLocale = normalizeLocale(locale);
-
-                return (
-                  <Link
-                    key={locale}
-                    className="text text-center font-bold text-gray-900"
-                    href={href}
-                    locale={locale}
-                    lang={normalizedLocale}
-                    hrefLang={normalizedLocale}
-                    localizedRouteParameters={localizedRouteParameters}
-                    onClick={() => {
-                      setCookieLocale(locale);
-                      document.body.dir = locale === "ar-sa" ? "rtl" : "ltr";
-                    }}>
-                    {(localeString as KeyValueObject)[locale]}
-                  </Link>
-                );
-              })}
           </div>
           <div className="flex gap-4">
             <p>{messages.format("contactUs")}</p>
@@ -110,6 +94,42 @@ export default function Layout({
           </div>
         </div>
       </div>
+
+      <Modal
+        open={isChooseLanguageOpen}
+        setOpen={setIsChooseLanguageOpen}
+        onClose={() => {
+          setIsChooseLanguageOpen(false);
+        }}
+        bottomModal={true}
+        className="bg-white">
+        <div className="mt-2 flex w-full flex-col">
+          {locales?.map((locale) => {
+            const normalizedLocale = normalizeLocale(locale);
+
+            return (
+              <Link
+                key={locale}
+                className={clsx(
+                  "text w-full rounded-md p-4 text-center font-bold text-gray-900",
+                  locale === currentLocale ? "bg-blue-500 text-white " : ""
+                )}
+                href={href}
+                locale={locale}
+                lang={normalizedLocale}
+                hrefLang={normalizedLocale}
+                localizedRouteParameters={localizedRouteParameters}
+                onClick={() => {
+                  setCookieLocale(locale);
+                  document.body.dir = locale === "ar-sa" ? "rtl" : "ltr";
+                  setIsChooseLanguageOpen(false);
+                }}>
+                {(localeString as KeyValueObject)[locale]}
+              </Link>
+            );
+          })}
+        </div>
+      </Modal>
     </>
   );
 }
