@@ -1,4 +1,4 @@
-import { Story } from "@prisma/client";
+import { type Story } from "@prisma/client";
 import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
 import Link from "next-multilingual/link";
 import { useMessages } from "next-multilingual/messages";
@@ -72,7 +72,7 @@ export default function StoriesInSameCategory({
             (page) =>
               page?.stories?.map((story, index) => (
                 <Link
-                  href={`/stories/${story.slug}`}
+                  href={`/short-learning-stories-for-childrens/story/${story.slug}`}
                   key={story.id}
                   className="story relative z-20 flex h-40 min-w-[50%] cursor-pointer select-none items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:min-w-[25%] lg:min-w-[16%]">
                   <StoryImage
@@ -93,7 +93,7 @@ export default function StoriesInSameCategory({
               <div
                 key={i}
                 className="relative col-span-6 flex h-64 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2">
-                <div className="h-full w-full animate-pulse bg-gray-200"></div>
+                <div className="h-full w-full animate-pulse bg-gray-200" />
               </div>
             ))}
           </Fragment>
