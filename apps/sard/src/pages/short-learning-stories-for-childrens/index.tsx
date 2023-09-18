@@ -17,7 +17,10 @@ import { useGetLocalizedUrl } from "next-multilingual/url";
 
 const ChildrenStories: NextPage<{ locale: string }> = ({ locale }) => {
   const router = useRouter();
+  const { largeFont } = router.query as { largeFont?: string };
   const { getLocalizedUrl } = useGetLocalizedUrl();
+
+  console.log("largeFont", largeFont);
 
   const messages = useMessages();
 

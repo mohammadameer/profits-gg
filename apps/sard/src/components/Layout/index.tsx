@@ -41,19 +41,7 @@ export default function Layout({
   return (
     <>
       <Head localizedRouteParameters={localizedRouteParameters}>
-        {messages.format("title") && (
-          <>
-            <meta name="title" content={messages.format("title")} />
-            <meta property="og:title" content={messages.format("title")} />
-          </>
-        )}
-        {messages.format("description") && (
-          <>
-            <meta name="description" content={messages.format("description")} />
-            <meta property="og:description" content={messages.format("description")} />
-          </>
-        )}
-        {messages.format("keywords") && <meta name="keywords" content={messages.format("keywords")} />}
+        <></>
       </Head>
       <div
         className={clsx(

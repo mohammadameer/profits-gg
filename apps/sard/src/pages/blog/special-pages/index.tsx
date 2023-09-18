@@ -34,6 +34,12 @@ export default function SpecialPages() {
           <p>📂</p>
           <p>{messages.format("pdfKidsStories")}</p>
         </Link>
+        <Link
+          href="/blog/special-pages/stories-written-in-large-font"
+          className="col-span-full row-span-2 flex flex-col gap-2 rounded-md bg-white p-4 shadow-md md:col-span-4">
+          <p>✍️</p>
+          <p>{messages.format("storiesWithLargeFont")}</p>
+        </Link>
       </div>
     </>
   );

@@ -29,6 +29,24 @@ import { getStaticPathsLocales, getStaticPropsLocales } from "next-multilingual"
 import SEO from "~/components/SEO";
 import { useGetLocalizedUrl } from "next-multilingual/url";
 import Link from "next-multilingual/link";
+import { Button } from "@profits-gg/ui";
+
+const getFontSize = (fontSize: number) => {
+  switch (fontSize) {
+    case 1:
+      return "text-2xl";
+    case 2:
+      return "text-3xl";
+    case 3:
+      return "text-4xl";
+    case 4:
+      return "text-5xl";
+    case 5:
+      return "text-6xl";
+    default:
+      return "text-2xl";
+  }
+};
 
 export default function Story({
   names,
@@ -90,6 +108,7 @@ export default function Story({
   const [content, setContent] = useState<string>(storyData?.content as string);
   const [imagePrompt, setImagePrompt] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
+  const [fontSize, setFontSize] = useState(1);
 
   const debouncedImagePrompt = useDebounce(imagePrompt, 500);
   const debouncedContent = useDebounce(content, 5000);
@@ -363,13 +382,31 @@ export default function Story({
           ) : (
             <div className="h-24 w-3/4 animate-pulse rounded-md bg-gray-400" />
           )}
+          <div className="flex justify-end gap-4">
+            <Button
+              text="زيادة حجم الخط"
+              onClick={() => {
+                if (fontSize < 5) {
+                  setFontSize(fontSize + 1);
+                }
+              }}
+            />
+            <Button
+              text="تقليل حجم الخط"
+              onClick={() => {
+                if (fontSize > 1) {
+                  setFontSize(fontSize - 1);
+                }
+              }}
+            />
+          </div>
           {description ? (
-            <p className="text-xl">{description}</p>
+            <h2 className={clsx("leading-normal", getFontSize(fontSize))}>{description}</h2>
           ) : (
             <div className="h-10 w-2/4 animate-pulse rounded-md bg-gray-400" />
           )}
           {slug ? (
-            <p className="text-xl">
+            <p className={clsx("leading-normal", getFontSize(fontSize))}>
               {messages.format("about")}{" "}
               {
                 // @ts-ignore
@@ -410,7 +447,9 @@ export default function Story({
           {content ? (
             <div className="flex flex-col gap-4 break-words">
               {content?.split("\n").map((paragraph, index) => (
-                <p key={index} className="break-inside-avoid break-words text-2xl">
+                <p
+                  key={index}
+                  className={clsx("break-inside-avoid break-words leading-normal", getFontSize(fontSize))}>
                   {paragraph?.replace(/🍆|🌈|🏳️‍🌈|/gm, "")}
                 </p>
               ))}
@@ -423,7 +462,7 @@ export default function Story({
 
           {content && !isLoading ? (
             <div className="my-4 flex w-1/2 flex-col gap-4 border-t border-black pt-6" id="page-break-after">
-              <p className="text-2xl">{messages.format("storyEnded")}</p>
+              <p className={getFontSize(fontSize)}>{messages.format("storyEnded")}</p>
             </div>
           ) : null}
 
