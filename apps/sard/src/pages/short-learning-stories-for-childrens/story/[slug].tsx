@@ -108,7 +108,7 @@ export default function Story({
   const [content, setContent] = useState<string>(storyData?.content as string);
   const [imagePrompt, setImagePrompt] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
-  const [fontSize, setFontSize] = useState(1);
+  const [fontSize, setFontSize] = useState(2);
 
   const debouncedImagePrompt = useDebounce(imagePrompt, 500);
   const debouncedContent = useDebounce(content, 5000);
