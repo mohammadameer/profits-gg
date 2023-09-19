@@ -384,7 +384,7 @@ export default function Story({
           )}
           <div className="flex justify-end gap-4">
             <Button
-              text="زيادة حجم الخط"
+              text={messages.format("increaseFont")}
               onClick={() => {
                 if (fontSize < 5) {
                   setFontSize(fontSize + 1);
@@ -392,7 +392,7 @@ export default function Story({
               }}
             />
             <Button
-              text="تقليل حجم الخط"
+              text={messages.format("decreaseFont")}
               onClick={() => {
                 if (fontSize > 1) {
                   setFontSize(fontSize - 1);
