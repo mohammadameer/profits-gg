@@ -15,7 +15,7 @@ export default function SpecialPages() {
       <SEO
         title={messages.format("title")}
         description={messages.format("description")}
-        url={getLocalizedUrl(`/special-pages`, router.locale, undefined, true)}
+        url={getLocalizedUrl(`/blog/special-pages`, router.locale, undefined, true)}
         keywords={[messages.format("title"), messages.format("description")]}
       />
 

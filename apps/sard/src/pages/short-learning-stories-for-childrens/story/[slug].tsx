@@ -474,6 +474,12 @@ export default function Story({
             </Link>
           ) : null}
 
+          <Link
+            href="/short-learning-stories-for-childrens"
+            className="text h-auto rounded-lg bg-white px-6 py-4 text-center font-bold transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 lg:w-1/3">
+            {messages.format("returnToStories")} 📃
+          </Link>
+
           {!isLoading && storyData?.id ? (
             <StoriesInSameCategory
               storyId={storyData?.id}

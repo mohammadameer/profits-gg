@@ -41,7 +41,7 @@
     "html2pdf.js": "0.10.1",
     "next": "^13.4.12",
     "next-auth": "^4.21.0",
-    "next-multilingual": "^5.0.14",
+    "next-multilingual": "^5.0.21",
     "next-recaptcha-v3": "^1.1.5",
     "next-seo": "^6.1.0",
     "openai": "^3.2.1",

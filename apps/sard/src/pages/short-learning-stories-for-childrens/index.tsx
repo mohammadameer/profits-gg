@@ -1,8 +1,6 @@
-import { useEffect, useRef } from "react";
 import { useRouter } from "next-multilingual/router";
 import StoryImage from "~/components/StoryImage";
 import { api } from "~/utils/api";
-import useInViewObserver from "@profits-gg/lib/hooks/useInViewObserver";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import SuperJSON from "superjson";
 import { appRouter } from "~/server/api/root";
@@ -14,6 +12,7 @@ import { getStaticPropsLocales } from "next-multilingual";
 import { useMessages } from "next-multilingual/messages";
 import SEO from "~/components/SEO";
 import { useGetLocalizedUrl } from "next-multilingual/url";
+import { Button } from "@profits-gg/ui";
 
 const ChildrenStories: NextPage<{ locale: string }> = ({ locale }) => {
   const router = useRouter();
@@ -24,19 +23,11 @@ const ChildrenStories: NextPage<{ locale: string }> = ({ locale }) => {
 
   const messages = useMessages();
 
-  const inViewRef = useRef<HTMLDivElement>(null);
-  const inViewConfig = useInViewObserver(inViewRef, {});
-  const inView = inViewConfig?.isIntersecting;
-
   const {
     data: stories,
-    isLoading: isLoadingData,
     isFetching,
-    isFetchingNextPage,
     hasNextPage,
-    status,
     fetchNextPage,
-    refetch: refetchStories,
   } = api.story.list.useInfiniteQuery(
     {
       hidden: false,
@@ -54,18 +45,6 @@ const ChildrenStories: NextPage<{ locale: string }> = ({ locale }) => {
       getNextPageParam: (lastPage) => lastPage?.nextCursor,
     }
   );
-
-  const handleFetchNextPage = () => {
-    if (!isFetching && hasNextPage && status === "success") {
-      fetchNextPage();
-    }
-  };
-
-  useEffect(() => {
-    if (inView) {
-      handleFetchNextPage();
-    }
-  }, [inView]);
 
   return (
     <>
@@ -104,18 +83,22 @@ const ChildrenStories: NextPage<{ locale: string }> = ({ locale }) => {
             <p className="text text-xl font-bold leading-10 text-gray-900 md:text-2xl">لا توجد قصص حاليا</p>
           </div>
         )}
-        {isFetchingNextPage &&
-          Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="col-span-6 flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-white shadow-sm md:col-span-3 lg:col-span-2">
-              <div className="flex h-full w-full animate-pulse flex-col">
-                <div className="h-3/4 w-full rounded-md bg-gray-200" />
-                <div className="h-1/4 w-full rounded-md bg-gray-200" />
-              </div>
-            </div>
-          ))}
-        <div ref={inViewRef} className="absolute bottom-0 left-0 h-1/2 w-full " />
+        <Button
+          text={isFetching ? "🪄" : hasNextPage ? messages.format("loadMore") : messages.format("reachEnd")}
+          onClick={() => {
+            fetchNextPage().catch((error) => {
+              console.error(error);
+            });
+          }}
+          className="col-span-full"
+        />
+        {!hasNextPage ? (
+          <Link
+            href="/short-learning-stories-for-childrens/story/new-and-special-story-for-your-children"
+            className="text col-span-full h-auto rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 lg:w-1/3">
+            {messages.format("newStory")} 🪄
+          </Link>
+        ) : null}
       </div>
     </>
   );
