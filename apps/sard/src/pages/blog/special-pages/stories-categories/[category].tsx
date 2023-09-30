@@ -12,10 +12,11 @@ import {
   getLocalizedRouteParameters,
   useRouter,
 } from "next-multilingual/router";
-import { getStaticPropsLocales } from "next-multilingual";
+import { getStaticPropsLocales, normalizeLocale } from "next-multilingual";
 import { useMessages } from "next-multilingual/messages";
 import SEO from "~/components/SEO";
 import { useGetLocalizedUrl } from "next-multilingual/url";
+import Head from "next/head";
 
 export default function Category({
   category,
@@ -25,6 +26,7 @@ export default function Category({
   localizedRouteParameters: LocalizedRouteParameters;
 }) {
   const router = useRouter();
+  const { locale, locales } = router;
 
   const { getLocalizedUrl } = useGetLocalizedUrl();
 
@@ -40,6 +42,12 @@ export default function Category({
     },
   });
 
+  const categoryValue = categories.find((c) =>
+    Object.entries(c.label).some(([key, value]) => value === category?.label)
+  );
+
+  console.log(categoryValue);
+
   return (
     <>
       <SEO
@@ -51,8 +59,91 @@ export default function Category({
           localizedRouteParameters,
           true
         )}
-        keywords={[messages.format("storyAbout") + " " + category?.label]}
       />
+
+      <Head>
+        <link
+          rel="canonical"
+          href={
+            getLocalizedUrl(
+              `/blog/special-pages/stories-categories`,
+              router.locale,
+              localizedRouteParameters,
+              true
+            ) +
+            `/${encodeURIComponent(
+              categoryValue?.label[locale as keyof typeof categoryValue.label] as string
+            )}`
+          }
+          key="canonical-link"
+        />
+        {locales?.map((locale) => {
+          return (
+            <link
+              rel="alternate"
+              href={
+                getLocalizedUrl(
+                  `/blog/special-pages/stories-categories`,
+                  locale,
+                  localizedRouteParameters,
+                  true
+                ) +
+                `/${encodeURIComponent(
+                  categoryValue?.label[locale as keyof typeof categoryValue.label] as string
+                )}`
+              }
+              hrefLang={normalizeLocale(locale)}
+              key={`alternate-link-${locale}`}
+            />
+          );
+        })}
+        <title>{messages.format("storyAbout") + " " + category?.label}</title>
+        <meta property="og:type" content="article" />
+        <meta
+          name="twitter:site"
+          content={getLocalizedUrl(
+            `/blog/special-pages/stories-categories/${encodeURIComponent(category.label)}`,
+            router.locale,
+            localizedRouteParameters,
+            true
+          )}
+        />{" "}
+        <meta
+          name="twitter:url"
+          content={getLocalizedUrl(
+            `/blog/special-pages/stories-categories/${encodeURIComponent(category.label)}`,
+            router.locale,
+            localizedRouteParameters,
+            true
+          )}
+        />
+        <meta
+          property="og:url"
+          content={getLocalizedUrl(
+            `/blog/special-pages/stories-categories/${encodeURIComponent(category.label)}`,
+            router.locale,
+            localizedRouteParameters,
+            true
+          )}
+        />
+        <meta name="twitter:title" content={messages.format("storyAbout") + " " + category?.label} />
+        <meta property="og:title" content={messages.format("storyAbout") + " " + category?.label} />
+        <meta name="description" content={messages.format("bestStoriesAbout") + " " + category?.label} />
+        <meta
+          name="twitter:description"
+          content={messages.format("bestStoriesAbout") + " " + category?.label}
+        />
+        <meta
+          property="og:description"
+          content={messages.format("bestStoriesAbout") + " " + category?.label}
+        />
+        <meta name="keywords" content={messages.format("storyAbout") + " " + category?.label} />
+        <meta property="og:site_name" content="Sard" />
+        <meta property="og:locale" content={locale} />
+        {locales?.map((locale) => <meta property="og:locale:alternate" content={locale} key={locale} />)}
+        <meta name="twitter:creator" content="maats_s" />
+        <meta name="author" content="Sard" />
+      </Head>
 
       <h1 className="p-6 text-4xl font-bold">
         {messages.format("storyAbout")} {category?.label}

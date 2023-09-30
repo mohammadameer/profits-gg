@@ -15,7 +15,7 @@ export default function StoriesWithLargeFont() {
         title={messages.format("title")}
         description={messages.format("description")}
         url={getLocalizedUrl(
-          `/blog/special-pages/children-stories-written-in-large-font`,
+          `/blog/special-pages/stories-written-in-large-font`,
           router.locale,
           undefined,
           true
