@@ -49,6 +49,7 @@ export const storyRouter = createTRPCRouter({
         title: z.string().nullish(),
         slug: z.string().nullish(),
         category: z.string().nullish(),
+        categories: z.array(z.string()).nullish(),
         language: z.string().nullish(),
         hidden: z.boolean().nullish(),
         place: z.string().nullish(),
@@ -67,6 +68,16 @@ export const storyRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const take = input.limit ?? 10;
       const skip = input.cursor ?? 0;
+
+      const categories = [];
+
+      if (input.category) {
+        categories.push(input.category);
+      }
+
+      if (input.categories) {
+        categories.push(...input.categories);
+      }
 
       const query: Prisma.StoryFindManyArgs = {
         select: {
@@ -90,7 +101,9 @@ export const storyRouter = createTRPCRouter({
             },
             categories: {
               some: {
-                name: input.category ?? undefined,
+                name: {
+                  in: categories,
+                },
               },
             },
             language: input.language ?? undefined,

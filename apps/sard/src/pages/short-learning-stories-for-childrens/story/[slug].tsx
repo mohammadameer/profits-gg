@@ -30,6 +30,7 @@ import SEO from "~/components/SEO";
 import { useGetLocalizedUrl } from "next-multilingual/url";
 import Link from "next-multilingual/link";
 import { Button } from "@profits-gg/ui";
+import StoriesInDifferentCategory from "~/components/StoriesInDifferentCategories";
 
 const getFontSize = (fontSize: number) => {
   switch (fontSize) {
@@ -382,24 +383,26 @@ export default function Story({
           ) : (
             <div className="h-24 w-3/4 animate-pulse rounded-md bg-gray-400" />
           )}
-          <div className="flex justify-end gap-4">
-            <Button
-              text={messages.format("increaseFont")}
-              onClick={() => {
-                if (fontSize < 5) {
-                  setFontSize(fontSize + 1);
-                }
-              }}
-            />
-            <Button
-              text={messages.format("decreaseFont")}
-              onClick={() => {
-                if (fontSize > 1) {
-                  setFontSize(fontSize - 1);
-                }
-              }}
-            />
-          </div>
+          {!isLoading ? (
+            <div className="flex justify-end gap-4">
+              <Button
+                text={messages.format("increaseFont")}
+                onClick={() => {
+                  if (fontSize < 5) {
+                    setFontSize(fontSize + 1);
+                  }
+                }}
+              />
+              <Button
+                text={messages.format("decreaseFont")}
+                onClick={() => {
+                  if (fontSize > 1) {
+                    setFontSize(fontSize - 1);
+                  }
+                }}
+              />
+            </div>
+          ) : null}
           {description ? (
             <h2 className={clsx("leading-normal", getFontSize(fontSize))}>{description}</h2>
           ) : (
@@ -482,6 +485,12 @@ export default function Story({
 
           {!isLoading && storyData?.id ? (
             <StoriesInSameCategory
+              storyId={storyData?.id}
+              categoryName={storyData?.categories?.[0]?.name as string}
+            />
+          ) : null}
+          {!isLoading && storyData?.id ? (
+            <StoriesInDifferentCategory
               storyId={storyData?.id}
               categoryName={storyData?.categories?.[0]?.name as string}
             />

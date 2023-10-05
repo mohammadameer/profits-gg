@@ -1,10 +1,6 @@
 import { Button, Page } from "@profits-gg/ui";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import {
-  GoogleMap,
-  useLoadScript,
-  DrawingManager,
-} from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, DrawingManager } from "@react-google-maps/api";
 import useDebounce from "@profits-gg/lib/hooks/useDebounce";
 import { api } from "src/utils/api";
 import GoogleDataItem from "src/components/GoogleDataItem";
@@ -13,15 +9,13 @@ import { useSession } from "next-auth/react";
 import { LoginModalContext } from "src/components/Layout";
 import clsx from "clsx";
 import path from "path";
-import fullChallets from "./challets";
+import fullPlaces from "./places";
 export default function GoogleMaps() {
   const { status: sessionStatus } = useSession();
 
   const { setLoginOpen } = useContext(LoginModalContext);
 
-  const drawingManagerRef = useRef<google.maps.drawing.DrawingManager | null>(
-    null,
-  );
+  const drawingManagerRef = useRef<google.maps.drawing.DrawingManager | null>(null);
 
   const libraries = useMemo(() => ["places", "drawing"], []);
 
@@ -29,8 +23,7 @@ export default function GoogleMaps() {
   const [fullScreen, setFullScreen] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [places, setPlaces] = useState<google.maps.places.PlaceResult[]>([]);
-  const [selectedPlace, setSelectedPlace] =
-    useState<google.maps.places.PlaceResult | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
   const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral>({
     lat: 24.682657,
     lng: 46.690707,
@@ -48,7 +41,7 @@ export default function GoogleMaps() {
       scrollwheel: true,
       tilt: 0,
     }),
-    [],
+    []
   );
 
   const { isLoaded } = useLoadScript({
@@ -62,9 +55,7 @@ export default function GoogleMaps() {
   };
 
   const getPlaces = (onLoadMap: google.maps.Map) => {
-    const placeApi = new google.maps.places.PlacesService(
-      onLoadMap || (map as google.maps.Map),
-    );
+    const placeApi = new google.maps.places.PlacesService(onLoadMap || (map as google.maps.Map));
 
     const request = {
       location: debouncedMapCenter,
@@ -92,37 +83,28 @@ export default function GoogleMaps() {
         <div
           className={clsx(
             "col-span-12 h-[450px] overflow-hidden rounded-md p-4 md:h-[65vh]",
-            fullScreen ? "fixed left-0 top-0 h-full w-full" : "",
-          )}
-        >
+            fullScreen ? "fixed left-0 top-0 h-full w-full" : ""
+          )}>
           {isLoaded ? (
             <GoogleMap
               options={mapOptions}
-              zoom={16}
+              zoom={10}
               center={debouncedMapCenter}
               mapContainerStyle={{
                 width: "100%",
                 height: "100%",
-                ...(fullScreen
-                  ? { position: "fixed", top: 0, left: 0 }
-                  : { position: "relative" }),
+                ...(fullScreen ? { position: "fixed", top: 0, left: 0 } : { position: "relative" }),
               }}
               mapTypeId={google.maps.MapTypeId.ROADMAP}
               onCenterChanged={() => {
                 if (map) {
-                  const center = map
-                    .getCenter()
-                    ?.toJSON() as google.maps.LatLngLiteral;
-                  if (
-                    center?.lat !== mapCenter.lat &&
-                    center?.lng !== mapCenter.lng
-                  ) {
+                  const center = map.getCenter()?.toJSON() as google.maps.LatLngLiteral;
+                  if (center?.lat !== mapCenter.lat && center?.lng !== mapCenter.lng) {
                     setMapCenter(center);
                   }
                 }
               }}
-              onLoad={onMapLoad}
-            >
+              onLoad={onMapLoad}>
               <DrawingManager
                 onLoad={(drawingManager) => {
                   drawingManagerRef.current = drawingManager;
@@ -148,9 +130,8 @@ export default function GoogleMaps() {
               <div
                 className={clsx(
                   "absolute top-0 flex w-full gap-4 overflow-scroll rounded-md p-2 lg:left-2 lg:h-full lg:w-4/12 lg:flex-col",
-                  fullScreen ? "pt-28" : "",
-                )}
-              >
+                  fullScreen ? "pt-28" : ""
+                )}>
                 {places.map((place) => {
                   if (!place.business_status) return null;
 
@@ -178,15 +159,13 @@ export default function GoogleMaps() {
                     console.log("test");
                     // draw a rectangle on the map
                     if (drawingManagerRef.current) {
-                      drawingManagerRef.current.setDrawingMode(
-                        google.maps.drawing.OverlayType.RECTANGLE,
-                      );
+                      drawingManagerRef.current.setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE);
                     }
 
                     // get the bounds of the rectangle
                     const bounds = map?.getBounds();
 
-                    // fill the bounds with rectangles that 12 * 12 of the map
+                    // fill the bounds with rectangles that are 1/24 of the bounds
                     if (bounds) {
                       const ne = bounds.getNorthEast();
                       const sw = bounds.getSouthWest();
@@ -198,19 +177,17 @@ export default function GoogleMaps() {
                       const lngStep = lngDiff / 24;
 
                       const rectangles = [];
-                      const chalets = [];
+                      const places = [];
 
-                      const placesApi = new google.maps.places.PlacesService(
-                        map as google.maps.Map,
-                      );
+                      const placesApi = new google.maps.places.PlacesService(map as google.maps.Map);
 
                       for (let i = 0; i < 24; i++) {
                         for (let j = 0; j < 24; j++) {
-                          // for every square get the places, get chalets
+                          // for every square get the places, get places
 
                           placesApi.textSearch(
                             {
-                              query: "شاليه",
+                              query: "فندق",
                               bounds: {
                                 north: ne.lat() - i * latStep,
                                 south: ne.lat() - (i + 1) * latStep,
@@ -219,18 +196,14 @@ export default function GoogleMaps() {
                               },
                             },
                             (results, status) => {
-                              if (
-                                status ===
-                                  google.maps.places.PlacesServiceStatus.OK &&
-                                results
-                              ) {
-                                for (const chalet of results) {
-                                  chalets.push(chalet);
+                              if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+                                for (const place of results) {
+                                  places.push(place);
                                 }
 
-                                console.log("#", i, j, "chalets", chalets);
+                                console.log("#", i, j, "places", places);
                               }
-                            },
+                            }
                           );
 
                           const rectangle = new google.maps.Rectangle({
@@ -253,38 +226,35 @@ export default function GoogleMaps() {
                       }
 
                       console.log(rectangles);
-                      console.log("chalets", chalets);
+                      console.log("places", places);
                     }
                   }}
                 />
                 <Button
-                  text="طلب رقم الشاليهات"
+                  text="طلب رقم الأماكن"
                   onClick={async () => {
-                    const filteredChallets = [];
+                    const filteredPlaces = [];
 
                     const placesApi = new google.maps.places.PlacesService(map as google.maps.Map);
                     const uniquePlaceIds = new Set();
 
                     await Promise.all(
-                      fullChallets.map(async (chalet) => {
-                        if (uniquePlaceIds.has(chalet.place_id)) {
+                      fullPlaces.map(async (place) => {
+                        if (uniquePlaceIds.has(place.place_id)) {
                           return;
                         }
-                        
-                        uniquePlaceIds.add(chalet.place_id);
+
+                        uniquePlaceIds.add(place.place_id);
 
                         try {
                           const challetDetails = await new Promise((resolve) => {
                             placesApi.getDetails(
                               {
-                                placeId: chalet.place_id,
+                                placeId: place.place_id,
                                 fields: ["formatted_phone_number"],
                               },
                               (place, status) => {
-                                if (
-                                  status === google.maps.places.PlacesServiceStatus.OK &&
-                                  place
-                                ) {
+                                if (status === google.maps.places.PlacesServiceStatus.OK && place) {
                                   resolve(place);
                                 } else {
                                   resolve(null);
@@ -293,17 +263,18 @@ export default function GoogleMaps() {
                             );
                           });
 
-                          filteredChallets.push({
-                            ...chalet,
+                          filteredPlaces.push({
+                            ...place,
                             phone: challetDetails?.formatted_phone_number || undefined,
                           });
+                          console.log("filteredPlaces", filteredPlaces);
                         } catch (error) {
                           console.error("An error occurred:", error);
                         }
                       })
                     );
 
-                    console.log("filteredChallets", filteredChallets);
+                    console.log("filteredPlaces", filteredPlaces);
                   }}
                 />
               </div>

@@ -28,10 +28,7 @@ const ibmPlexSansArabicBold = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
 });
 
-const MyApp: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, ...pageProps },
-}) => {
+const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { session, ...pageProps } }) => {
   const router = useRouter();
 
   useEffect(() => {
