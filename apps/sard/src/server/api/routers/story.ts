@@ -102,7 +102,7 @@ export const storyRouter = createTRPCRouter({
             categories: {
               some: {
                 name: {
-                  in: categories,
+                  in: categories?.length > 0 ? categories : undefined,
                 },
               },
             },

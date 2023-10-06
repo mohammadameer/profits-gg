@@ -5,7 +5,7 @@ const categories = [
       "ar-sa": "الاخلاق والفضائل",
       "en-us": "Ethics and Virtues",
     },
-    value: "morals",
+    value: "ethics-and-virtues",
     field: "morals",
   },
   {

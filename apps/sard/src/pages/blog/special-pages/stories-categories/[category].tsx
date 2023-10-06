@@ -46,8 +46,6 @@ export default function Category({
     Object.entries(c.label).some(([key, value]) => value === category?.label)
   );
 
-  console.log(categoryValue);
-
   return (
     <>
       <SEO

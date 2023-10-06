@@ -7,7 +7,7 @@ import {
   getLocalizedRouteParameters,
   useRouter,
 } from "next-multilingual/router";
-import { type KeyValueObject, slugify, useMessages } from "next-multilingual/messages";
+import { type KeyValueObject, useMessages } from "next-multilingual/messages";
 import { getLanguageSwitcherUrl } from "next-multilingual/url";
 import Head from "next-multilingual/head";
 import { type GetStaticProps } from "next";

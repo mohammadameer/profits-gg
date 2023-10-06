@@ -30,7 +30,8 @@ export default function StoriesInDifferentCategory({
     return categories
       .map((category) => category.value)
       ?.filter((category) => category !== categoryName)
-      ?.sort(() => Math.random() - 0.5);
+      ?.sort(() => Math.random() - 0.5)
+      ?.slice(0, 5);
     return [categoryName];
   }, [categoryName]);
 

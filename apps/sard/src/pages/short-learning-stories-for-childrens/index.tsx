@@ -80,25 +80,29 @@ const ChildrenStories: NextPage<{ locale: string }> = ({ locale }) => {
           )
         ) : (
           <div className="col-span-full flex h-96 flex-col items-center justify-center gap-8 rounded-md p-6">
-            <p className="text text-xl font-bold leading-10 text-gray-900 md:text-2xl">لا توجد قصص حاليا</p>
+            <p className="text text-xl font-bold leading-10 text-gray-900 md:text-2xl">
+              {messages.format("noStories")}
+            </p>
           </div>
         )}
-        <Button
-          text={isFetching ? "🪄" : hasNextPage ? messages.format("loadMore") : messages.format("reachEnd")}
-          onClick={() => {
-            fetchNextPage().catch((error) => {
-              console.error(error);
-            });
-          }}
-          className="col-span-full"
-        />
-        {!hasNextPage ? (
-          <Link
-            href="/short-learning-stories-for-childrens/new-and-special-story-for-your-children"
-            className="text col-span-full h-auto rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 lg:w-1/3">
-            {messages.format("newStory")} 🪄
-          </Link>
-        ) : null}
+        <div className="col-span-full mt-2 flex flex-col items-center justify-center gap-4">
+          <Button
+            text={isFetching ? "🪄" : hasNextPage ? messages.format("loadMore") : messages.format("reachEnd")}
+            onClick={() => {
+              fetchNextPage().catch((error) => {
+                console.error(error);
+              });
+            }}
+            className="w-full md:w-5/12"
+          />
+          {!hasNextPage ? (
+            <Link
+              href="/short-learning-stories-for-childrens/new-and-special-story-for-your-children"
+              className="text col-span-full h-auto rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 lg:w-1/3">
+              {messages.format("newStory")} 🪄
+            </Link>
+          ) : null}
+        </div>
       </div>
     </>
   );
