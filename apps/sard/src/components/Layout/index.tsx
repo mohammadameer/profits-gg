@@ -61,19 +61,32 @@ export default function Layout({
           <Button text="English/عربي" onClick={() => setIsChooseLanguageOpen(true)} />
         </div>
         {children}
-        <div className="flex flex-col items-center justify-between gap-8 p-4 lg:flex-row">
-          <div className="flex gap-4">
-            <Link href="/">{messages.format("mainPage")}</Link>
-            <Link href="/blog">{messages.format("blog")}</Link>
-          </div>
-          <div className="flex gap-4">
-            <p>{messages.format("contactUs")}</p>
-            <a
-              id="email"
-              className="text text-center font-bold text-gray-900"
-              href="mailto:mohammad@sard.dev">
+        <div className="flex flex-col items-start gap-8 bg-gray-300 p-4 lg:min-h-[30vh] lg:flex-row lg:px-16">
+          <div className="flex flex-col items-start gap-2">
+            <p className="underline">{messages.format("contactUs")}</p>
+            <a id="email" className="text text-center text-gray-900" href="mailto:mohammad@sard.dev">
               {messages.format("email")}
             </a>
+          </div>
+
+          <div className="flex flex-col ">
+            <p className="underline">{messages.format("links")}</p>
+            <div className="flex flex-col p-2">
+              <Link href="/">{messages.format("mainPage")}</Link>
+              <Link href="/blog">{messages.format("blog")}</Link>
+              <Link href="/blog/special-pages">{messages.format("specialPages")}</Link>
+              <div className="flex flex-col px-4">
+                <Link href="/blog/special-pages/stories-categories">
+                  {messages.format("storiesCategories")}
+                </Link>
+                <Link href="/blog/special-pages/stories-for-kids-in-pdf">
+                  {messages.format("storiesInPdf")}
+                </Link>
+                <Link href="/blog/special-pages/stories-written-in-large-font">
+                  {messages.format("storiesInLargeFont")}
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

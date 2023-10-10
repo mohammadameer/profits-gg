@@ -195,13 +195,19 @@ export default function GoogleMaps() {
                                 west: ne.lng() - (j + 1) * lngStep,
                               },
                             },
-                            (results, status) => {
+                            (results, status, pagination) => {
                               if (status === google.maps.places.PlacesServiceStatus.OK && results) {
                                 for (const place of results) {
                                   places.push(place);
                                 }
 
                                 console.log("#", i, j, "places", places);
+
+                                // get all the places
+
+                                if (pagination?.hasNextPage) {
+                                  pagination.nextPage();
+                                }
                               }
                             }
                           );
