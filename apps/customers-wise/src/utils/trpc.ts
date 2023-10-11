@@ -12,7 +12,8 @@ const getBaseUrl = () => {
 };
 
 export const trpc = createTRPCNext<AppRouter>({
-  config() {
+  // @ts-expect-error
+  config(ctx) {
     return {
       transformer: superjson,
       links: [

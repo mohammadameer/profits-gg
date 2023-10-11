@@ -50,9 +50,7 @@ export const createInnerTRPCContext = () => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async (
-  opts: CreateNextContextOptions | FetchCreateContextFnOptions
-) => {
+export const createTRPCContext = async (opts: CreateNextContextOptions | FetchCreateContextFnOptions) => {
   // const { req, res } = opts;
 
   // // Get the session from the server using the getServerSession wrapper function
@@ -75,7 +73,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { NextApiRequest } from "next";
-import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
+import { type FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { openai } from "~/server/openai";
 
 export const t = initTRPC.context<typeof createTRPCContext>().create({
@@ -85,8 +83,7 @@ export const t = initTRPC.context<typeof createTRPCContext>().create({
       ...shape,
       data: {
         ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
+        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
     };
   },

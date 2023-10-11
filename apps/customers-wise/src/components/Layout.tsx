@@ -119,9 +119,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   const loginWithEmail = async () => {
     try {
       if (emailSent) {
-        window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(
-          email
-        )}&token=${code}`;
+        window.location.href = `/api/auth/callback/email?email=${encodeURIComponent(email)}&token=${code}`;
       } else {
         setLoading(true);
         const res = await signIn("email", {
@@ -146,8 +144,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     }
   };
 
-  const isNonAuthPage =
-    nonAuthPages.some((page) => route.includes(page)) || false;
+  const isNonAuthPage = nonAuthPages.some((page) => route.includes(page)) || false;
   const isAuthenticated = status === "authenticated";
 
   return (
@@ -155,28 +152,19 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       {!isNonAuthPage ? (
         <div
           className={clsx(
-            "fixed top-0 left-0 z-20 flex w-full items-center justify-between px-8 py-6 transition-all",
-            loginOpen && "blur-[4px]",
-          )}
-        >
+            "fixed left-0 top-0 z-20 flex w-full items-center justify-between px-8 py-6 transition-all",
+            loginOpen && "blur-[4px]"
+          )}>
           <div className="flex items-end gap-4">
             <p className="text-6xl">👥</p>
           </div>
 
           <div className="hidden items-center justify-between gap-2 md:flex">
             {status === "authenticated" && !route.includes("/dashboard") ? (
-              <Button
-                text="صفحة التحكم"
-                noStyles
-                onClick={() => router.push("/dashboard")}
-              />
+              <Button text="صفحة التحكم" noStyles onClick={() => router.push("/dashboard")} />
             ) : null}
             <Button
-              text={
-                status === "authenticated"
-                  ? "تسجيل الخروج  🫡"
-                  : " تسجيل /  تسجيل الدخول 👤"
-              }
+              text={status === "authenticated" ? "تسجيل الخروج  🫡" : " تسجيل /  تسجيل الدخول 👤"}
               onClick={() => {
                 if (status === "authenticated") {
                   signOut({ callbackUrl: "/" });
@@ -199,12 +187,12 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       {menuOpen && !isNonAuthPage ? (
         <div
           className={clsx(
-            "fixed top-0 left-0 z-10 flex h-screen w-full flex-col justify-between overflow-scroll bg-gray-800 px-6 pb-20 pt-32 md:right-0 md:w-3/12 md:rounded-l-lg md:pt-36 md:pb-10",
-            route == "/" && "md:hidden",
-          )}
-        >
+            "fixed left-0 top-0 z-10 flex h-screen w-full flex-col justify-between overflow-scroll bg-gray-800 px-6 pb-20 pt-32 md:right-0 md:w-3/12 md:rounded-l-lg md:pb-10 md:pt-36",
+            route == "/" && "md:hidden"
+          )}>
           <div className="flex flex-col gap-4 ">
-            {organizations?.length > 1 &&
+            {organizations?.length &&
+            organizations?.length > 1 &&
             status === "authenticated" &&
             route.includes("/dashboard") ? (
               <SelectInput
@@ -246,9 +234,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
               onClick={() => router.push("/dashboard/user")}
               className={clsx(!isAuthenticated && "hidden")}
             />
-            {status === "authenticated" &&
-            !route.includes("/dashboard") &&
-            route != "/" ? (
+            {status === "authenticated" && !route.includes("/dashboard") && route != "/" ? (
               <Button
                 text="صفحة التحكم"
                 noStyles
@@ -257,11 +243,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
               />
             ) : null}
             <Button
-              text={
-                status === "authenticated"
-                  ? "تسجيل الخروج  🫡"
-                  : " تسجيل /  تسجيل الدخول 👤"
-              }
+              text={status === "authenticated" ? "تسجيل الخروج  🫡" : " تسجيل /  تسجيل الدخول 👤"}
               onClick={() => {
                 if (status === "authenticated") {
                   signOut({ callbackUrl: "/" });
@@ -274,17 +256,14 @@ const Layout: FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       ) : null}
-      {!isNonAuthPage && route != "/" && (
-        <div className="hidden md:block md:h-screen md:w-3/12" />
-      )}
+      {!isNonAuthPage && route != "/" && <div className="hidden md:block md:h-screen md:w-3/12" />}
       <div
         className={clsx(
           `relative flex grow flex-col items-start gap-8 px-6 transition-all`,
           !isNonAuthPage && "pt-28",
           route == "/" && "pt-0",
-          loginOpen && "blur-[4px]",
-        )}
-      >
+          loginOpen && "blur-[4px]"
+        )}>
         {status === "authenticated" || route === "/" || isNonAuthPage ? (
           children
         ) : (
@@ -301,17 +280,10 @@ const Layout: FC<LayoutProps> = ({ children }) => {
             setEmailSent(false);
             setValue("email", "");
             setValue("code", "");
-          }}
-        >
-          <form
-            onSubmit={handleSubmit(loginWithEmail)}
-            className="flex w-full flex-col p-4"
-          >
+          }}>
+          <form onSubmit={handleSubmit(loginWithEmail)} className="flex w-full flex-col p-4">
             <p className="mb-8 text-xl">تسجيل / تسجيل الدخول 👤 بــ</p>
-            <Button
-              text="حساب Google"
-              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-            />
+            <Button text="حساب Google" onClick={() => signIn("google", { callbackUrl: "/dashboard" })} />
             <div className="my-4 h-1 w-full bg-gray-500" />
             <TextInput
               name="email"
@@ -321,12 +293,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
               autoComplete="true"
             />
             {emailSent ? (
-              <CodeInput
-                name="code"
-                label="رمز الدخول"
-                control={control}
-                rules={{ required }}
-              />
+              <CodeInput name="code" label="رمز الدخول" control={control} rules={{ required }} />
             ) : null}
             <Button
               text={emailSent ? "تأكيد رمز الدخول" : "إرسال رمز الدخول"}
