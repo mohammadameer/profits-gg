@@ -23,8 +23,6 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
-    "sentry.server.config.mjs",
-    "sentry.client.config.mjs",
     "src/env/server.mjs",
     "src/env/client.mjs",
     "src/env/schema.mjs"
