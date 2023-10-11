@@ -15,20 +15,21 @@ import { type Story } from "@prisma/client";
 export default function Admin() {
   const router = useRouter();
 
-  const { control, watch, handleSubmit, getValues, reset } = useForm();
+  const { control, watch, handleSubmit, getValues, reset, setValue } = useForm();
 
   const inViewRef = useRef<HTMLDivElement>(null);
   const inViewConfig = useInViewObserver(inViewRef, {});
   const inView = inViewConfig?.isIntersecting;
 
-  const id = watch("id");
-  const category = watch("category");
-  const hidden = watch("hidden");
-  const locale = watch("locale");
+  const id = watch("id") as string;
+  const category = watch("category") as string;
+  const hidden = watch("hidden") as boolean;
+  const locale = watch("locale") as string;
+  const title = watch("title") as string;
+  const slug = watch("slug") as string;
 
-  const [userId, setUserId] = useLocalStorage("userId", "");
+  const [userId] = useLocalStorage("userId", "");
 
-  const [isAdmin, setIsAdmin] = useState(false);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
 
   const { data: user, isLoading } = api.user.get.useQuery(
@@ -46,14 +47,13 @@ export default function Admin() {
     refetch: refetchStories,
     fetchNextPage,
     hasNextPage,
-    isFetchingNextPage,
     status,
   } = api.story.list.useInfiniteQuery(
     {
-      id: id as string,
-      category: category as string,
-      hidden: hidden as boolean,
-      language: locale as string,
+      id: id,
+      category: category,
+      hidden: hidden,
+      language: locale,
       select: {
         mainImage: true,
         smallImage: true,
@@ -66,11 +66,7 @@ export default function Admin() {
     }
   );
 
-  const {
-    data: story,
-    isLoading: isGettingStory,
-    refetch: refetchStory,
-  } = api.story.get.useQuery(
+  const { data: story, refetch: refetchStory } = api.story.get.useQuery(
     {
       id: selectedStory?.id as string,
       select: {
@@ -95,13 +91,9 @@ export default function Admin() {
       if (!user || user.email !== "mohammadameerabdallah@gmail.com") {
         toast.error("You are not an admin");
         router.push("/");
-      } else {
-        setIsAdmin(true);
       }
     }
   }, [userId, user, isLoading]);
-
-  const updateStoryDetails = async (data: any) => {};
 
   const handleFetchNextPage = () => {
     if (!isFetchingStories && hasNextPage && status === "success") {
@@ -126,6 +118,12 @@ export default function Admin() {
       handleFetchNextPage();
     }
   }, [inView]);
+
+  useEffect(() => {
+    if (story && title && title !== story.title) {
+      setValue("slug", encodeURIComponent(title.trim().replace(/\s+/g, "-")));
+    }
+  }, [title, slug]);
 
   return (
     <>
@@ -316,202 +314,199 @@ export default function Admin() {
         open={!!selectedStory}
         setOpen={() => setSelectedStory(null)}
         className="!bg-gray-200 xl:!w-[60vw] xl:!max-w-[60vw] ">
-        <form onSubmit={handleSubmit(updateStoryDetails)} className="grid w-full grid-cols-12 gap-2 p-6">
-          <div className="col-span-full flex flex-col items-start gap-2 xl:flex-row xl:items-end">
-            <div
-              className={clsx(
-                "relative col-span-full flex h-96 w-full max-w-[100vw] xl:w-96",
-                isGettingImage && "animate-pulse"
-              )}>
-              <StoryImage
-                id={story?.id as string}
-                src={story?.mainImage as string}
-                alt={story?.imagePrompt as string}
-              />
-            </div>
-            <Button
-              text="تحديث"
-              type="submit"
-              loading={isGettingImage}
-              disabled={isGettingImage}
-              onClick={() => {
-                getImage(
-                  {
-                    prompt: selectedStory?.imagePrompt as string,
-                  },
-                  {
-                    onSuccess: async (image) => {
-                      const compressedImage = await new Promise<string>((resolve) => {
-                        const url = "data:image/png;base64," + image;
-                        const imageFile = dataURLtoFile(url, `${Date.now()}.png`);
-
-                        new Compressor(imageFile, {
-                          strict: true,
-                          checkOrientation: true,
-                          maxWidth: 0,
-                          maxHeight: 0,
-                          minWidth: 0,
-                          minHeight: 0,
-                          width: 256,
-                          height: 256,
-                          resize: "cover",
-                          quality: 0.4,
-                          mimeType: "auto",
-                          convertTypes: ["image/png"],
-                          convertSize: 0,
-                          success: (result) => {
-                            const reader = new FileReader();
-                            reader.readAsDataURL(result);
-                            reader.onloadend = () => {
-                              const base64data = reader.result;
-                              resolve(base64data as string);
-                            };
-                          },
-                        });
-                      });
-
-                      updateStory(
-                        {
-                          id: selectedStory?.id as string,
-                          mainImage: compressedImage?.replace("data:image/jpeg;base64,", ""),
-                        },
-                        {
-                          onSuccess: async () => {
-                            refetchStories({ exact: true });
-                            refetchStory({ exact: true });
-                            await fetch("/api/revalidate");
-                          },
-                        }
-                      );
-                    },
-                  }
-                );
-              }}
-              className="w-full select-none shadow-md xl:w-52"
+        <div className="col-span-full flex flex-col items-start gap-2 xl:flex-row xl:items-end">
+          <div
+            className={clsx(
+              "relative col-span-full flex h-96 w-full max-w-[100vw] xl:w-96",
+              isGettingImage && "animate-pulse"
+            )}>
+            <StoryImage
+              id={story?.id as string}
+              src={story?.mainImage as string}
+              alt={story?.imagePrompt as string}
             />
           </div>
-          <div className="col-span-full flex flex-col items-start gap-2 xl:flex-row xl:items-end">
-            <div
-              className={clsx("relative col-span-full flex h-52 w-52", isUpdatingStory && "animate-pulse")}>
-              <StoryImage
-                id={story?.id as string}
-                src={story?.smallImage as string}
-                alt={story?.imagePrompt as string}
-              />
-            </div>
-            <Button
-              text="إضافة"
-              type="submit"
-              loading={isUpdatingStory}
-              disabled={isUpdatingStory}
-              onClick={async () => {
-                const smallCompressedImage = await new Promise<string>((resolve) => {
-                  const url = "data:image/png;base64," + story?.mainImage;
-                  const imageFile = dataURLtoFile(url, `${Date.now()}.png`);
-
-                  new Compressor(imageFile, {
-                    strict: true,
-                    checkOrientation: true,
-                    maxWidth: 0,
-                    maxHeight: 0,
-                    minWidth: 0,
-                    minHeight: 0,
-                    width: 128,
-                    height: 128,
-                    resize: "cover",
-                    quality: 0.2,
-                    mimeType: "auto",
-                    convertTypes: ["image/png"],
-                    convertSize: 0,
-                    success: (result) => {
-                      const reader = new FileReader();
-                      reader.readAsDataURL(result);
-                      reader.onloadend = () => {
-                        const base64data = reader.result;
-                        resolve(base64data as string);
-                      };
-                    },
-                  });
-                });
-
-                updateStory(
-                  {
-                    id: story?.id as string,
-                    smallImage: smallCompressedImage?.replace("data:image/jpeg;base64,", ""),
-                  },
-                  {
-                    onSuccess: () => {
-                      refetchStories({
-                        exact: true,
-                      });
-                      refetchStory();
-                    },
-                  }
-                );
-              }}
-              className="w-full select-none shadow-md xl:w-52"
-            />
-          </div>
-          <TextInput
-            className="col-span-full"
-            inputClassName="!bg-gray-200 focus:!border-gray-500"
-            name="title"
-            control={control}
-            placeholder="العنوان"
-            defaultValue={selectedStory?.title}
-          />
-          <TextInput
-            className="col-span-full"
-            inputClassName="!bg-gray-200 focus:!border-gray-500"
-            name="description"
-            control={control}
-            placeholder="الوصف"
-            defaultValue={selectedStory?.description}
-          />
-          <TextInput
-            className="col-span-full"
-            inputClassName="!bg-gray-200 focus:!border-gray-500"
-            name="slug"
-            control={control}
-            placeholder="الرابط"
-            defaultValue={selectedStory?.slug}
-          />
-          <TextAreaInput
-            className="col-span-full"
-            height="h-52"
-            inputClassName="!bg-gray-200 focus:!border-gray-500"
-            name="content"
-            control={control}
-            placeholder="المحتوى"
-            defaultValue={selectedStory?.content}
-          />
-
           <Button
-            text="حفظ"
+            text="تحديث"
             type="submit"
+            loading={isGettingImage}
+            disabled={isGettingImage}
             onClick={() => {
-              if (!user) return router.push("/");
-
-              updateStory(
+              getImage(
                 {
-                  id: selectedStory?.id || "",
-                  title: getValues("title").trim(),
-                  description: getValues("description"),
-                  slug: getValues("slug").trim().replace(/\s+/g, "-"),
-                  content: getValues("content"),
+                  prompt: selectedStory?.imagePrompt as string,
                 },
                 {
-                  onSuccess: async () => {
-                    refetchStories({ exact: true });
-                    setSelectedStory(null);
-                    await fetch("/api/revalidate");
+                  onSuccess: async (image) => {
+                    const compressedImage = await new Promise<string>((resolve) => {
+                      const url = "data:image/png;base64," + image;
+                      const imageFile = dataURLtoFile(url, `${Date.now()}.png`);
+
+                      new Compressor(imageFile, {
+                        strict: true,
+                        checkOrientation: true,
+                        maxWidth: 0,
+                        maxHeight: 0,
+                        minWidth: 0,
+                        minHeight: 0,
+                        width: 256,
+                        height: 256,
+                        resize: "cover",
+                        quality: 0.4,
+                        mimeType: "auto",
+                        convertTypes: ["image/png"],
+                        convertSize: 0,
+                        success: (result) => {
+                          const reader = new FileReader();
+                          reader.readAsDataURL(result);
+                          reader.onloadend = () => {
+                            const base64data = reader.result;
+                            resolve(base64data as string);
+                          };
+                        },
+                      });
+                    });
+
+                    updateStory(
+                      {
+                        id: selectedStory?.id as string,
+                        mainImage: compressedImage?.replace("data:image/jpeg;base64,", ""),
+                      },
+                      {
+                        onSuccess: async () => {
+                          refetchStories({ exact: true });
+                          refetchStory({ exact: true });
+                          await fetch("/api/revalidate");
+                        },
+                      }
+                    );
                   },
                 }
               );
             }}
-            className="col-span-4 select-none shadow-md"
+            className="w-full select-none shadow-md xl:w-52"
           />
-        </form>
+        </div>
+        <div className="col-span-full flex flex-col items-start gap-2 xl:flex-row xl:items-end">
+          <div className={clsx("relative col-span-full flex h-52 w-52", isUpdatingStory && "animate-pulse")}>
+            <StoryImage
+              id={story?.id as string}
+              src={story?.smallImage as string}
+              alt={story?.imagePrompt as string}
+            />
+          </div>
+          <Button
+            text="إضافة"
+            type="submit"
+            loading={isUpdatingStory}
+            disabled={isUpdatingStory}
+            onClick={async () => {
+              const smallCompressedImage = await new Promise<string>((resolve) => {
+                const url = "data:image/png;base64," + story?.mainImage;
+                const imageFile = dataURLtoFile(url, `${Date.now()}.png`);
+
+                new Compressor(imageFile, {
+                  strict: true,
+                  checkOrientation: true,
+                  maxWidth: 0,
+                  maxHeight: 0,
+                  minWidth: 0,
+                  minHeight: 0,
+                  width: 128,
+                  height: 128,
+                  resize: "cover",
+                  quality: 0.2,
+                  mimeType: "auto",
+                  convertTypes: ["image/png"],
+                  convertSize: 0,
+                  success: (result) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(result);
+                    reader.onloadend = () => {
+                      const base64data = reader.result;
+                      resolve(base64data as string);
+                    };
+                  },
+                });
+              });
+
+              updateStory(
+                {
+                  id: story?.id as string,
+                  smallImage: smallCompressedImage?.replace("data:image/jpeg;base64,", ""),
+                },
+                {
+                  onSuccess: () => {
+                    refetchStories({
+                      exact: true,
+                    });
+                    refetchStory();
+                  },
+                }
+              );
+            }}
+            className="w-full select-none shadow-md xl:w-52"
+          />
+        </div>
+        <TextInput
+          className="col-span-full"
+          inputClassName="!bg-gray-200 focus:!border-gray-500"
+          name="title"
+          control={control}
+          placeholder="العنوان"
+          defaultValue={selectedStory?.title}
+        />
+        <TextInput
+          className="col-span-full"
+          inputClassName="!bg-gray-200 focus:!border-gray-500"
+          name="description"
+          control={control}
+          placeholder="الوصف"
+          defaultValue={selectedStory?.description}
+        />
+        <TextInput
+          className="col-span-full"
+          inputClassName="!bg-gray-200 focus:!border-gray-500"
+          name="slug"
+          control={control}
+          placeholder="الرابط"
+          defaultValue={selectedStory?.slug}
+        />
+        <TextAreaInput
+          className="col-span-full"
+          height="h-52"
+          inputClassName="!bg-gray-200 focus:!border-gray-500"
+          name="content"
+          control={control}
+          placeholder="المحتوى"
+          defaultValue={selectedStory?.content}
+        />
+
+        <Button
+          text="حفظ"
+          type="submit"
+          onClick={() => {
+            if (!user) return router.push("/");
+
+            updateStory(
+              {
+                id: selectedStory?.id || "",
+                title: getValues("title").trim(),
+                description: getValues("description"),
+                slug: getValues("slug").trim().replace(/\s+/g, "-"),
+                content: getValues("content"),
+              },
+              {
+                onSuccess: async () => {
+                  refetchStories({ exact: true });
+                  setSelectedStory(null);
+                  await fetch("/api/revalidate");
+                },
+              }
+            );
+          }}
+          className="col-span-4 select-none shadow-md"
+        />
       </Modal>
     </>
   );

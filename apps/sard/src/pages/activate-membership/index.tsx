@@ -82,6 +82,7 @@ export default function ActivateMembershipModal() {
           }
         },
         onError: () => {
+          console.log("error");
           va.track("Activate Membership Email Or Phone Number Not Found");
           toast.error(messages.format("error"));
         },

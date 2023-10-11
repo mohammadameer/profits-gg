@@ -375,7 +375,7 @@ export default function Story({
 
       <ReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY} useEnterprise={true}>
         <ReCaptcha onValidate={setToken} action="page_view" />
-        <div key={storyData?.id} className={clsx("flex flex-col gap-6 p-6 py-10  pb-20 md:pt-12")}>
+        <div key={storyData?.id} className={clsx("relative flex flex-col gap-6 p-6 py-10  pb-20 md:pt-12")}>
           {title ? (
             <h1 className="pb-8 text-6xl font-bold md:pb-14 ">
               {messages.format("story")} {title}
@@ -383,7 +383,7 @@ export default function Story({
           ) : (
             <div className="h-24 w-3/4 animate-pulse rounded-md bg-gray-400" />
           )}
-          {!isLoading ? (
+          {!isLoading || !title ? (
             <div className="flex justify-end gap-4">
               <Button
                 text={messages.format("increaseFont")}
@@ -435,33 +435,39 @@ export default function Story({
             <div className="h-14" />
           )}
 
-          {mainImage ? (
-            <div className="relative aspect-square max-h-[500px] w-full md:w-[500px]" id="page-break-after">
-              <StoryImage
-                id={storyData?.id as string}
-                src={mainImage}
-                alt={(imagePrompt || storyData?.imagePrompt) as string}
-              />
+          <div className="relative">
+            <div className="sticky top-4 z-10">
+              {mainImage ? (
+                <div
+                  className=" relative left-0 top-0 aspect-square max-h-[500px] w-full md:w-[500px]"
+                  id="page-break-after">
+                  <StoryImage
+                    id={storyData?.id as string}
+                    src={mainImage}
+                    alt={(imagePrompt || storyData?.imagePrompt) as string}
+                  />
+                </div>
+              ) : (
+                <div className="h-96 w-full animate-pulse rounded-md bg-gray-400 md:w-96" />
+              )}
             </div>
-          ) : (
-            <div className="h-96 w-full animate-pulse rounded-md bg-gray-400 md:w-96" />
-          )}
 
-          {content ? (
-            <div className="flex flex-col gap-4 break-words">
-              {content?.split("\n").map((paragraph, index) => (
-                <p
-                  key={index}
-                  className={clsx("break-inside-avoid break-words leading-normal", getFontSize(fontSize))}>
-                  {paragraph?.replace(/🍆|🌈|🏳️‍🌈|/gm, "")}
-                </p>
-              ))}
-            </div>
-          ) : (
-            Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} className="h-10 w-full animate-pulse rounded-md bg-gray-400" />
-            ))
-          )}
+            {content ? (
+              <div className="relative z-50 flex flex-col gap-4 break-words bg-gray-200/50">
+                {content?.split("\n").map((paragraph, index) => (
+                  <p
+                    key={index}
+                    className={clsx("break-inside-avoid break-words leading-normal", getFontSize(fontSize))}>
+                    {paragraph?.replace(/🍆|🌈|🏳️‍🌈|/gm, "")}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              Array.from({ length: 5 }).map((_, index) => (
+                <div key={index} className="h-10 w-full animate-pulse rounded-md bg-gray-400" />
+              ))
+            )}
+          </div>
 
           {content && !isLoading ? (
             <div className="my-4 flex w-1/2 flex-col gap-4 border-t border-black pt-6" id="page-break-after">
