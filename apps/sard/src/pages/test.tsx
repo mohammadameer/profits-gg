@@ -1,6 +1,5 @@
 import { Button } from "@profits-gg/ui";
 import Image from "next/image";
-import { CreateImageRequestSizeEnum } from "openai";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import Compressor from "compressorjs";
@@ -9,14 +8,12 @@ export default function Test() {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>();
   const [compressedImages, setCompressedImages] = useState<string[]>();
-  const [smallCompressedImages, setSmallCompressedImages] =
-    useState<string[]>();
+  const [smallCompressedImages, setSmallCompressedImages] = useState<string[]>();
 
-  const { isLoading: isGettingImage, mutateAsync: getImage } =
-    api.openai.getImage.useMutation();
+  const { isLoading: isGettingImage, mutateAsync: getImage } = api.openai.getImage.useMutation();
 
   function dataURLtoFile(dataurl: string, filename: string) {
-    var arr = dataurl.split(",") as any[],
+    let arr = dataurl.split(",") as any[],
       mime = arr[0].match(/:(.*?);/)[1],
       bstr = atob(arr[arr.length - 1]),
       n = bstr.length,
@@ -43,7 +40,7 @@ export default function Test() {
               const image = await getImage({
                 prompt:
                   "detailed, cartoonic, colorful and oil paster painting of a friendly bear and a curious rabbit exploring a forest together",
-                size: size as CreateImageRequestSizeEnum,
+                size: size as any,
               });
 
               setImages((prev) => [...(prev ?? []), image]);
@@ -162,7 +159,7 @@ export default function Test() {
                 <div className="relative h-96 w-96">
                   <Image
                     src={"data:image/png;base64," + image}
-                    alt={"test"}
+                    alt="test"
                     fill
                     style={{ objectFit: "cover" }}
                     className="rounded-md"
@@ -186,7 +183,7 @@ export default function Test() {
                 <div className="relative h-96 w-96">
                   <Image
                     src={"data:image/png;base64," + image}
-                    alt={"test"}
+                    alt="test"
                     fill
                     style={{ objectFit: "cover" }}
                     className="rounded-md"
@@ -210,7 +207,7 @@ export default function Test() {
                 <div className="black relative h-52 w-52">
                   <Image
                     src={"data:image/png;base64," + image}
-                    alt={"test"}
+                    alt="test"
                     fill
                     style={{ objectFit: "cover" }}
                     className="rounded-md"

@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { OpenAIApi, Configuration } from "openai";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
@@ -11,9 +10,7 @@ export const stripeRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      const checkoutSession = await ctx.stripe.checkout.sessions.retrieve(
-        input.id
-      );
+      const checkoutSession = await ctx.stripe.checkout.sessions.retrieve(input.id);
 
       return checkoutSession;
     }),
