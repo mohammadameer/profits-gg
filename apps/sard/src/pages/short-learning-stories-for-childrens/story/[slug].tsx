@@ -436,7 +436,7 @@ export default function Story({
           )}
 
           <div className="relative">
-            <div className="sticky top-4 z-10">
+            <div className="z-10">
               {mainImage ? (
                 <div
                   className=" relative left-0 top-0 aspect-square max-h-[500px] w-full md:w-[500px]"
