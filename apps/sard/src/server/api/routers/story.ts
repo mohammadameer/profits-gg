@@ -54,6 +54,7 @@ export const storyRouter = createTRPCRouter({
         hidden: z.boolean().nullish(),
         place: z.string().nullish(),
         limit: z.number().min(1).max(100).nullish(),
+        initialCursor: z.number().nullish(),
         cursor: z.number().nullish(), // <-- "cursor" needs to exist, but can be any type
         select: z
           .object({
@@ -67,7 +68,7 @@ export const storyRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const take = input.limit ?? 10;
-      const skip = input.cursor ?? 0;
+      const skip = input.cursor || input.initialCursor || 0;
 
       const categories = [];
 

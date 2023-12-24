@@ -16,10 +16,7 @@ import { Button } from "@profits-gg/ui";
 
 const ChildrenStories: NextPage<{ locale: string }> = ({ locale }) => {
   const router = useRouter();
-  const { largeFont } = router.query as { largeFont?: string };
   const { getLocalizedUrl } = useGetLocalizedUrl();
-
-  console.log("largeFont", largeFont);
 
   const messages = useMessages();
 
@@ -95,13 +92,11 @@ const ChildrenStories: NextPage<{ locale: string }> = ({ locale }) => {
             }}
             className="w-full md:w-5/12"
           />
-          {!hasNextPage ? (
-            <Link
-              href="/short-learning-stories-for-childrens/new-and-special-story-for-your-children"
-              className="text col-span-full h-auto rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 lg:w-1/3">
-              {messages.format("newStory")} 🪄
-            </Link>
-          ) : null}
+          <Link
+            href="/short-learning-stories-for-childrens/new-and-special-story-for-your-children"
+            className="text col-span-full h-auto rounded-lg bg-blue-500 px-6 py-4 text-center font-bold text-white transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 lg:w-1/3">
+            {messages.format("newStory")} 🪄
+          </Link>
         </div>
       </div>
     </>
