@@ -40,6 +40,10 @@ export const storyRouter = createTRPCRouter({
           id: input.id,
           slug: input.slug,
         },
+        cacheStrategy: {
+          ttl: 1000 * 60 * 60 * 24, // 1 day
+          swr: 1000 * 60 * 60 * 24, // 1 day
+        },
       })
     ),
   list: publicProcedure
@@ -116,7 +120,13 @@ export const storyRouter = createTRPCRouter({
         skip,
       };
 
-      const stories: Story[] = await ctx.prisma.story.findMany(query);
+      const stories: Story[] = await ctx.prisma.story.findMany({
+        ...query,
+        cacheStrategy: {
+          ttl: 1000 * 60 * 60 * 24, // 1 day
+          swr: 1000 * 60 * 60 * 24, // 1 day
+        },
+      });
 
       const dataFetched = stories.length;
       let nextCursor: typeof skip | null = skip;

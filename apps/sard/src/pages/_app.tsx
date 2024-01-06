@@ -5,12 +5,12 @@ import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import { api } from "~/utils/api";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "~/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import Layout from "~/components/Layout";
 import { useEffect } from "react";
-import { LocalizedRouteParameters, useRouter } from "next-multilingual/router";
+import { type LocalizedRouteParameters, useRouter } from "next-multilingual/router";
 
 import { useActualLocale } from "next-multilingual";
 
@@ -61,6 +61,7 @@ const MyApp: AppType<{ session: Session | null; localizedRouteParameters: Locali
 
         <ReactQueryDevtools initialIsOpen={false} />
       </PostHogProvider>
+      <SpeedInsights />
     </>
   );
 };

@@ -404,12 +404,12 @@ export default function Story({
             </div>
           ) : null}
           {description ? (
-            <h2 className={clsx("leading-normal", getFontSize(fontSize))}>{description}</h2>
+            <h2 className={clsx("leading-loose", getFontSize(fontSize))}>{description}</h2>
           ) : (
             <div className="h-10 w-2/4 animate-pulse rounded-md bg-gray-400" />
           )}
           {slug ? (
-            <p className={clsx("leading-normal", getFontSize(fontSize))}>
+            <p className={clsx("leading-loose", getFontSize(fontSize))}>
               {messages.format("about")}{" "}
               {
                 // @ts-ignore
@@ -448,7 +448,7 @@ export default function Story({
                   />
                 </div>
               ) : (
-                <div className="h-96 w-full animate-pulse rounded-md bg-gray-400 md:w-96" />
+                <div className="my-2 h-96 w-full animate-pulse rounded-md bg-gray-400 md:w-96" />
               )}
             </div>
 
@@ -457,14 +457,14 @@ export default function Story({
                 {content?.split("\n").map((paragraph, index) => (
                   <p
                     key={index}
-                    className={clsx("break-inside-avoid break-words leading-normal", getFontSize(fontSize))}>
+                    className={clsx("break-inside-avoid break-words leading-loose", getFontSize(fontSize))}>
                     {paragraph?.replace(/🍆|🌈|🏳️‍🌈|/gm, "")}
                   </p>
                 ))}
               </div>
             ) : (
               Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="h-10 w-full animate-pulse rounded-md bg-gray-400" />
+                <div key={index} className="mt-2 h-10 w-full animate-pulse rounded-md bg-gray-400" />
               ))
             )}
           </div>
