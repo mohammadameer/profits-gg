@@ -6,6 +6,7 @@ import { z } from "zod";
  */
 const server = z.object({
   // DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.string().url(),
   POSTGRES_PRISMA_URL: z.string().url(),
   POSTGRES_URL_NON_POOLING: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
@@ -56,6 +57,7 @@ const client = z.object(
  */
 const processEnv = {
   // DATABASE_URL: process.env.DATABASE_URL,
+  DATABASE_URL: process.env.DATABASE_URL,
   POSTGRES_PRISMA_URL: process.env.POSTGRES_PRISMA_URL,
   POSTGRES_URL_NON_POOLING: process.env.POSTGRES_URL_NON_POOLING,
   NODE_ENV: process.env.NODE_ENV,
@@ -72,15 +74,11 @@ const processEnv = {
   // DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
   // DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
-  NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY:
-    process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY,
+  NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY: process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY,
   NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
-  NEXT_PUBLIC_STRIPE_ONE_DAY_PAYMENT_LINK:
-    process.env.NEXT_PUBLIC_STRIPE_ONE_DAY_PAYMENT_LINK,
-  NEXT_PUBLIC_STRIPE_ONE_MONTH_PAYMENT_LINK:
-    process.env.NEXT_PUBLIC_STRIPE_ONE_MONTH_PAYMENT_LINK,
-  NEXT_PUBLIC_STRIPE_ONE_YEAR_PAYMENT_LINK:
-    process.env.NEXT_PUBLIC_STRIPE_ONE_YEAR_PAYMENT_LINK,
+  NEXT_PUBLIC_STRIPE_ONE_DAY_PAYMENT_LINK: process.env.NEXT_PUBLIC_STRIPE_ONE_DAY_PAYMENT_LINK,
+  NEXT_PUBLIC_STRIPE_ONE_MONTH_PAYMENT_LINK: process.env.NEXT_PUBLIC_STRIPE_ONE_MONTH_PAYMENT_LINK,
+  NEXT_PUBLIC_STRIPE_ONE_YEAR_PAYMENT_LINK: process.env.NEXT_PUBLIC_STRIPE_ONE_YEAR_PAYMENT_LINK,
 };
 
 // Don't touch the part below
@@ -108,10 +106,7 @@ if (!skip) {
   );
 
   if (parsed.success === false) {
-    console.error(
-      "❌ Invalid environment variables:",
-      parsed.error.flatten().fieldErrors,
-    );
+    console.error("❌ Invalid environment variables:", parsed.error.flatten().fieldErrors);
     throw new Error("Invalid environment variables");
   }
 
@@ -124,7 +119,7 @@ if (!skip) {
         throw new Error(
           process.env.NODE_ENV === "production"
             ? "❌ Attempted to access a server-side environment variable on the client"
-            : `❌ Attempted to access server-side environment variable '${prop}' on the client`,
+            : `❌ Attempted to access server-side environment variable '${prop}' on the client`
         );
       return target[/** @type {keyof typeof target} */ (prop)];
     },
