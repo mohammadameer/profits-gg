@@ -1,5 +1,6 @@
 import type { PrismaClient } from "@prisma/client";
 import type Stripe from "stripe";
+import { type initializePrisma } from "~/server/db";
 import { expirationByAmount } from "~/utils/memberships";
 
 // retrieves a Stripe customer id for a given user if it exists or creates a new one
@@ -42,7 +43,7 @@ export const handleCheckoutSessionCompleted = async ({
 }: {
   event: Stripe.Event;
   stripe: Stripe;
-  prisma: PrismaClient;
+  prisma: ReturnType<typeof initializePrisma>;
 }) => {
   const checkoutSession = event.data.object as Stripe.Checkout.Session;
 

@@ -8,7 +8,7 @@ const globalForPrisma = globalThis as unknown as {
   prisma: ReturnType<typeof initializePrisma>;
 };
 
-const initializePrisma = () => {
+export const initializePrisma = () => {
   return new PrismaClient({
     log: env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
   }).$extends(withAccelerate());
