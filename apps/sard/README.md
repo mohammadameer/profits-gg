@@ -31,4 +31,4 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 you should add the .env file to the sard project it's contains some important information project
 
-to start this project print 'yarn dev:sard' in the terminal.
+to start this project print 'yarn dev:sard' in the terminal..
