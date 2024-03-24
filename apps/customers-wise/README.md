@@ -26,4 +26,7 @@ Also checkout these awesome tutorials on `create-t3-app`.
 
 Follow our deployment guides for [Vercel](https://beta.create.t3.gg/en/deployment/vercel) and [Docker](https://beta.create.t3.gg/en/deployment/docker) for more information.
 
-to start the project print 'yarn dev:customers-wise'.
+# Projects
+
+- [Sard - Personalized Leanring Stories For Childrens](https://www.sard.dev/)
+- customerswise
